@@ -61,7 +61,6 @@ public class UserDataSP {
     public void storePostData(String postData){
         editor.putString(POST_DATA,postData);
         editor.commit();
-        Log.e("POST1",postData);
     }
     public void appendToPostData(String addendString){
         String data = getPostData() + addendString;

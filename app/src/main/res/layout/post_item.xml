@@ -83,64 +83,97 @@
                         <LinearLayout
                             android:orientation="horizontal"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
+                            android:layout_height="45dp"
                             android:layout_marginEnd="2dp"
                             app:layout_constraintRight_toRightOf="parent"
                             android:layout_marginRight="2dp"
                             android:layout_marginStart="2dp"
                             app:layout_constraintLeft_toLeftOf="parent"
                             android:layout_marginLeft="2dp"
-                            android:layout_marginTop="8dp"
                             android:weightSum="3"
-                            app:layout_constraintTop_toBottomOf="@+id/postimage"
-                            android:id="@+id/button">
+                            android:id="@+id/post_action"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintTop_toBottomOf="@+id/postimage">
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_weight="1"
                                     android:orientation="horizontal"
-                                    android:layout_height="match_parent">
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/like"
+                                    android:background="?android:attr/selectableItemBackground"
+                                    >
                                         <ImageView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:src="@drawable/ic_like"
-                                            android:layout_margin="10dp"/>
-                                        <TextView
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:text="Like"
-                                            android:layout_marginTop="13dp"/>
-
+                                            android:src="@drawable/ic_not_liked"
+                                            android:layout_margin="8dp"
+                                            android:id="@+id/like_icon" />
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:orientation="vertical">
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:text="Like"
+                                                    android:layout_marginTop="8dp"
+                                                    android:id="@+id/like_text" />
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:text="0"
+                                                    android:textSize="10dp"
+                                                    android:layout_marginTop="0dp"
+                                                    android:id="@+id/like_num" />
+                                        </LinearLayout>
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_weight="1"
-                                    android:layout_height="match_parent">
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/comment"
+                                    android:clickable="false"
+                                    android:background="?android:attr/selectableItemBackground">
                                         <ImageView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:src="@drawable/ic_comment"
                                             android:paddingTop="2dp"
-                                            android:layout_margin="10dp"/>
-                                        <TextView
+                                            android:layout_margin="8dp"/>
+
+                                        <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:text="Comment"
-                                            android:layout_marginTop="13dp"/>
+                                            android:orientation="vertical">
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:text="Comment"
+                                                    android:layout_marginTop="8dp"/>
+                                                <TextView
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:text="0"
+                                                    android:textSize="10dp"
+                                                    android:layout_marginTop="0dp"
+                                                    android:id="@+id/comment_num" />
+                                        </LinearLayout>
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_weight="1"
-                                    android:layout_height="match_parent">
+                                    android:layout_height="match_parent"
+                                    android:background="?android:attr/selectableItemBackground">
                                         <ImageView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:src="@drawable/ic_share"
-                                            android:layout_margin="10dp"/>
+                                            android:layout_margin="8dp"/>
                                         <TextView
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:text="Share"
-                                            android:layout_marginTop="13dp"/>
+                                            android:layout_marginTop="8dp"/>
                                 </LinearLayout>
 
                         </LinearLayout>
@@ -149,4 +182,5 @@
 
 
         </android.support.v7.widget.CardView>
+
 </RelativeLayout>

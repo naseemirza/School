@@ -200,7 +200,7 @@ public class PostDialog extends DialogFragment {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 uploadImage.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
                 int size = byteArrayOutputStream.toByteArray().length/1024;
-                if(size>500) {
+                if(size>350) {
                     Bitmap b = uploadImage;
                     uploadImage = null;
                     int wr = 16;
@@ -221,7 +221,7 @@ public class PostDialog extends DialogFragment {
                             res = res -10;
                             uploadImage = resize(uploadImage,wr *res, hr*res );
                             quality = 100;}
-                    }while (size > 500);
+                    }while (size > 350);
                 }
                 encoded_image = Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
                 return true;
@@ -283,6 +283,7 @@ public class PostDialog extends DialogFragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.getStackTrace();
+                        progressDialog.dismiss();
                         Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
                     }
         }){

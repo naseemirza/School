@@ -2,6 +2,7 @@ package com.lead.infosystems.schooldiary.Main;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
@@ -43,7 +46,8 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
     String POST_MIN = "0";
     Activity activity;
     UserDataSP userDataSP;
-    JSONArray jsonArray;
+    JSONArray jsonPost,jsonLikes;
+    boolean backPressed = false;
 
     public FragTabHome() {
         // Required empty public constructor
@@ -51,7 +55,7 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
 
     @Override
     public void onStart() {
-        if(ServerConnect.checkInternetConenction(getActivity())){
+        if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){
              loadData(getActivity());
         }else{
             if(userDataSP.getPostData()!=""){
@@ -63,16 +67,17 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.frag_tab_home, container, false);
+        Log.e("onCreate","called");
         swipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = (RecyclerView) rootview.findViewById(R.id.rvList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         activity = getActivity();
-        adapterItem = new AdapterItem(this, getActivity().getApplicationContext());
+        adapterItem = new AdapterItem(this, getActivity());
         adapterItem.setLinearLayoutManager(linearLayoutManager);
         adapterItem.setRecyclerView(recyclerView);
         recyclerView.setAdapter(adapterItem);
@@ -85,7 +90,6 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
         swipeRefreshLayout.setOnRefreshListener(this);
         return rootview;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -106,10 +110,18 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
     }
 
     @Override
+    public void onCommentClick(String post_id) {
+        backPressed = true;
+        startActivity(new Intent(getActivity(),PostComments.class));
+    }
+
+
+    @Override
     public void onRefresh() {
         POST_MIN = "0";
         loadData(getActivity());
     }
+
 
     private class PostDataLoad extends AsyncTask<String, Void, String> {
 
@@ -160,28 +172,48 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
 
     private ArrayList<Post_Data> getJsonData(String jsonString){
 
-        JSONObject jsonObject = null;
+        JSONObject jsonPostObj = null;
+        JSONObject jsonLikeObj = null;
+        ArrayList<String> likedStudents = new ArrayList<>();
         try {
-            Log.e("data",jsonString);
-            jsonArray = new JSONArray(jsonString);
-            for (int i = 0; i <= jsonArray.length() - 1; i++) {
-                jsonObject = jsonArray.getJSONObject(i);
+            jsonPost = new JSONArray(jsonString);
+            for (int i = 0; i <= jsonPost.length() - 1; i++) {
+                boolean isLiked = false;
+                jsonPostObj = jsonPost.getJSONObject(i);
+                //parse date
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                Date date = dateFormat.parse(jsonObject.getString("date"));
-                itemlist.add(new Post_Data(jsonObject.getString("first_name"), jsonObject.getString("last_name"),
-                        jsonObject.getString("post_id"), jsonObject.getString("text_message"),
-                        jsonObject.getString("src_link"), date.getTime()));
-                if (i == jsonArray.length() - 1) {
-                    POST_MIN = jsonObject.getString("post_id");
+                Date date = dateFormat.parse(jsonPostObj.getString("date"));
+
+                //get likes list
+                likedStudents = new ArrayList<>();
+                if(jsonPostObj.getString("like") != "null"){
+                jsonLikes = new JSONArray(jsonPostObj.getString("like"));
+                    for(int j = 0 ; j < jsonLikes.length();j++){
+                        jsonLikeObj = jsonLikes.getJSONObject(j);
+                        String sNo = jsonLikeObj.getString("student_number");
+                        if(Integer.parseInt(sNo) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)))
+                        {isLiked = true;}
+                        likedStudents.add(sNo);
+                    }
+                }
+
+                itemlist.add(new Post_Data(jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
+                                            jsonPostObj.getString("post_id"), jsonPostObj.getString("text_message"),
+                                            jsonPostObj.getString("src_link"), date.getTime(),isLiked,likedStudents,"5"));
+                if (i == jsonPost.length() - 1) {
+                    POST_MIN = jsonPostObj.getString("post_id");
                 }
             }
             return itemlist;
         } catch (JSONException e) {
             e.printStackTrace();
-            return null;
+            itemlist.clear();
+            Toast.makeText(getActivity().getApplicationContext(),"No more posts...",Toast.LENGTH_SHORT).show();
+            return itemlist;
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            itemlist.clear();
+            return itemlist;
         }
     }
 }

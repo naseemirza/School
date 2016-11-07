@@ -1,12 +1,10 @@
 package com.lead.infosystems.schooldiary.Main;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
@@ -15,12 +13,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Attendance;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -43,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     FragmentTransaction frag;
     UserDataSP userDataSP;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +77,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            FragmentManager fn = getSupportFragmentManager();
-            fn.popBackStack("tag",FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            super.onBackPressed();
-        }
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                FragmentManager fn = getSupportFragmentManager();
+                fn.popBackStack("tag",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                super.onBackPressed();
+            }
     }
 
     @Override
