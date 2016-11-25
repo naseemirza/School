@@ -31,12 +31,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="25dp"
-                android:id="@+id/radioA"/>
+                android:id="@+id/radio_buttonA"/>
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/radioL"
+                android:id="@+id/radio_buttonL"
                 android:layout_marginRight="5dp"/>
 
 
