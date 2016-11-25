@@ -14,12 +14,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Main.MainActivity;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -77,7 +76,7 @@ public class Login extends AppCompatActivity {
             builder.appendQueryParameter("username",username);
             builder.appendQueryParameter("password",password);
             try {
-                return ServerConnect.downloadUrl("login.php",builder.build().getEncodedQuery());
+                return ServerConnect.downloadUrl(Utils.LOGIN,builder.build().getEncodedQuery());
             } catch (IOException e) {
                 e.printStackTrace();
             }

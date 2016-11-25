@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content">
-
     <android.support.v7.widget.CardView
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_margin="5dp"
-        card_view:cardCornerRadius="1dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="3dp"
+        card_view:cardElevation="4dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
                 android:src="@drawable/school_boy"
                 android:layout_marginTop="8dp"
                 card_view:layout_constraintTop_toTopOf="parent"
-                android:transitionName="@string/transition_name_propic"
                 android:layout_marginStart="8dp"
                 card_view:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginLeft="8dp"
-                android:id="@+id/profile_image" />
+                android:id="@+id/profile_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
 
             <TextView
                 android:text="Umar Mukhtar"
@@ -33,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/name"
                 android:textStyle="bold"
-                android:transitionName="@string/transition_name_name"
                 android:layout_marginStart="16dp"
                 card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
                 android:layout_marginLeft="16dp"
@@ -47,7 +48,6 @@
                 android:id="@+id/question_text"
                 android:layout_marginStart="16dp"
                 card_view:layout_constraintLeft_toLeftOf="parent"
-                android:transitionName="@string/transition_name_text"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 card_view:layout_constraintTop_toBottomOf="@+id/profile_image"
@@ -60,39 +60,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/time"
-                android:transitionName="@string/transition_name_time"
-                card_view:layout_constraintTop_toBottomOf="@+id/name"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="208dp"
                 card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
-                android:layout_marginLeft="16dp"
-                card_view:layout_constraintHorizontal_bias="0.61"
-                android:layout_marginTop="8dp" />
-
-            <Button
-                android:text="Answer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/answer_btn"
-                android:background="@android:color/background_light"
-                android:textAppearance="@style/TextAppearance.AppCompat"
-                card_view:layout_constraintRight_toRightOf="parent"
-                card_view:layout_constraintLeft_toLeftOf="parent"
-                card_view:layout_constraintHorizontal_bias="1.0"
-                android:layout_marginTop="8dp"
-                card_view:layout_constraintTop_toBottomOf="@+id/question_text" />
-
-            <TextView
-                android:text="TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/answer_num"
-                android:layout_marginTop="16dp"
-                card_view:layout_constraintTop_toTopOf="parent"
-                card_view:layout_constraintBottom_toTopOf="@+id/name"
+                android:layout_marginLeft="208dp"
                 android:layout_marginEnd="16dp"
                 card_view:layout_constraintRight_toRightOf="parent"
-                android:layout_marginRight="16dp" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
+                android:layout_marginRight="16dp"
+                card_view:layout_constraintBottom_toBottomOf="@+id/name"
+                android:layout_marginBottom="8dp" />
 
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

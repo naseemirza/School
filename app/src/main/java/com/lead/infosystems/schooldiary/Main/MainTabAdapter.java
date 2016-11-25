@@ -8,18 +8,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 
 import com.lead.infosystems.schooldiary.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainTabAdapter extends Fragment implements PostDialog.IRefereshHome {
+public class MainTabAdapter extends Fragment {
 
     ViewPager viewPager;
     TabLayout tabLayout;
@@ -55,15 +57,17 @@ public class MainTabAdapter extends Fragment implements PostDialog.IRefereshHome
             public void onClick(View v) {
                 currentTab = viewPager.getCurrentItem();
                 if(currentTab == HOME_TAB){
+//                    rotateFab(fab,0);
                     loadHomeFragDialog();
                 }else if(currentTab == QA_TAB){
-                    Log.e("tab","1");
+//                    rotateFab(fab,1);
+                    loadQuestionFragDialog();
                 }
                 else if(currentTab == CHAT_TAB){
-                    Log.e("tab","2");
+//                    rotateFab(fab,2);
                 }
                 else if(currentTab == NOTIFICATION_TAB){
-                    Log.e("tab","3");
+//                    rotateFab(fab,3);
                 }
             }
         });
@@ -72,10 +76,15 @@ public class MainTabAdapter extends Fragment implements PostDialog.IRefereshHome
 
     public void loadHomeFragDialog(){
         android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
-        PostDialog postDialog = new PostDialog(this);
-        postDialog.show(fragmentManager,"frag");
+        PostDialog dialog = new PostDialog();
+        dialog.show(fragmentManager,"frag");
     }
 
+    public void loadQuestionFragDialog(){
+        android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
+        QuestionDialog dialog = new QuestionDialog();
+        dialog.show(fragmentManager,"frag");
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(new FragTabHome(),"ONE");
@@ -83,15 +92,7 @@ public class MainTabAdapter extends Fragment implements PostDialog.IRefereshHome
         adapter.addFragment(new FragTabChat(), "THREE");
         adapter.addFragment(new FragTabNotifications(), "FOUR");
         viewPager.setAdapter(adapter);
-    }
-
-    @Override
-    public void refereshHome() {
-     //   adapter.getItem(viewPager.getCurrentItem()).onResume();
-       // adapter.notifyDataSetChanged();
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-        setupTabIcons();
+        viewPager.setOffscreenPageLimit(0);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -130,4 +131,24 @@ public class MainTabAdapter extends Fragment implements PostDialog.IRefereshHome
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_message);
         tabLayout.getTabAt(3).setIcon(R.drawable.ic_net);
     }
+
+//    public void rotateFab(FloatingActionButton fab, int dir) {
+//        int previous_tab = 0;
+////        if((previous_tab - dir) > 0){
+//            ViewCompat.animate(fab)
+//                    .rotation(90)
+//                    .withLayer()
+//                    .setDuration(300L)
+//                    .setInterpolator(new OvershootInterpolator(10.0F))
+//                    .start();
+////        }else{
+////            ViewCompat.animate(fab)
+////                    .rotation(-90)
+////                    .withLayer()
+////                    .setDuration(300L)
+////                    .setInterpolator(new OvershootInterpolator(10.0F))
+////                    .start();
+////        }
+//    }
+
 }

@@ -1,24 +1,21 @@
 package com.lead.infosystems.schooldiary.Main;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
+import com.lead.infosystems.schooldiary.Data.QaData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
@@ -36,32 +34,32 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
-    private ArrayList<Post_Data> itemList;
+    private static ArrayList<Post_Data> itemList;
 
     private OnLoadMoreListener onLoadMoreListener;
     private LinearLayoutManager mLinearLayoutManager;
     private Context context;
+    Activity activity;
     private UserDataSP userDataSP;
     private boolean canClickLike = true;
     private boolean isMoreLoading = false;
-    private int visibleThreshold = 1;
+    private int visibleThreshold = 3;
     int firstVisibleItem, visibleItemCount, totalItemCount;
 
     public interface OnLoadMoreListener {
         void onLoadMore();
-        void onCommentClick(String post_id);
+        void onCommentClick(PostAnimData postAnimData);
     }
 
-    public AdapterItem(OnLoadMoreListener onLoadMoreListener, Activity activity) {
+    public PostAdaptor(OnLoadMoreListener onLoadMoreListener, Activity activity) {
         this.onLoadMoreListener = onLoadMoreListener;
+        this.activity = activity;
         this.context = activity.getApplicationContext();
         userDataSP = new UserDataSP(context);
         itemList = new ArrayList<>();
@@ -115,19 +113,47 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeChanged(0, itemList.size());
     }
 
+    public void addItemAtTop(List<Post_Data> lst){
+        itemList.addAll(0,lst);
+        notifyItemRangeChanged(0,itemList.size());
+    }
+
+    public void deleteItem(int position){
+        itemList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(0,itemList.size());
+    }
+
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof StudentViewHolder) {
-          final Post_Data singleItem = (Post_Data) itemList.get(position);
+            final Bitmap[] postImageBitmap = new Bitmap[1];
+            final boolean[] isImageAvailable = new boolean[1];
+            final Post_Data singleItem = (Post_Data) itemList.get(position);
             ((StudentViewHolder) holder).name.setText(singleItem.getFirst_name() + " " + singleItem.getLast_name());
-            ((StudentViewHolder) holder).time.setText(getTimeString(singleItem.getTimeInmilisec()));
+            ((StudentViewHolder) holder).time.setText(Utils.getTimeString(singleItem.gettimeString()));
             ((StudentViewHolder) holder).text.setText(singleItem.getText_message());
-            if (singleItem.getSrc_link().length()>5) {
+            if (singleItem.getSrc_link().length()>10) {
                 ((StudentViewHolder) holder).postImage.setVisibility(View.VISIBLE);
-                Picasso.with(context).load(singleItem.getSrc_link())
+                Picasso.with(context)
+                        .load(singleItem.getSrc_link())
                         .into(((StudentViewHolder) holder).postImage);
+                        isImageAvailable[0] = true;
+                Thread thread = new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            postImageBitmap[0] = Picasso.with(context)
+                                    .load(singleItem.getSrc_link()).get();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                thread.start();
             } else {
                 ((StudentViewHolder) holder).postImage.setVisibility(View.GONE);
+                isImageAvailable[0] = false;
             }
             ((StudentViewHolder) holder).like_num.setText(singleItem.numLikes());
             if(singleItem.isLiked()){
@@ -145,52 +171,71 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             Uri.Builder builder = new Uri.Builder();
                             builder.appendQueryParameter("post_id",singleItem.getId());
                             builder.appendQueryParameter("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
-                            new ActionConnect(Utils.DELETE_PL,singleItem,((StudentViewHolder) holder)).execute(builder.build().getQuery());
+                            new ActionConnect(Utils.DELETE,singleItem,((StudentViewHolder) holder),position)
+                                    .execute(builder.build().getQuery());
                         }else{
                             Uri.Builder builder = new Uri.Builder();
                             builder.appendQueryParameter("post_id",singleItem.getId());
                             builder.appendQueryParameter("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
-                            new ActionConnect(Utils.POST_LIKE,singleItem,((StudentViewHolder) holder)).execute(builder.build().getQuery());
+                            new ActionConnect(Utils.LIKE,singleItem,((StudentViewHolder) holder),position)
+                                    .execute(builder.build().getQuery());
                         }
-                    }
+                }
                 }
             });
-            ((StudentViewHolder) holder).comment_num.setText(singleItem.getCommentsNum());
+            ((StudentViewHolder) holder).comment_num.setText(singleItem.getCommentsNum()+"");
             ((StudentViewHolder) holder).comment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onLoadMoreListener.onCommentClick(singleItem.getId());
+                    onLoadMoreListener.onCommentClick(new PostAnimData(((StudentViewHolder) holder).propic,
+                            ((StudentViewHolder) holder).name
+                            ,((StudentViewHolder) holder).time
+                            , ((StudentViewHolder) holder).text
+                            ,((StudentViewHolder) holder).postImage
+                            , ((StudentViewHolder) holder).postCardView
+                            ,((StudentViewHolder) holder).comment_num
+                            ,postImageBitmap[0]
+                            , isImageAvailable[0]
+                            ,singleItem.getId()
+                            ,singleItem
+                            ,position));
                 }
             });
+
+            if(singleItem.getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
+                ((StudentViewHolder) holder).deleteBtn.setVisibility(View.VISIBLE);
+                ((StudentViewHolder) holder).deleteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //delete post
+                        final CharSequence[] item = { "Delete"};
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                        dialog.setItems(item, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri.Builder builder = new Uri.Builder();
+                                builder.appendQueryParameter("post_id",singleItem.getId());
+                                new ActionConnect(Utils.DELETE, null, null,position).execute(builder.build().getQuery());
+                            }
+                        });
+                        dialog.show();
+
+                    }
+                });
+            }else{
+                ((StudentViewHolder) holder).deleteBtn.setVisibility(View.GONE);
+            }
 
         }
     }
 
-    private String getTimeString(long postTime){
-        String time = "";
-        long seconds = (System.currentTimeMillis() - postTime)/1000;
-
-            if(seconds < 60 ){
-                time  = seconds + " seconds ago";
-            }else if(seconds <  60 * 60){
-                time = (int)(seconds /60)+" min ago";
-            }else if(seconds < 86400){
-                time = (int) (seconds / (60*60))+"hr ago";
-            }else if(seconds < 604800){
-                time = (int) (seconds / (60*60*24)) + " days ago";
-            }else if(seconds > 518400) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-dd,  hh:mm a");
-                time = simpleDateFormat.format(new Date(postTime)).replace("  ", " at ");
-            } else if((seconds/(60*60*24*30))>365){
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MMM-dd,  hh:mm a");
-                time = simpleDateFormat.format(new Date(postTime)).replace("  ", " at ");
-            }
-        return time;
-    }
+//    public static void updateCommentNum(TextView comment_num, int position, int a){
+//        itemList.get(position).setCommentsNum(itemList.get(position).getCommentsNum() + a);
+//        commentNum.setText(itemList.get(position).getCommentsNum()+"");
+//    }
     public void setMoreLoading(boolean isMoreLoading) {
         this.isMoreLoading = isMoreLoading;
     }
-
     @Override
     public int getItemCount() {
         return itemList.size();
@@ -215,14 +260,18 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     static class StudentViewHolder extends RecyclerView.ViewHolder {
         public TextView name, time, text, like_text, like_num, comment_num;
-        public ImageView postImage, like_icon;
+        public ImageView postImage, like_icon , propic;
         public LinearLayout like,comment;
+        public CardView postCardView;
+        public ImageButton deleteBtn;
 
         public StudentViewHolder(View v) {
             super(v);
+            propic = (ImageView) v.findViewById(R.id.propic);
+            postCardView = (CardView) v.findViewById(R.id.post_card_view);
             name = (TextView) v.findViewById(R.id.name);
             time = (TextView) v.findViewById(R.id.time);
-            text = (TextView) v.findViewById(R.id.text);
+            text = (TextView) v.findViewById(R.id.question_text);
             postImage = (ImageView) v.findViewById(R.id.postimage);
 
             like = (LinearLayout) v.findViewById(R.id.like);
@@ -232,6 +281,10 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             comment = (LinearLayout) v.findViewById(R.id.comment);
             comment_num = (TextView) v.findViewById(R.id.comment_num);
+
+            postCardView = (CardView) v.findViewById(R.id.post_card_view);
+
+            deleteBtn = (ImageButton) v.findViewById(R.id.delete);
 
         }
     }
@@ -249,12 +302,14 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         String urlFile;
+        int position;
         Post_Data item;
         StudentViewHolder holder;
-        public ActionConnect(String urlFile, Post_Data item, StudentViewHolder holder) {
+        public ActionConnect(String urlFile, Post_Data item, StudentViewHolder holder,int position) {
             this.urlFile = urlFile;
             this.item = item;
             this.holder = holder;
+            this.position = position;
         }
 
         @Override
@@ -270,10 +325,9 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.e("result",s);
             if(s != null){
                 s = s.trim();
-                if(urlFile == Utils.POST_LIKE) {
+                if(urlFile == Utils.LIKE) {
                     canClickLike =true;
                     if(s.contains("DONE")){
                         Toast.makeText(context.getApplicationContext(),"Liked",Toast.LENGTH_SHORT).show();
@@ -283,7 +337,8 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }else {
                         Toast.makeText(context.getApplicationContext(),"Connection Error..",Toast.LENGTH_SHORT).show();
                     }
-                }else if(urlFile == Utils.DELETE_PL){
+                }else if(urlFile == Utils.DELETE && holder != null){
+                    //remove like
                     canClickLike = true;
                     if(s.contains("DONE")){
                         Toast.makeText(context.getApplicationContext(),"Unliked",Toast.LENGTH_SHORT).show();
@@ -293,6 +348,9 @@ public class AdapterItem extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }else {
                         Toast.makeText(context.getApplicationContext(),"Connection Error..",Toast.LENGTH_SHORT).show();
                     }
+                }else if(urlFile == Utils.DELETE && holder == null){
+                    //delete post
+                    deleteItem(position);
                 }
             }
         }

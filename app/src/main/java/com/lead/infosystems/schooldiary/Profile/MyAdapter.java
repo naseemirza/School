@@ -51,7 +51,7 @@ public class MyAdapter  extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
             date = (TextView) itemView.findViewById(R.id.time);
-            question = (TextView) itemView.findViewById(R.id.text);
+            question = (TextView) itemView.findViewById(R.id.question_text);
             img  = (ImageView) itemView.findViewById(R.id.postimage);
 
 

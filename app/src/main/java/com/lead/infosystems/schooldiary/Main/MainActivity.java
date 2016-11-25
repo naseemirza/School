@@ -27,6 +27,7 @@ import com.lead.infosystems.schooldiary.Profile.Profile;
 import com.lead.infosystems.schooldiary.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
 
 import java.io.IOException;
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity
                 builder.appendQueryParameter(UserDataSP.STUDENT_NUMBER, userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
                 builder.appendQueryParameter("regid",userDataSP.getUserData(userDataSP.CLOUD_ID));
                 try {
-                    return ServerConnect.downloadUrl("reg_user.php",builder.build().getQuery());
+                    return ServerConnect.downloadUrl(Utils.REGESTRATION,builder.build().getQuery());
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;

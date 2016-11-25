@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/post_text_field"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/upload_post_image"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:elevation="10dp"
+        android:hint="  Type your question..."
+        android:layout_height="80dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_below="@+id/upload_post_image"
+            android:background="@drawable/input_boder"
+            android:id="@+id/question_text"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:singleLine="false"
+            android:lines="3" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/post_text_field"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/cardview_light_background"
+        android:id="@+id/submit"
+        android:backgroundTint="@color/colorPrimary" />
+</RelativeLayout>

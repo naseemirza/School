@@ -13,22 +13,23 @@ import java.util.ArrayList;
  */
 
 public class Post_Data {
-    private String first_name,last_name,id,text_message,src_link,commentsNum;
-    private long timeInmilisec;
+    private String first_name,last_name,id,text_message,src_link,timeString;
     boolean isLiked;
+    private int commentsNum,studentNum;
     ArrayList<String> likedStudents = new ArrayList<>();
 
-    public Post_Data(String first_name, String last_name, String id, String text_message, String src_link,
-                     long timeInmilisec, boolean isLiked, ArrayList<String> likedStudents,String commentNum) {
+    public Post_Data(String studentNum, String first_name, String last_name, String id, String text_message, String src_link,
+                     String timeString, boolean isLiked, ArrayList<String> likedStudents,String commentNum) {
+        this.studentNum = Integer.parseInt(studentNum);
         this.first_name = first_name;
         this.last_name = last_name;
         this.id = id;
         this.text_message = text_message;
         this.src_link = src_link;
-        this.timeInmilisec = timeInmilisec;
+        this.timeString = timeString;
         this.isLiked = isLiked;
         this.likedStudents = likedStudents;
-        this.commentsNum = commentNum;
+        this.commentsNum = Integer.parseInt(commentNum);
     }
 
     public String getFirst_name() {
@@ -51,16 +52,11 @@ public class Post_Data {
         return src_link;
     }
 
-    public long getTimeInmilisec() {
-        return timeInmilisec;
+    public String gettimeString() {
+        return timeString;
     }
 
     public boolean isLiked() {
-        if(isLiked){
-            Log.e("isliked", "true");
-        }else{
-            Log.e("isliked", "false");
-        }
         return isLiked;
     }
 
@@ -77,11 +73,17 @@ public class Post_Data {
         isLiked = liked;
     }
     public String numLikes(){
-        Log.e("Like_no",likedStudents.toString());
         return likedStudents.size()+"";
     }
 
-    public String getCommentsNum() {
+    public int getCommentsNum() {
         return commentsNum;
+    }
+    public void setCommentsNum(int num){
+        this.commentsNum = num;
+    }
+
+    public int getStudentNum() {
+        return studentNum;
     }
 }

@@ -5,6 +5,14 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,7 +33,7 @@ public class ServerConnect {
 //        String postParaQuery = builder.build().getEncodedQuery();
 
     public static String downloadUrl(String inurl, String postParaQuery) throws IOException {
-        URL url = new URL(Utils.SERVER_URL+inurl);
+        URL url = new URL(inurl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -78,5 +86,23 @@ public class ServerConnect {
                 Toast.makeText(activity.getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public static String connectionError(VolleyError volleyError){
+        String message = null;
+        if (volleyError instanceof NetworkError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof ServerError) {
+            message = "The server could not be found. Please try again after some time!!";
+        } else if (volleyError instanceof AuthFailureError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof ParseError) {
+            message = "Parsing error! Please try again after some time!!";
+        } else if (volleyError instanceof NoConnectionError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof TimeoutError) {
+            message = "Connection TimeOut! Please check your internet connection.";
+        }
+        return message;
     }
 }

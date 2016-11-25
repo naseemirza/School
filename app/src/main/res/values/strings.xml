@@ -99,4 +99,10 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="home_work_diary"><![CDATA[Home Work & Diary]]></string>
+    <string name="transition_name_propic">post_propic</string>
+    <string name="transition_name_name">post_name</string>
+    <string name="transition_name_card">post_card</string>
+    <string name="transition_name_time">post_time</string>
+    <string name="transition_name_text">post_text</string>
+    <string name="transition_name_post_image">post_image</string>
 </resources>

@@ -35,6 +35,11 @@ import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,15 +59,8 @@ public class PostDialog extends DialogFragment {
     String encoded_image;
     ProgressDialog progressDialog;
     UserDataSP userDataSP;
-    IRefereshHome iRefereshHome;
+    private final int MAX_IMAGE_SIZE = 150;
 
-    public interface IRefereshHome{
-        void refereshHome();
-    }
-
-    public PostDialog(IRefereshHome iRefereshHome) {
-        this.iRefereshHome = iRefereshHome;
-    }
     public PostDialog() {}
 
     @Nullable
@@ -200,12 +198,12 @@ public class PostDialog extends DialogFragment {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 uploadImage.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
                 int size = byteArrayOutputStream.toByteArray().length/1024;
-                if(size>350) {
+                if(size>MAX_IMAGE_SIZE) {
                     Bitmap b = uploadImage;
                     uploadImage = null;
                     int wr = 16;
                     int hr = 9;
-                    int res = 100;
+                    int res = 55;
                     int quality = 100;
                     uploadImage = resize(b, wr*res, hr*res);
                     do {
@@ -217,11 +215,11 @@ public class PostDialog extends DialogFragment {
                                         byteArrayOutputStream.toByteArray().length);
                         size = byteArrayOutputStream.toByteArray().length / 1024;
                         quality = quality - 10;
-                        if(quality < 40){
+                        if(quality < 70){
                             res = res -10;
                             uploadImage = resize(uploadImage,wr *res, hr*res );
                             quality = 100;}
-                    }while (size > 350);
+                    }while (size > MAX_IMAGE_SIZE);
                 }
                 encoded_image = Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
                 return true;
@@ -265,15 +263,24 @@ public class PostDialog extends DialogFragment {
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCancelable(true);
         progressDialog.show();
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.SERVER_URL + "post.php",
+        StringRequest request = new StringRequest(Request.Method.POST, Utils.NEW_POST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         progressDialog.dismiss();
-                        if(response.contains("DONE")){
+                        if(response.contains("post_id")){
                             Toast.makeText(getActivity(),"Done",Toast.LENGTH_SHORT).show();
-                            iRefereshHome.refereshHome();
-                            getDialog().dismiss();
+                            JSONArray jsonArray = null;
+                            try {
+                                jsonArray = new JSONArray(response);
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                FragTabHome.addPostedItem(textData,jsonObject.getString("src_link")
+                                        ,jsonObject.getString("date"),jsonObject.getString("post_id"));
+                                getDialog().dismiss();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }else{
                             Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
                         }

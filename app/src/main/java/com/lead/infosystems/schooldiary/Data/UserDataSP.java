@@ -23,6 +23,7 @@ public class UserDataSP {
     public static final String CLASS = "class";
     public static final String CLOUD_ID = "cloud_id";
     public static final String POST_DATA = "POST_DATA";
+    public static final String QA_DATA = "qa_data";
 
 
     SharedPreferences sharedPreferences;
@@ -65,9 +66,19 @@ public class UserDataSP {
     public void appendToPostData(String addendString){
         String data = getPostData() + addendString;
         data = data.replace("][",",");
+        editor.putString(POST_DATA,"");
         editor.putString(POST_DATA,data);
         editor.commit();
     }
+
+    public void prefixPostData(String prefixData){
+        String d = prefixData + getPostData();
+        d = d.replace("][",",");
+        editor.putString(POST_DATA,"");
+        editor.putString(POST_DATA,d);
+        editor.commit();
+    }
+
     public String getPostData(){
       return   sharedPreferences.getString(POST_DATA,"");
     }
@@ -83,6 +94,26 @@ public class UserDataSP {
         editor.clear();
         editor.commit();
     }
+    public void storeQaData(String data){
+        editor.putString(QA_DATA,data);
+        editor.commit();
+    }
+    public String getQaData(){
+        return sharedPreferences.getString(QA_DATA,"");
+    }
+    public void appendQaData(String appendData){
+        String d = getQaData() + appendData;
+        d = d.replace("][",",");
+        editor.putString(QA_DATA,"");
+        editor.putString(QA_DATA,d);
+        editor.commit();
+    }
+    public void prefixQaData(String prefixData){
+        String d = prefixData + getQaData();
+        d = d.replace("][",",");
+        editor.putString(QA_DATA,"");
+        editor.putString(QA_DATA,d);
+        editor.commit();
+    }
+
 }
-/*
-    }*/

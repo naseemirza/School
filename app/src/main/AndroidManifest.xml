@@ -61,6 +61,7 @@
         </service>
 
         <activity android:name=".Main.PostComments"></activity>
+        <activity android:name=".Main.Answer"></activity>
     </application>
 
 </manifest>

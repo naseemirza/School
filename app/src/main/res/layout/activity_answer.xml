@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView3"
+        card_view:layout_constraintLeft_toLeftOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintBottom_toTopOf="@+id/comment_text_field"
+        card_view:layout_constraintVertical_bias="0.0"
+        card_view:layout_constraintRight_toRightOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/l1">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/school_boy"
+                android:layout_marginTop="8dp"
+                card_view:layout_constraintTop_toTopOf="parent"
+                android:transitionName="@string/transition_name_propic"
+                android:layout_marginStart="8dp"
+                card_view:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/profile_image" />
+
+            <TextView
+                android:text="Umar Mukhtar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/name"
+                android:textStyle="bold"
+                android:transitionName="@string/transition_name_name"
+                android:layout_marginStart="16dp"
+                card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="24dp"
+                card_view:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:text="This is message from umar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/question_text"
+                android:layout_marginStart="16dp"
+                card_view:layout_constraintLeft_toLeftOf="parent"
+                android:transitionName="@string/transition_name_text"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                card_view:layout_constraintTop_toBottomOf="@+id/profile_image"
+                android:layout_marginEnd="16dp"
+                card_view:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="16dp" />
+
+            <TextView
+                android:text="3 hours ago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/time"
+                android:transitionName="@string/transition_name_time"
+                card_view:layout_constraintTop_toBottomOf="@+id/name"
+                android:layout_marginStart="208dp"
+                card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
+                android:layout_marginLeft="208dp"
+                android:layout_marginEnd="16dp"
+                card_view:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="16dp" />
+
+        </android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:src="@android:color/darker_gray"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Answers"
+            android:id="@+id/answer_noanswer"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/answers_progress" />
+
+        <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:id="@+id/list"/>
+    </LinearLayout>
+    </ScrollView>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/comment_text_field"
+        android:hint="  Answer.."
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintRight_toLeftOf="@+id/answerBtn"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="0dp"
+        card_view:layout_constraintLeft_toLeftOf="@+id/scrollView3">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_boder"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:id="@+id/answer_text"
+            android:singleLine="false"
+            android:lines="2" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:id="@+id/answerBtn"
+        android:elevation="10dp"
+        android:textColor="@color/cardview_light_background"
+        app:backgroundTint="@android:color/holo_blue_dark"
+        app:srcCompat="@drawable/ic_menu_send"
+        android:onClick="commentBtn"
+        android:layout_height="50dp"
+        card_view:layout_constraintRight_toRightOf="@+id/scrollView3"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        card_view:srcCompat="@drawable/ic_menu_send"
+        card_view:backgroundTint="@android:color/holo_blue_light" />
+</android.support.constraint.ConstraintLayout>

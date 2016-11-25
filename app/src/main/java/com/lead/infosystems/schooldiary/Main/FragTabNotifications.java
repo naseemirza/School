@@ -78,7 +78,7 @@ public class FragTabNotifications extends Fragment {
             TextView date = (TextView) itemView.findViewById(R.id.date);
             date.setText(item.getDate());
 
-            TextView message = (TextView) itemView.findViewById(R.id.message);
+            TextView message = (TextView) itemView.findViewById(R.id.question_text);
             message.setText(item.getQuestion());
 
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);

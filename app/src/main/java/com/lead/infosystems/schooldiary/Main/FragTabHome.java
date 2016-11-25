@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,17 +38,19 @@ import java.util.Date;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListener,SwipeRefreshLayout.OnRefreshListener{
+public class FragTabHome extends Fragment implements PostAdaptor.OnLoadMoreListener,SwipeRefreshLayout.OnRefreshListener{
 
     View rootview;
-    private ArrayList<Post_Data> itemlist = new ArrayList<Post_Data>();;
+    private static ArrayList<Post_Data> itemlist = new ArrayList<Post_Data>();;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private AdapterItem adapterItem;
+    private static PostAdaptor postAdaptor;
     String POST_MIN = "0";
     Activity activity;
-    UserDataSP userDataSP;
+    static UserDataSP userDataSP;
     JSONArray jsonPost,jsonLikes;
+    public static PostAnimData postAnimData;
     boolean backPressed = false;
+    boolean noMorePost = false;
 
     public FragTabHome() {
         // Required empty public constructor
@@ -55,12 +58,14 @@ public class FragTabHome extends Fragment implements AdapterItem.OnLoadMoreListe
 
     @Override
     public void onStart() {
+        itemlist.clear();
+        noMorePost = false;
         if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){
              loadData(getActivity());
         }else{
             if(userDataSP.getPostData()!=""){
                 swipeRefreshLayout.setRefreshing(false);
-                adapterItem.addAll(getJsonData(userDataSP.getPostData()));
+                postAdaptor.addAll(getJsonData(userDataSP.getPostData()));
             }
         }
         super.onStart();
@@ -71,16 +76,15 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.frag_tab_home, container, false);
-        Log.e("onCreate","called");
         swipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = (RecyclerView) rootview.findViewById(R.id.rvList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         activity = getActivity();
-        adapterItem = new AdapterItem(this, getActivity());
-        adapterItem.setLinearLayoutManager(linearLayoutManager);
-        adapterItem.setRecyclerView(recyclerView);
-        recyclerView.setAdapter(adapterItem);
+        postAdaptor = new PostAdaptor(this, getActivity());
+        postAdaptor.setLinearLayoutManager(linearLayoutManager);
+        postAdaptor.setRecyclerView(recyclerView);
+        recyclerView.setAdapter(postAdaptor);
         recyclerView.getItemAnimator().setChangeDuration(0);
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
         swipeRefreshLayout.setColorSchemeResources(
@@ -89,10 +93,6 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 R.color.colorPrimaryDark);
         swipeRefreshLayout.setOnRefreshListener(this);
         return rootview;
-    }
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     public void loadData(Activity activity) {
@@ -103,22 +103,76 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
     @Override
     public void onLoadMore() {
-            adapterItem.setProgressMore(true);
-        if(ServerConnect.checkInternetConenction(getActivity())){
+
+        if(ServerConnect.checkInternetConenction(getActivity()) && !noMorePost){
             new PostDataLoad().execute(POST_MIN);
+            postAdaptor.setProgressMore(true);
+        }
+    }
+
+    public static void addPostedItem(String text, String link,String dateString,String postid){
+        itemlist.clear();
+        itemlist.add(new Post_Data(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)
+                                ,userDataSP.getUserData(UserDataSP.FIRST_NAME)
+                                ,userDataSP.getUserData(UserDataSP.LAST_NAME)
+                                ,postid,text,link,dateString,false,new ArrayList<String>(),"0"));
+        postAdaptor.addItemAtTop(itemlist);
+        prefixItemData(postid,text,link,dateString);
+
+    }
+
+    private static void prefixItemData(String postid, String text, String link, String dateString) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+            jsonObject.put("first_name",userDataSP.getUserData(UserDataSP.FIRST_NAME));
+            jsonObject.put("last_name",userDataSP.getUserData(UserDataSP.LAST_NAME));
+            jsonObject.put("post_id",postid);
+            jsonObject.put("text_message",text);
+            jsonObject.put("src_link",link);
+            jsonObject.put("date",dateString);
+            jsonObject.put("like",JSONObject.NULL);
+            jsonObject.put("num_comment",0);
+
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(jsonObject);
+
+            userDataSP.prefixPostData(jsonArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void onCommentClick(String post_id) {
+    public void onCommentClick(PostAnimData postAnimData) {
         backPressed = true;
-        startActivity(new Intent(getActivity(),PostComments.class));
+        Intent intent = new Intent(getActivity(),PostComments.class);
+        ActivityOptionsCompat activityOptionsCompat = null;
+        this.postAnimData = postAnimData;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Pair<View,String> p1 = Pair.create(postAnimData.getName(), postAnimData.getName().getTransitionName());
+            Pair<View,String> p2 = Pair.create(postAnimData.getTime(), postAnimData.getTime().getTransitionName());
+            Pair<View,String> p3 = Pair.create(postAnimData.getText(), postAnimData.getText().getTransitionName());
+            Pair<View,String> p4 = Pair.create(postAnimData.getPropic(), postAnimData.getPropic().getTransitionName());
+            if(postAnimData.isImageAvailable()){
+                Pair<View,String> p5 = Pair.create(postAnimData.getPost_img(), postAnimData.getPost_img().getTransitionName());
+                activityOptionsCompat = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4,p5);
+            }else{
+            activityOptionsCompat = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4);
+            }
+            startActivity(intent,activityOptionsCompat.toBundle());
+        }else{
+            startActivity(intent);
+        }
     }
-
 
     @Override
     public void onRefresh() {
         POST_MIN = "0";
+        noMorePost = false;
+        postAdaptor.setMoreLoading(false);
         loadData(getActivity());
     }
 
@@ -154,19 +208,24 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     }
 
     private void storeData(String s) throws JSONException {
-        if(s != null && s != "ERROR") {
+        if(!s.isEmpty() && s != "ERROR") {
             itemlist.clear();
             if (POST_MIN == "0") {
                 swipeRefreshLayout.setRefreshing(false);
-                adapterItem.addAll(getJsonData(s));
+                postAdaptor.addAll(getJsonData(s));
                 userDataSP.storePostData(s);
             } else {
-                adapterItem.setProgressMore(false);
-                adapterItem.addItemMore(getJsonData(s));
-                adapterItem.setMoreLoading(false);
+                postAdaptor.setProgressMore(false);
+                postAdaptor.addItemMore(getJsonData(s));
+                postAdaptor.setMoreLoading(false);
                 userDataSP.appendToPostData(s);
             }
 
+        }else{
+            Toast.makeText(getActivity().getApplicationContext(),"No more posts...",Toast.LENGTH_SHORT).show();
+            noMorePost = true;
+            postAdaptor.setProgressMore(false);
+            postAdaptor.setMoreLoading(false);
         }
     }
 
@@ -180,10 +239,6 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
             for (int i = 0; i <= jsonPost.length() - 1; i++) {
                 boolean isLiked = false;
                 jsonPostObj = jsonPost.getJSONObject(i);
-                //parse date
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                Date date = dateFormat.parse(jsonPostObj.getString("date"));
-
                 //get likes list
                 likedStudents = new ArrayList<>();
                 if(jsonPostObj.getString("like") != "null"){
@@ -197,20 +252,16 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                     }
                 }
 
-                itemlist.add(new Post_Data(jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
+                itemlist.add(new Post_Data(jsonPostObj.getString("student_number"),jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
                                             jsonPostObj.getString("post_id"), jsonPostObj.getString("text_message"),
-                                            jsonPostObj.getString("src_link"), date.getTime(),isLiked,likedStudents,"5"));
+                                            jsonPostObj.getString("src_link"), jsonPostObj.getString("date"),isLiked,likedStudents,
+                                            jsonPostObj.getString("num_comment")));
                 if (i == jsonPost.length() - 1) {
                     POST_MIN = jsonPostObj.getString("post_id");
                 }
             }
             return itemlist;
         } catch (JSONException e) {
-            e.printStackTrace();
-            itemlist.clear();
-            Toast.makeText(getActivity().getApplicationContext(),"No more posts...",Toast.LENGTH_SHORT).show();
-            return itemlist;
-        } catch (ParseException e) {
             e.printStackTrace();
             itemlist.clear();
             return itemlist;
