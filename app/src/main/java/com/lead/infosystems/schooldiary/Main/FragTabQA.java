@@ -84,7 +84,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         RecyclerView recyclerView = (RecyclerView) rootview.findViewById(R.id.rvList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
-        qaAdaptor = new QaAdaptor(this);
+        qaAdaptor = new QaAdaptor(this,getActivity());
         qaAdaptor.setLinearLayoutManager(linearLayoutManager);
         qaAdaptor.setRecyclerView(recyclerView);
         recyclerView.setAdapter(qaAdaptor);

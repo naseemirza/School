@@ -2,9 +2,7 @@ package com.lead.infosystems.schooldiary.Main;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,10 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.AnswerData;
-import com.lead.infosystems.schooldiary.Data.QaData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.Main.FragTabQA;
-import com.lead.infosystems.schooldiary.Main.QaAnimData;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
@@ -45,12 +39,8 @@ import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +90,7 @@ public class Answer extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(answerText.getText().length()>0){
-                    connect(Utils.ANSWER_SUBMIT,answerText.getText().toString());
+                    connect(Utils.ANSWER_SUBMIT,answerText.getText().toString(),null,null,null, 0);
                     answerText.setText("");
                 }else{
                     Toast.makeText(getApplicationContext(),"No answer Text..",Toast.LENGTH_SHORT).show();
@@ -110,14 +100,17 @@ public class Answer extends AppCompatActivity {
 
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(items.get(position).getStudentNumber() == userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)){
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                Log.e("1",items.get(position).getStudentNumber());
+                Log.e("2",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
                     final CharSequence[] item = { "Delete"};
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                     dialog.setItems(item, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            connect(Utils.QA_DELETE,null);
+                            connect(Utils.QA_DELETE,null,items.get(position).getStudentNumber(),
+                                    items.get(position).getAnswerNumber(),qaAnimData.getQuestionNum(),position);
                         }
                     });
                     dialog.show();
@@ -134,9 +127,9 @@ public class Answer extends AppCompatActivity {
         name.setText(qaAnimData.getName().getText().toString());
         text.setText(qaAnimData.getText().getText().toString());
         time.setText(qaAnimData.getTime().getText().toString());
-        connect(Utils.QA_FETCH,null);
+        connect(Utils.QA_FETCH,null, null, null, null, 0);
     }
-    private void connect(final String url, final String answerText){
+    private void connect(final String url, final String answerText, final String studentNumber, final String answerNumber, final String questionNum, final int position){
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -156,6 +149,10 @@ public class Answer extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }else if(url == Utils.QA_DELETE){
+                        if(response.contains("DONE")){
+                            deleteItem(position);
+                        }
                     }
                 }
                 doneLoading();
@@ -171,12 +168,16 @@ public class Answer extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> params = new HashMap<>();
 
-                if(answerText == null){
+                if(answerText == null && answerNumber == null){
                     params.put("question_number",qaAnimData.getQuestionNum().trim());
-                }else{
+                }else if(answerNumber == null){
                     params.put(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
                     params.put("question_number",qaAnimData.getQuestionNum());
                     params.put("answer",answerText);
+                }else if(answerNumber != null && studentNumber != null){
+                    params.put("question_number",questionNum);
+                    params.put("student_number",studentNumber);
+                    params.put("answer_number",answerNumber);
                 }
                 return params;
             }
@@ -184,6 +185,12 @@ public class Answer extends AppCompatActivity {
         RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         request.setRetryPolicy(retryPolicy);
         requestQueue.add(request);
+    }
+
+    private void deleteItem(int position) {
+        items.remove(position);
+        adaptor.notifyDataSetChanged();
+        Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
     }
 
     private void addItem(String answer_number, String time, String answerText) {
