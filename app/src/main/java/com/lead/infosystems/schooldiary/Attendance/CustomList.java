@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.R;
 
@@ -36,7 +37,7 @@ public class CustomList extends ArrayAdapter<String> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
 
 
@@ -70,9 +71,12 @@ public class CustomList extends ArrayAdapter<String> {
                         listViewHolder.Rleave.setChecked(false);
                         flagA = true;
                         flagL = false;
+                        String snumber= studentnumber.get(position);
 
                         String send= "A";
 
+                        Toast.makeText(context, "Sunmber..."+snumber ,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Value..."+send ,Toast.LENGTH_SHORT).show();
                     } else {
                         flagA = false;
                         listViewHolder.Rabsent.setChecked(false);
