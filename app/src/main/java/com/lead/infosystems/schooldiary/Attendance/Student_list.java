@@ -57,6 +57,7 @@ public class Student_list extends AppCompatActivity {
             JSONObject jsonobj = json.getJSONObject(i);
             students.add(jsonobj.getString("first_name") + " " + jsonobj.getString("last_name"));
             roll_number.add(jsonobj.getString("roll_number"));
+            snumber.add(jsonobj.getString("student_number"));
 
             Log.e("students", String.valueOf(students));
 

@@ -3,6 +3,7 @@ package com.lead.infosystems.schooldiary.Attendance;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,11 +73,12 @@ public class CustomList extends ArrayAdapter<String> {
                         flagA = true;
                         flagL = false;
                         String snumber= studentnumber.get(position);
+                        Log.e("Stud_number",snumber);
 
                         String send= "A";
-
-                        Toast.makeText(context, "Sunmber..."+snumber ,Toast.LENGTH_SHORT).show();
-                        Toast.makeText(context, "Value..."+send ,Toast.LENGTH_SHORT).show();
+                        Log.e("Send",send);
+//                        Toast.makeText(context, "Sunmber..."+snumber ,Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "Value..."+send ,Toast.LENGTH_SHORT).show();
                     } else {
                         flagA = false;
                         listViewHolder.Rabsent.setChecked(false);
