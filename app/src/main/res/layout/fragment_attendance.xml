@@ -2,17 +2,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lead.infosystems.schooldiary.Attendance">
+    tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance">
 
 
-    <TextView
-        android:text="Student Attendance"
+
+
+
+    <Button
+        android:text="Teacher Page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:textStyle="normal|bold|italic"
-        android:textSize="36sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
+        android:id="@+id/button_tech"
+        android:layout_alignBaseline="@+id/button_student"
+        android:layout_alignBottom="@+id/button_student"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
+    <Button
+        android:text="Student Page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="194dp"
+        android:id="@+id/button_student"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Attendance"
+        android:textSize="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_att"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

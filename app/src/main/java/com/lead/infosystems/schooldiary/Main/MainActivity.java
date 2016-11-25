@@ -18,13 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.lead.infosystems.schooldiary.Attendance;
+import com.lead.infosystems.schooldiary.Attendance.Attendance;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.Fees;
 import com.lead.infosystems.schooldiary.Login;
-import com.lead.infosystems.schooldiary.ModelQuestionPapers;
+import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Profile.Profile;
-import com.lead.infosystems.schooldiary.Progress_Report;
+import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
@@ -136,11 +135,11 @@ public class MainActivity extends AppCompatActivity
             frag.addToBackStack("tag");
             frag.commit();
         } else if (id == R.id.nav_fees) {
-            Fees blankFragment = new Fees();
-            frag = getSupportFragmentManager().beginTransaction();
-            frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack("tag");
-            frag.commit();
+            Uri path = Uri.parse(userDataSP.getUserData(UserDataSP.SCHOOL_FEES));
+            Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
+            pdfIntent.setDataAndType(path, "application/pdf");
+            pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(pdfIntent);
         } else if (id == R.id.nav_question_papers) {
             ModelQuestionPapers blankFragment = new ModelQuestionPapers();
             frag = getSupportFragmentManager().beginTransaction();

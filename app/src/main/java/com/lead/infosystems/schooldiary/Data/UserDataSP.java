@@ -24,6 +24,7 @@ public class UserDataSP {
     public static final String CLOUD_ID = "cloud_id";
     public static final String POST_DATA = "POST_DATA";
     public static final String QA_DATA = "qa_data";
+    public static final String SCHOOL_FEES = "school_fees";
 
 
     SharedPreferences sharedPreferences;
@@ -50,6 +51,7 @@ public class UserDataSP {
         editor.putString(EMAIL_ID,jsonObject.getString(EMAIL_ID));
         editor.putString(BLOOD_GROUP,jsonObject.getString(BLOOD_GROUP));
         editor.putString(CLASS,jsonObject.getString(CLASS));
+        editor.putString(SCHOOL_FEES,jsonObject.getString(SCHOOL_FEES));
 
         editor.putBoolean("LoggedIn",true);
         editor.commit();

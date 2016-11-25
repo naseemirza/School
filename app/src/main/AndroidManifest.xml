@@ -62,6 +62,19 @@
 
         <activity android:name=".Main.PostComments"></activity>
         <activity android:name=".Main.Answer"></activity>
+
+        <activity
+            android:name=".Progress.GraphView"
+            android:screenOrientation="landscape" />
+        <activity android:name=".Progress.Marks" />
+        <activity
+            android:name=".Progress.SinlGraph"
+            android:screenOrientation="landscape" />
+
+        <activity android:name=".Attendance.Teacher_Attendance" />
+        <activity android:name=".Attendance.Student_list" />
+        <activity android:name=".Attendance.ShowAttendance"></activity>
+
     </application>
 
 </manifest>

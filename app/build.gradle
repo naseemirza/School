@@ -35,6 +35,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.4.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.github.paolorotolo:expandableheightlistview:1.0.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.0.9'
+    compile 'net.gotev:uploadservice:2.1'
     testCompile 'junit:junit:4.12'
 }
 
