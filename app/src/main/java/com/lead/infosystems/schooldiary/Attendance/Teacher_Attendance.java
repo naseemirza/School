@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 
@@ -29,12 +30,12 @@ import java.net.URL;
 
 public class Teacher_Attendance extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-
+UserDataSP userDataSP;
+    SPData spData;
     Spinner student_class,student_divisio;
 
-    private static final String[] Stu_cls={"Select","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th","11th","12th"};
-    private static final String[] Stu_div={"Select","A","B","C","D","E"};
-
+    private static final String[] Stu_cls=null;
+    private static final String[] Stu_div=null;
     String a,b;
 
 public  Button bt;
@@ -44,6 +45,10 @@ public  Button bt;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher__attendance);
         bt=(Button)findViewById(R.id.button_sub);
+        userDataSP=new UserDataSP(this);
+        spData =new SPData(this);
+
+
 
 
         student_class=(Spinner)findViewById(R.id.spinner_cls);
@@ -112,7 +117,7 @@ public  Button bt;
         protected String doInBackground(Void... params) {
 
             try {
-                URL url = new URL("http://leadinfosystems.com/school_diary/SchoolDiary/student_list_fetch.php");
+                URL url = new URL("http://leadinfosystems.com/school_diary/SchoolDiary/attendance_insert.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(10000);
                 httpURLConnection.setReadTimeout(15000);
@@ -126,8 +131,11 @@ public  Button bt;
 
                 Uri.Builder builder = new Uri.Builder();
 
-                builder.appendQueryParameter("class", a);
-                builder.appendQueryParameter("division", b);
+                builder.appendQueryParameter("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+
+
+               // builder.appendQueryParameter("class", a);
+                //builder.appendQueryParameter("division", b);
 
                 String abc = builder.build().getQuery();
                 bufferedWriter.write(abc);
@@ -161,7 +169,7 @@ public  Button bt;
 
             SPData spData = new SPData(getApplicationContext());
             spData.storeData(result);
-            Log.e("result",result);
+            Log.e("my",result);
 
         }
     }

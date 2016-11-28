@@ -77,8 +77,6 @@ UserDataSP userdatasp;
     }
 
 
-
-
     class Model extends AsyncTask<Void,Void,String> {
 
         String json_url;
@@ -87,7 +85,6 @@ UserDataSP userdatasp;
         Model(Activity activity) {
             this.activity = activity;
         }
-
 
 
         @Override
@@ -178,7 +175,7 @@ UserDataSP userdatasp;
                     Intent it=new Intent(Intent.ACTION_VIEW);
                     String link="http://leadinfosystems.com/school_diary/SchoolDiary/"+items.get(position).getLink();
                     it.setDataAndType(Uri.parse(link.replace(" ","%20")),"application/pdf");
-                   // Log.e("result",link.replace(" ","%20"));
+
                     it.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     getActivity().startActivity(it);
 

@@ -17,12 +17,8 @@ import com.lead.infosystems.schooldiary.R;
  */
 public class Attendance extends Fragment {
 
-
-
-
-
     public Attendance() {
-        // Required empty public constructor
+
     }
 
 
@@ -49,10 +45,6 @@ public class Attendance extends Fragment {
 
             }
         });
-
-
-
-
 
         return rootView;
     }

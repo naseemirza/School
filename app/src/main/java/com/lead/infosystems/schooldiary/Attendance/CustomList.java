@@ -8,44 +8,47 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Naseem on 25-11-2016.
  */
 
-public class CustomList extends ArrayAdapter<String> {
+public class CustomList extends ArrayAdapter<Datalist> {
+
+
     private boolean flagA=false;
     private boolean flagL=false;
     private final Activity context;
-    private final List<String> student_name;
-    private final List<String> rollnumber;
-    private final List<String> studentnumber;
+    static List<Datalist> items=new ArrayList<>();
 
-    public CustomList( Activity context, List<String> student_name, List<String> rollnumber, List<String> studentnumber) {
-        super(context, R.layout.list,student_name);
+
+    public CustomList( Activity context, List<Datalist> items) {
+        super(context, R.layout.list,items);
+        this.items = items;
         this.context = context;
-        this.student_name = student_name;
-        this.rollnumber = rollnumber;
-        this.studentnumber = studentnumber;
     }
 
     @NonNull
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-
-
         View rowView;
         final ListViewHolder listViewHolder;
         if(convertView == null)
         {
+
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = layoutInflater.inflate(R.layout.list,parent,false);
             listViewHolder = new ListViewHolder();
@@ -60,8 +63,12 @@ public class CustomList extends ArrayAdapter<String> {
             rowView = convertView;
             listViewHolder = (ListViewHolder) rowView.getTag();
         }
-        listViewHolder.text_roll.setText(rollnumber.get(position));
-        listViewHolder.text_name.setText(student_name.get(position));
+
+        final Datalist currentItem = items.get(position);
+
+        listViewHolder.text_roll.setText(currentItem.getStudent_roll());
+        listViewHolder.text_name.setText(currentItem.getStudent_name());
+
         listViewHolder.Rabsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,17 +79,13 @@ public class CustomList extends ArrayAdapter<String> {
                         listViewHolder.Rleave.setChecked(false);
                         flagA = true;
                         flagL = false;
-                        String snumber= studentnumber.get(position);
-                        Log.e("Stud_number",snumber);
+                        currentItem.setAttendance("A");
 
-                        String send= "A";
-                        Log.e("Send",send);
-//                        Toast.makeText(context, "Sunmber..."+snumber ,Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(context, "Value..."+send ,Toast.LENGTH_SHORT).show();
                     } else {
                         flagA = false;
                         listViewHolder.Rabsent.setChecked(false);
                         listViewHolder.Rleave.setChecked(false);
+                        currentItem.setAttendance("P");
                     }
                 }
 
@@ -99,13 +102,14 @@ public class CustomList extends ArrayAdapter<String> {
                         flagL = true;
                         flagA = false;
 
-                        String send= "L";
 
+                        currentItem.setAttendance("L");
 
                     } else {
                         flagL = false;
                         listViewHolder.Rleave.setChecked(false);
                         listViewHolder.Rabsent.setChecked(false);
+                        currentItem.setAttendance("P");
                     }
                 }
 

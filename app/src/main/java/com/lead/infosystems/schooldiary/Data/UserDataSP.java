@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 public class UserDataSP {
 
+    public static final String SCHOOL_NUMBER = "school_number";
     public static final String STUDENT_NUMBER = "student_number";
     public static final String DIVISION = "division";
     public static final String ROLL_NO = "roll_number";
@@ -40,6 +41,7 @@ public class UserDataSP {
         JSONArray jsonArray = new JSONArray(json);
         JSONObject jsonObject = jsonArray.getJSONObject(0);
 
+        editor.putString(SCHOOL_NUMBER,jsonObject.getString(SCHOOL_NUMBER));
         editor.putString(STUDENT_NUMBER,jsonObject.getString(STUDENT_NUMBER));
         editor.putString(DIVISION,jsonObject.getString(DIVISION));
         editor.putString(ROLL_NO,jsonObject.getString(ROLL_NO));
