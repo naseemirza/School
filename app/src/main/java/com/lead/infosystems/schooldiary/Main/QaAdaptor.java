@@ -225,7 +225,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         public StudentViewHolder(View v) {
             super(v);
             name = (TextView) v.findViewById(R.id.name);
-            time = (TextView) v.findViewById(R.id.time);
+            time = (TextView) v.findViewById(R.id.time_rcv);
             question_text = (TextView) v.findViewById(R.id.question_text);
             propic = (ImageView) v.findViewById(R.id.profile_image);
             answerBtn = (Button) v.findViewById(R.id.answer_btn);

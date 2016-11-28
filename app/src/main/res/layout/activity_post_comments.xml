@@ -54,7 +54,7 @@
                     android:text="4 days ago"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/time"
+                    android:id="@+id/time_rcv"
                     android:transitionName="@string/transition_name_time"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintRight_toRightOf="parent"

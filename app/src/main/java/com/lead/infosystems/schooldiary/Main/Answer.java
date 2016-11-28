@@ -67,7 +67,7 @@ public class Answer extends AppCompatActivity {
         propic = (ImageView) findViewById(R.id.profile_image);
         name = (TextView) findViewById(R.id.name);
         text = (TextView) findViewById(R.id.question_text);
-        time = (TextView) findViewById(R.id.time);
+        time = (TextView) findViewById(R.id.time_rcv);
         list = (ExpandableHeightListView) findViewById(R.id.list);
         progressBar = (ProgressBar) findViewById(R.id.answers_progress);
         answer = (TextView) findViewById(R.id.answer_noanswer);
@@ -224,7 +224,7 @@ public class Answer extends AppCompatActivity {
                 v = getLayoutInflater().inflate(R.layout.answer_item,parent,false);
             }
             name = (TextView) v.findViewById(R.id.name);
-            time = (TextView) v.findViewById(R.id.time);
+            time = (TextView) v.findViewById(R.id.time_rcv);
             text = (TextView) v.findViewById(R.id.question_text);
             propic = (ImageView) v.findViewById(R.id.profile_image);
 

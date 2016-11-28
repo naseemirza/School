@@ -11,6 +11,7 @@ import org.json.JSONObject;
 public class UserDataSP {
 
     public static final String STUDENT_NUMBER = "student_number";
+    public static final String SCHOOL_NUMBER = "school_number";
     public static final String DIVISION = "division";
     public static final String ROLL_NO = "roll_number";
     public static final String FIRST_NAME = "first_name";

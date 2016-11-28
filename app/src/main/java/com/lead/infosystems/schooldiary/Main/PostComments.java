@@ -2,17 +2,11 @@ package com.lead.infosystems.schooldiary.Main;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -47,11 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +68,7 @@ public class PostComments extends AppCompatActivity {
         propic = (ImageView) findViewById(R.id.propic);
         post_img = (ImageView) findViewById(R.id.postimage);
         name = (TextView) findViewById(R.id.name);
-        time = (TextView) findViewById(R.id.time);
+        time = (TextView) findViewById(R.id.time_rcv);
         text = (TextView) findViewById(R.id.question_text);
         commentsList = (ExpandableHeightListView) findViewById(R.id.comment_list);
         commentText = (EditText) findViewById(R.id.comment_text);
@@ -265,7 +254,7 @@ public class PostComments extends AppCompatActivity {
             }
 
             TextView comment_name = (TextView) itemView.findViewById(R.id.name);
-            TextView time = (TextView) itemView.findViewById(R.id.time);
+            TextView time = (TextView) itemView.findViewById(R.id.time_rcv);
             TextView text = (TextView) itemView.findViewById(R.id.question_text);
             final TextView likes = (TextView) itemView.findViewById(R.id.comment_likes_num);
             final LinearLayout likeView = (LinearLayout) itemView.findViewById(R.id.comments_likes);

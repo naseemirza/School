@@ -50,7 +50,7 @@ public class MyAdapter  extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
         public ViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
-            date = (TextView) itemView.findViewById(R.id.time);
+            date = (TextView) itemView.findViewById(R.id.time_rcv);
             question = (TextView) itemView.findViewById(R.id.question_text);
             img  = (ImageView) itemView.findViewById(R.id.postimage);
 

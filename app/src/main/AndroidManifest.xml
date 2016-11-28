@@ -26,6 +26,7 @@
         <activity
             android:name=".Main.MainActivity"
             android:label="Home"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,8 +61,26 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Main.PostComments"></activity>
-        <activity android:name=".Main.Answer"></activity>
+        <activity android:name=".Main.PostComments" />
+        <activity android:name=".Main.Answer" />
+        <activity
+            android:name=".Main.ChatNew"
+            android:label="Contact"
+            android:launchMode="singleTop"
+            >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".Profile" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lead.infosystems.schooldiary.Main.MainActivity" />
+        </activity>
+        <activity android:name=".Main.Chat"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lead.infosystems.schooldiary.Main.ChatNew"/>
+        </activity>
     </application>
 
 </manifest>

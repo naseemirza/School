@@ -23,6 +23,8 @@ public class Utils {
     public static final String Q_SUBMIT = SERVER_URL+"question_post.php";
     public static final String ANSWER_SUBMIT = SERVER_URL+"answer_post.php";
     public static final String QA_DELETE = SERVER_URL+"question_answer_delete.php";
+    public static final String CHAT_LIST = SERVER_URL+"chat_list.php";
+    public static final String CHAT_CONTACT = SERVER_URL+"chat_contact.php";
 
 
    public static String getTimeString(String dateString){
