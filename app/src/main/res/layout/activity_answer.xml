@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/holo_blue_dark"
         card_view:layout_constraintBottom_toBottomOf="parent"
-        card_view:layout_constraintRight_toLeftOf="@+id/answerBtn"
+        card_view:layout_constraintRight_toLeftOf="@+id/chatBtn"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_width="0dp"
@@ -140,7 +140,7 @@
     <android.support.design.widget.FloatingActionButton
         android:text="Button"
         android:layout_width="wrap_content"
-        android:id="@+id/answerBtn"
+        android:id="@+id/chatBtn"
         android:elevation="10dp"
         android:textColor="@color/cardview_light_background"
         app:backgroundTint="@android:color/holo_blue_dark"

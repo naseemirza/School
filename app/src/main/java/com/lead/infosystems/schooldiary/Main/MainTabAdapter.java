@@ -63,7 +63,8 @@ public class MainTabAdapter extends Fragment {
                     loadHomeFragDialog();
                 }else if(currentTab == QA_TAB){
 //                    rotateFab(fab,1);
-                    loadQuestionFragDialog();
+                 //   loadQuestionFragDialog();
+                    startActivity(new Intent(getActivity(),ChatNew.class));
                 }
                 else if(currentTab == CHAT_TAB){
 //                    rotateFab(fab,2);
@@ -95,7 +96,7 @@ public class MainTabAdapter extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(new FragTabHome(),"ONE");
-        adapter.addFragment(new FragTabQA(),"TWO");
+      //  adapter.addFragment(new FragTabQA(),"TWO");
         adapter.addFragment(new FragTabChat(), "THREE");
         adapter.addFragment(new FragTabNotifications(), "FOUR");
         viewPager.setAdapter(adapter);
@@ -134,9 +135,9 @@ public class MainTabAdapter extends Fragment {
 
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_home);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_question_answer);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_message);
-        tabLayout.getTabAt(3).setIcon(R.drawable.ic_net);
+    //    tabLayout.getTabAt(1).setIcon(R.drawable.ic_question_answer);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_message);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_net);
     }
 
 //    public void rotateFab(FloatingActionButton fab, int dir) {

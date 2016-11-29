@@ -72,7 +72,7 @@ public class Answer extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.answers_progress);
         answer = (TextView) findViewById(R.id.answer_noanswer);
         answerText = (EditText) findViewById(R.id.answer_text);
-        answerBtn = (FloatingActionButton) findViewById(R.id.answerBtn);
+        answerBtn = (FloatingActionButton) findViewById(R.id.chatBtn);
         userDataSP = new UserDataSP(getApplicationContext());
 
         populateView();

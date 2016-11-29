@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.ChatListItems;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Data.QuestionData;
@@ -46,6 +48,7 @@ public class FragTabChat extends Fragment {
     ListView list;
     private UserDataSP userDataSP;
     List<ChatListItems> items = new ArrayList<>();
+    private MyDataBase dataBase;
     public FragTabChat() {
         // Required empty public constructor
     }
@@ -58,7 +61,14 @@ public class FragTabChat extends Fragment {
         rootview =  inflater.inflate(R.layout.fragment_tab_chat, container, false);
         list = (ListView) rootview.findViewById(R.id.list_two);
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
-        connect();
+        dataBase = new MyDataBase(getActivity().getApplicationContext());
+        if(dataBase.getActiveChats().getCount()>0){
+            getDataIntoList();
+            Log.e("chat",dataBase.getActiveChats().getCount()+"");
+        }else{
+            Log.e("chat","conect");
+            connect();
+        }
         return rootview;
     }
 
@@ -104,11 +114,11 @@ public class FragTabChat extends Fragment {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for(int i = 0; i< jsonArray.length();i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    items.add(new ChatListItems(jsonObject.getString("chat_id"),jsonObject.getString("user1")
+                                    dataBase.newChat(jsonObject.getString("chat_id"),jsonObject.getString("user1")
                                                                 ,jsonObject.getString("user2"),jsonObject.getString("date")
-                                                                ,jsonObject.getString("last_message")));
+                                                                ,jsonObject.getString("last_message"));
                                 }
-                                populateListView();
+                                getDataIntoList();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -134,6 +144,19 @@ public class FragTabChat extends Fragment {
         requestQueue.add(request);
 
     }
+
+    private void getDataIntoList() {
+        if(dataBase.getActiveChats().getCount() >0){
+            Cursor data = dataBase.getActiveChats();
+            while (data.moveToNext()){
+                items.add(new ChatListItems(data.getString(1)
+                        ,data.getString(2),data.getString(3)
+                        ,data.getString(4),data.getString(5)));
+            }
+            populateListView();
+        }
+    }
+
     private void populateListView(){
         ArrayAdapter adapter = new MyListAdapter();
         list.setAdapter(adapter);
