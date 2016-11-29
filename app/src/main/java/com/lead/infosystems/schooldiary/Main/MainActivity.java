@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Login;
@@ -158,6 +159,12 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_management) {
 
+        }else if (id==R.id.nav_formdownload) {
+            ApplicationForm myform=new ApplicationForm();
+            frag=getSupportFragmentManager().beginTransaction();
+                    frag.replace(R.id.main_con,myform);
+            frag.addToBackStack("tag");
+            frag.commit();
 
 
 

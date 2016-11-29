@@ -1,6 +1,8 @@
-package com.lead.infosystems.schooldiary.Model_Paper;
+package com.lead.infosystems.schooldiary.ApplicationForm;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,25 +16,26 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Model_Paper.FilePath;
 import com.lead.infosystems.schooldiary.R;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
 
+import java.io.Console;
 import java.util.UUID;
 
 /**
- * Created by Naseem on 17-11-2016.
+ * Created by Naseem on 28-11-2016.
  */
-
-public class Dialog_model extends DialogFragment implements View.OnClickListener {
+public class Dialog_form extends DialogFragment implements View.OnClickListener {
     private static final int RESULT_OK =-1 ;
     public Button btn_choose, btn_upload;
     EditText file_name;
     View rootview;
     UserDataSP userdatasp;
 
-    public static final String Upload_url = "http://leadinfosystems.com/school_diary/SchoolDiary/model_paper_insert.php";
+    public static final String Upload_url = "http://leadinfosystems.com/school_diary/SchoolDiary/application_form_insert.php";
 
     private int pdf_reqst = 1;
     private static final int STORAGE_PERMISSION_CODE = 123;
@@ -69,15 +72,21 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         } else {
             try {
                 String uploadId = UUID.randomUUID().toString();
+
                 new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Upload_url)
                         .addFileToUpload(path, "pdf")
                         .addParameter("name", name)
-                        .addParameter("class",userdatasp.getUserData(UserDataSP.CLASS))
+                        .addParameter("school",userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
                         .setNotificationConfig(new UploadNotificationConfig())
                         .setMaxRetries(2)
                         .startUpload();
 
-            } catch (Exception exc) {
+
+
+
+
+
+           } catch (Exception exc) {
                 Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
             }
             getDialog().dismiss();
