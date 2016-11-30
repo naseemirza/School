@@ -25,6 +25,8 @@ public class Utils {
     public static final String QA_DELETE = SERVER_URL+"question_answer_delete.php";
     public static final String CHAT_LIST = SERVER_URL+"chat_list.php";
     public static final String CHAT_CONTACT = SERVER_URL+"chat_contact.php";
+    public static final String ATTENDANCE = SERVER_URL+"attendance_insert.php";
+
 
 
    public static String getTimeString(String dateString){
