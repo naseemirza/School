@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     FragmentTransaction frag;
     UserDataSP userDataSP;
+    public static String BACK_STACK_TAG = "tag";
 
 
     @Override
@@ -53,10 +54,10 @@ public class MainActivity extends AppCompatActivity
         toolbar  = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        MainTabAdapter frag = new MainTabAdapter();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_con,frag);
-        transaction.commit();
+    MainTabAdapter frag = new MainTabAdapter();
+    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.main_con,frag);
+    transaction.commit();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
                 FragmentManager fn = getSupportFragmentManager();
-                fn.popBackStack("tag",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fn.popBackStack(BACK_STACK_TAG,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 super.onBackPressed();
             }
     }
@@ -120,22 +121,23 @@ public class MainActivity extends AppCompatActivity
             StudentDiery blankFragment = new StudentDiery();
         frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack("tag");
+            frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
 
         } else if (id == R.id.nav_attendance) {
             Attendance blankFragment = new Attendance();
             frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack("tag");
+            frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
         } else if (id == R.id.nav_progress) {
             Progress_Report blankFragment = new Progress_Report();
             frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack("tag");
+            frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
         } else if (id == R.id.nav_fees) {
+
             Uri path = Uri.parse(userDataSP.getUserData(UserDataSP.SCHOOL_FEES));
             Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
             pdfIntent.setDataAndType(path, "application/pdf");
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity
             ModelQuestionPapers blankFragment = new ModelQuestionPapers();
             frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack("tag");
+            frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
         } else if (id == R.id.nav_test) {
 

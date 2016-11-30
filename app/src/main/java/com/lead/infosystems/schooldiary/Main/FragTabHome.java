@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
@@ -58,6 +59,7 @@ public class FragTabHome extends Fragment implements PostAdaptor.OnLoadMoreListe
 
     @Override
     public void onStart() {
+        MyDataBase dataBase = new MyDataBase(getActivity().getApplicationContext());
         itemlist.clear();
         noMorePost = false;
         if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){

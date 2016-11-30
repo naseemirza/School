@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 
+import com.lead.infosystems.schooldiary.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.R;
 
 import java.util.ArrayList;
@@ -65,6 +67,7 @@ public class MainTabAdapter extends Fragment {
                 }
                 else if(currentTab == CHAT_TAB){
 //                    rotateFab(fab,2);
+                        startActivity(new Intent(getActivity(),ChatNew.class));
                 }
                 else if(currentTab == NOTIFICATION_TAB){
 //                    rotateFab(fab,3);
@@ -74,17 +77,21 @@ public class MainTabAdapter extends Fragment {
         return rootview;
     }
 
-    public void loadHomeFragDialog(){
+    private void loadHomeFragDialog(){
         android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
         PostDialog dialog = new PostDialog();
         dialog.show(fragmentManager,"frag");
     }
 
-    public void loadQuestionFragDialog(){
+    private void loadQuestionFragDialog(){
         android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
         QuestionDialog dialog = new QuestionDialog();
         dialog.show(fragmentManager,"frag");
     }
+
+
+
+
 
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(new FragTabHome(),"ONE");

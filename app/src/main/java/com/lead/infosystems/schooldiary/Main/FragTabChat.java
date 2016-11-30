@@ -4,6 +4,7 @@ package com.lead.infosystems.schooldiary.Main;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,31 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.lead.infosystems.schooldiary.Data.ChatListItems;
+import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Data.QuestionData;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class FragTabChat extends Fragment {
@@ -24,21 +44,12 @@ public class FragTabChat extends Fragment {
 
     View rootview;
     ListView list;
-    List<QuestionData> items = new ArrayList<QuestionData>();
+    private UserDataSP userDataSP;
+    List<ChatListItems> items = new ArrayList<>();
     public FragTabChat() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onStart() {
-        items.add(new QuestionData("Umar Mujale","1 hour ago","Hello.. What is todays Homework",getResources().getDrawable(R.drawable.student1)));
-        items.add(new QuestionData("Ramesh Bhat","2 hour ago","Hi.. Is there holiday 2moro?",getResources().getDrawable(R.drawable.student2)));
-        items.add(new QuestionData("Naseem Mirza","3 hour ago","Hello... are you having exam time table",getResources().getDrawable(R.drawable.student3)));
-        items.add(new QuestionData("Suresh Patil","4 hour ago","Are you comming to school 2moro",getResources().getDrawable(R.drawable.student4)));
-        items.add(new QuestionData("Nitin Gauda","5 hour ago","What Assignments are given today?",getResources().getDrawable(R.drawable.student1)));
-        items.add(new QuestionData("Abrar Khan","6 hour ago","please tell me what should i write in maths homework copy",getResources().getDrawable(R.drawable.student7)));
-        super.onStart();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,17 +57,12 @@ public class FragTabChat extends Fragment {
         // Inflate the layout for this fragment
         rootview =  inflater.inflate(R.layout.fragment_tab_chat, container, false);
         list = (ListView) rootview.findViewById(R.id.list_two);
-        populateListView();
+        userDataSP = new UserDataSP(getActivity().getApplicationContext());
+        connect();
         return rootview;
     }
 
-    private void populateListView(){
-        ArrayAdapter adapter = new MyListAdapter();
-        list.setAdapter(adapter);
-
-    }
-
-    private class MyListAdapter extends ArrayAdapter<QuestionData>{
+    private class MyListAdapter extends ArrayAdapter<ChatListItems>{
 
         public MyListAdapter() {
             super(getActivity().getApplicationContext(), R.layout.messageview_item, items);
@@ -69,22 +75,68 @@ public class FragTabChat extends Fragment {
             if(itemView == null){
                 itemView = getActivity().getLayoutInflater().inflate(R.layout.messageview_item,parent,false);
             }
-            QuestionData item = items.get(position);
+            ChatListItems currentItem = items.get(position);
 
             TextView name = (TextView) itemView.findViewById(R.id.name);
-            name.setText(item.getname());
-
             TextView date = (TextView) itemView.findViewById(R.id.date);
-            date.setText(item.getDate());
-
             TextView message = (TextView) itemView.findViewById(R.id.question_text);
-            message.setText(item.getQuestion());
-
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
-            propic.setImageDrawable(item.getDrawable());
+
+            String myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
+            name.setText(currentItem.getChatUserName(myName));
+            date.setText(Utils.getTimeString(currentItem.getDate()));
+            message.setText(currentItem.getLast_message());
 
             return itemView;
         }
     }
 
+
+    private void connect(){
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        StringRequest request = new StringRequest(Request.Method.POST, Utils.CHAT_LIST,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        items.clear();
+                        if(response != null && !response.contains("ERROR")) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for(int i = 0; i< jsonArray.length();i++){
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    items.add(new ChatListItems(jsonObject.getString("chat_id"),jsonObject.getString("user1")
+                                                                ,jsonObject.getString("user2"),jsonObject.getString("date")
+                                                                ,jsonObject.getString("last_message")));
+                                }
+                                populateListView();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.getStackTrace();
+                Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map =  new HashMap<>();
+                map.put("user",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                return map;
+            }
+        };
+        int socketTimeout = 20000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(policy);
+        requestQueue.add(request);
+
+    }
+    private void populateListView(){
+        ArrayAdapter adapter = new MyListAdapter();
+        list.setAdapter(adapter);
+
+    }
 }

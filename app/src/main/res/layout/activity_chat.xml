@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.lead.infosystems.schooldiary.Profile.Profile">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/school_boy"
+                    android:adjustViewBounds="false"
+                    android:id="@+id/propic"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UMAR"
+                    android:textStyle="normal|bold"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/title"
+                    android:textColor="@color/cardview_light_background"
+                    android:textSize="18sp" />
+            </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <android.support.design.widget.FloatingActionButton
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:id="@+id/answerBtn"
+            android:elevation="10dp"
+            android:textColor="@color/cardview_light_background"
+            app:backgroundTint="@android:color/holo_blue_dark"
+            app:srcCompat="@drawable/ic_menu_send"
+            android:onClick="commentBtn"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/comment_text_field"
+            android:layout_marginBottom="8dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/comment_text_field"
+            android:hint="  text..."
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_dark"
+            android:layout_width="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/answerBtn"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/input_boder"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
+                android:id="@+id/comment_text"
+                android:singleLine="false"
+                android:lines="2" />
+        </android.support.design.widget.TextInputLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.6"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toTopOf="@+id/comment_text_field"
+            android:id="@+id/chat_list" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout >

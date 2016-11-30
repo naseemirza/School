@@ -59,7 +59,7 @@
                 android:text="3 hours ago"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/time"
+                android:id="@+id/time_rcv"
                 android:layout_marginStart="208dp"
                 card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
                 android:layout_marginLeft="208dp"

@@ -2,16 +2,11 @@ package com.lead.infosystems.schooldiary.Main;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +68,7 @@ public class PostComments extends AppCompatActivity {
         propic = (ImageView) findViewById(R.id.propic);
         post_img = (ImageView) findViewById(R.id.postimage);
         name = (TextView) findViewById(R.id.name);
-        time = (TextView) findViewById(R.id.time);
+        time = (TextView) findViewById(R.id.time_rcv);
         text = (TextView) findViewById(R.id.question_text);
         commentsList = (ExpandableHeightListView) findViewById(R.id.comment_list);
         commentText = (EditText) findViewById(R.id.comment_text);
@@ -86,7 +77,6 @@ public class PostComments extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.comment_progress);
 
         user = new UserDataSP(getApplicationContext());
-
         commentText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -245,15 +235,13 @@ public class PostComments extends AppCompatActivity {
                 return map;
             }
         };
-
         RetryPolicy policy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         request.setRetryPolicy(policy);
         requestQueue.add(request);
     }
 
     class MyAdaptor extends ArrayAdapter<PostCommentData>{
-        public TextView comment_name,time,text,likes,Like_btn;
-        public LinearLayout likeView;
+
         public MyAdaptor() {
             super(getApplicationContext(), R.layout.post_comment_item,items);
         }
@@ -265,95 +253,81 @@ public class PostComments extends AppCompatActivity {
                 itemView = getLayoutInflater().inflate(R.layout.post_comment_item,parent,false);
             }
 
-            comment_name = (TextView) itemView.findViewById(R.id.name);
-            time = (TextView) itemView.findViewById(R.id.time);
-            text = (TextView) itemView.findViewById(R.id.question_text);
-            likes = (TextView) itemView.findViewById(R.id.comment_likes_num);
-            likeView = (LinearLayout) itemView.findViewById(R.id.comments_likes);
-            Like_btn = (TextView) itemView.findViewById(R.id.like);
+            TextView comment_name = (TextView) itemView.findViewById(R.id.name);
+            TextView time = (TextView) itemView.findViewById(R.id.time_rcv);
+            TextView text = (TextView) itemView.findViewById(R.id.question_text);
+            final TextView likes = (TextView) itemView.findViewById(R.id.comment_likes_num);
+            final LinearLayout likeView = (LinearLayout) itemView.findViewById(R.id.comments_likes);
+            final TextView Like_btn = (TextView) itemView.findViewById(R.id.like);
 
             final PostCommentData currentItem = items.get(position);
             comment_name.setText(currentItem.getName());
             time.setText(currentItem.getTime());
             text.setText(currentItem.getText());
             likes.setText(currentItem.getLikes()+"");
+            setLikeView(currentItem.getLikes(),likes,likeView);
 
             Like_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-// to dooooo
+
+                    if(!currentItem.isUser_liked()) {
+                        connect(Utils.LIKE,currentItem.getComment_id(),Like_btn,currentItem,likeView,likes);
+                    }else{
+                        connect(Utils.DELETE,currentItem.getComment_id(),Like_btn,currentItem,likeView,likes);
+                    }
                 }
             });
             return itemView;
         }
-        class LikeUnlike extends AsyncTask<String ,Void,String>{
-            String query, fileLink;
-            PostCommentData currentItem;
-            TextView likes,likeBtn;
-            LinearLayout likeView;
-            public LikeUnlike(String query, String like, PostCommentData currentItem, TextView likes, TextView like_btn, LinearLayout likeView){
-                this.query = query;
-                this.fileLink = like;
-                this.currentItem = currentItem;
-                this.likeBtn = like_btn;
-                this.likes = likes;
-                this.likeView = likeView;
-            }
 
-            @Override
-            protected void onPostExecute(String s) {
-//                String toastMessage = "Connection Error...";
-//                if(s != null) {
-//                    s = s.trim();
-//                    if (s.contains("DONE")) {
-//                        canClickLike = true;
-//                        if (fileLink == Utils.LIKE) {
-//                                toastMessage = "Liked";
-//                                currentItem.setUser_liked(true);
-//                                currentItem.setLikes(currentItem.getLikes() + 1);
-//                            if(currentItem.getLikes() > 0 ){
-//                                Log.e("INSIDE","LIKE");
-//                                likeView.setVisibility(View.VISIBLE);
-//                                if(currentItem.isUser_liked()){
-//                                    MyViewHolder.Like_btn.setText("Unlike");
-//                                }else{
-//                                    MyViewHolder.Like_btn.setText("Like");
-//                                }
-//                            }else{
-//                                likeView.setVisibility(View.INVISIBLE);
-//                            }
-//
-//                        } else if (fileLink == Utils.DELETE_LIKES) {
-//                                toastMessage = "Unliked";
-//                                currentItem.setUser_liked(false);
-//                                currentItem.setLikes(currentItem.getLikes() - 1);
-//                            if(currentItem.getLikes() > 0 ){
-//                                Log.e("INSIDE","DELETE");
-//                                likeView.setVisibility(View.VISIBLE);
-//                                if(currentItem.isUser_liked()){
-//                                    MyViewHolder.Like_btn.setText("Unlike");
-//                                }else{
-//                                    MyViewHolder.Like_btn.setText("Like");
-//                                }
-//                            }else{
-//                                likeView.setVisibility(View.INVISIBLE);
-//                            }
-//                        }
-//                    }
-//                Toast.makeText(getApplicationContext(),toastMessage,Toast.LENGTH_SHORT).show();
-//                }
-            }
 
+
+    }
+    private void connect(final String url, final String commentNum, final TextView like_btn
+            , final PostCommentData currentItem, final LinearLayout likeView, final TextView likes){
+        RequestQueue requestQueue = Volley.newRequestQueue(activity.getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            protected String doInBackground(String... params) {
-                try {
-                    return ServerConnect.downloadUrl(fileLink,query);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
+            public void onResponse(String response) {
+                if(response != null && response.contains("DONE")){
+                    if(url == Utils.LIKE){
+                        like_btn.setText("Unlike");
+                        currentItem.setUser_liked(true);
+                        currentItem.setLikes(currentItem.getLikes() + 1);
+                    }else if(url == Utils.DELETE){
+                        like_btn.setText("Like");
+                        currentItem.setUser_liked(false);
+                        currentItem.setLikes(currentItem.getLikes() - 1);
+                    }
                 }
+                setLikeView(currentItem.getLikes(),likes,likeView);
             }
-        }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(activity.getApplicationContext(),ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put("student_number",user.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("comment_id",commentNum);
+                return map;
+            }
+        };
+        RetryPolicy retry = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(retry);
+        requestQueue.add(request);
+    }
 
+    private void setLikeView(int likeNum,TextView likes,LinearLayout likeView){
+        if(likeNum > 0){
+            likes.setText(likeNum+"");
+            likeView.setVisibility(View.VISIBLE);
+        }else{
+            likeView.setVisibility(View.INVISIBLE);
+        }
     }
 }
