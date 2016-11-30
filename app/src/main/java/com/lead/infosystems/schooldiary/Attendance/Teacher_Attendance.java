@@ -97,15 +97,6 @@ public  Button bt;
               Uri.Builder builder = new Uri.Builder();
 
               builder.appendQueryParameter("school_number", userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-//              if (!adapter_class.isEmpty()){
-//                  builder.appendQueryParameter("school_number", userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-//                  builder.appendQueryParameter("class", userDataSP.getUserData(UserDataSP.CLASS));
-//              }
-
-
-              // builder.appendQueryParameter("class", a);
-              //builder.appendQueryParameter("division", b);
-
               String abc = builder.build().getQuery();
               bufferedWriter.write(abc);
               bufferedWriter.flush();
@@ -167,6 +158,7 @@ public  Button bt;
           //ArrayAdapter<String> class_itmes=new ArrayAdapter<String>(Teacher_Attendance.this,android.R.layout.simple_list_item_1,Stu_cls);
 
         adapter_class = new ArrayAdapter<String>(Teacher_Attendance.this, android.R.layout.simple_spinner_item, classes);
+
          adapter_division = new ArrayAdapter<String>(Teacher_Attendance.this, android.R.layout.simple_spinner_item, classes);
           student_class.setAdapter(adapter_class);
           student_division.setAdapter(adapter_division);

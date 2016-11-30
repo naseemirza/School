@@ -165,13 +165,13 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                             canClickLike = false;
                             Uri.Builder builder = new Uri.Builder();
                             builder.appendQueryParameter("post_id",singleItem.getId());
-                            builder.appendQueryParameter("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                            builder.appendQueryParameter("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
                             new ActionConnect(Utils.DELETE,singleItem,((StudentViewHolder) holder),position)
                                     .execute(builder.build().getQuery());
                         }else{
                             Uri.Builder builder = new Uri.Builder();
                             builder.appendQueryParameter("post_id",singleItem.getId());
-                            builder.appendQueryParameter("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                            builder.appendQueryParameter("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
                             new ActionConnect(Utils.LIKE,singleItem,((StudentViewHolder) holder),position)
                                     .execute(builder.build().getQuery());
                         }
@@ -197,7 +197,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 }
             });
 
-            if(singleItem.getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
+            if(singleItem.getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                 ((StudentViewHolder) holder).deleteBtn.setVisibility(View.VISIBLE);
                 ((StudentViewHolder) holder).deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -326,7 +326,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     canClickLike =true;
                     if(s.contains("DONE")){
                         Toast.makeText(context.getApplicationContext(),"Liked",Toast.LENGTH_SHORT).show();
-                        item.setLiked(true,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                        item.setLiked(true,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                         holder.like_icon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_liked));
                         holder.like_num.setText(item.numLikes());
                     }else {
@@ -337,7 +337,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     canClickLike = true;
                     if(s.contains("DONE")){
                         Toast.makeText(context.getApplicationContext(),"Unliked",Toast.LENGTH_SHORT).show();
-                        item.setLiked(false,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                        item.setLiked(false,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                         holder.like_icon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_not_liked));
                         holder.like_num.setText(item.numLikes());
                     }else {

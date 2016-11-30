@@ -114,7 +114,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
     public static void addPostedItem(String text, String link,String dateString,String postid){
         itemlist.clear();
-        itemlist.add(new Post_Data(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)
+        itemlist.add(new Post_Data(userDataSP.getUserData(UserDataSP.NUMBER_USER)
                                 ,userDataSP.getUserData(UserDataSP.FIRST_NAME)
                                 ,userDataSP.getUserData(UserDataSP.LAST_NAME)
                                 ,postid,text,link,dateString,false,new ArrayList<String>(),"0"));
@@ -126,7 +126,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     private static void prefixItemData(String postid, String text, String link, String dateString) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+            jsonObject.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
             jsonObject.put("first_name",userDataSP.getUserData(UserDataSP.FIRST_NAME));
             jsonObject.put("last_name",userDataSP.getUserData(UserDataSP.LAST_NAME));
             jsonObject.put("post_id",postid);
@@ -247,14 +247,14 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 jsonLikes = new JSONArray(jsonPostObj.getString("like"));
                     for(int j = 0 ; j < jsonLikes.length();j++){
                         jsonLikeObj = jsonLikes.getJSONObject(j);
-                        String sNo = jsonLikeObj.getString("student_number");
-                        if(Integer.parseInt(sNo) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)))
+                        String sNo = jsonLikeObj.getString("number_user");
+                        if(Integer.parseInt(sNo) == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER)))
                         {isLiked = true;}
                         likedStudents.add(sNo);
                     }
                 }
 
-                itemlist.add(new Post_Data(jsonPostObj.getString("student_number"),jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
+                itemlist.add(new Post_Data(jsonPostObj.getString("number_user"),jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
                                             jsonPostObj.getString("post_id"), jsonPostObj.getString("text_message"),
                                             jsonPostObj.getString("src_link"), jsonPostObj.getString("date"),isLiked,likedStudents,
                                             jsonPostObj.getString("num_comment")));

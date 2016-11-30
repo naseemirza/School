@@ -138,7 +138,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         items.clear();
         String name = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
                 userDataSP.getUserData(UserDataSP.LAST_NAME);
-        items.add(new QaData(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)
+        items.add(new QaData(userDataSP.getUserData(UserDataSP.NUMBER_USER)
                             ,name,questionText,questionNum,"0",Utils.getTimeString(date)));
         qaAdaptor.addItemAtTop(items);
         prifixItemData(questionText,name,questionNum,date);
@@ -148,7 +148,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
     private static void prifixItemData(String questionText, String name, String questionNum, String date) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+            jsonObject.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
             jsonObject.put("name",name);
             jsonObject.put("question_number",questionNum);
             jsonObject.put("question_text",questionText);
@@ -221,7 +221,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
             JSONArray jsonArray = new JSONArray(data);
             for(int i = 0 ; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                items.add(new QaData(jsonObject.getString("student_number"),jsonObject.getString("name"),
+                items.add(new QaData(jsonObject.getString("number_user"),jsonObject.getString("name"),
                         jsonObject.getString("question_text"),jsonObject.getString("question_number"),
                         jsonObject.getString("answer"),Utils.getTimeString(jsonObject.getString("date"))));
                 if(i == jsonArray.length()-1){

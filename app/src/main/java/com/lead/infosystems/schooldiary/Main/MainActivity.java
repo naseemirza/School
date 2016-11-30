@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
 
             if(ServerConnect.checkInternetConenction(activity) && !userDataSP.getUserData(UserDataSP.CLOUD_ID).isEmpty()){
                 Uri.Builder builder = new Uri.Builder();
-                builder.appendQueryParameter(UserDataSP.STUDENT_NUMBER, userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                builder.appendQueryParameter(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 builder.appendQueryParameter("regid",userDataSP.getUserData(userDataSP.CLOUD_ID));
                 try {
                     return ServerConnect.downloadUrl(Utils.REGESTRATION,builder.build().getQuery());

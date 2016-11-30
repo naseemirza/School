@@ -102,8 +102,8 @@ public class Answer extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 Log.e("1",items.get(position).getStudentNumber());
-                Log.e("2",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
-                if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
+                Log.e("2",userDataSP.getUserData(UserDataSP.NUMBER_USER));
+                if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                     final CharSequence[] item = { "Delete"};
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                     dialog.setItems(item, new DialogInterface.OnClickListener() {
@@ -171,12 +171,12 @@ public class Answer extends AppCompatActivity {
                 if(answerText == null && answerNumber == null){
                     params.put("question_number",qaAnimData.getQuestionNum().trim());
                 }else if(answerNumber == null){
-                    params.put(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    params.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     params.put("question_number",qaAnimData.getQuestionNum());
                     params.put("answer",answerText);
                 }else if(answerNumber != null && studentNumber != null){
                     params.put("question_number",questionNum);
-                    params.put("student_number",studentNumber);
+                    params.put("number_user",studentNumber);
                     params.put("answer_number",answerNumber);
                 }
                 return params;
@@ -194,7 +194,7 @@ public class Answer extends AppCompatActivity {
     }
 
     private void addItem(String answer_number, String time, String answerText) {
-        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER),answer_number
+        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.NUMBER_USER),answer_number
                 ,userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
                 userDataSP.getUserData(UserDataSP.LAST_NAME),time,answerText,null));
         adaptor.notifyDataSetChanged();
@@ -242,7 +242,7 @@ public class Answer extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray(data);
             for(int i = 0 ; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                items.add(new AnswerData(jsonObject.getString("student_number"),jsonObject.getString("answer_number")
+                items.add(new AnswerData(jsonObject.getString("number_user"),jsonObject.getString("answer_number")
                         ,jsonObject.getString("student_name")
                         ,Utils.getTimeString(jsonObject.getString("date"))
                         ,jsonObject.getString("answer_text"),null));

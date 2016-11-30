@@ -124,7 +124,7 @@ public class FragTabChat extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
-                map.put("user",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 return map;
             }
         };

@@ -78,7 +78,7 @@ public class ChatNew extends AppCompatActivity {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for(int i=0;i<jsonArray.length();i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    items.add(new ChatContact(jsonObject.getString("student_number")
+                                    items.add(new ChatContact(jsonObject.getString("number_user")
                                                                 ,jsonObject.getString("first_name")
                                                                 ,jsonObject.getString("last_name")));
                                 }
@@ -99,7 +99,7 @@ public class ChatNew extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
                 map.put("school_number","1");
-                map.put("user_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("user_number",userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 return map;
             }
         };

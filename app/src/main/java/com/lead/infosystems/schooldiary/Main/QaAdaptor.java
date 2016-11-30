@@ -134,7 +134,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             });
 
             if(Integer.parseInt(itemList.get(position).getStudent_number()) ==
-                    Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
+                    Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                 ((StudentViewHolder) holder).answerDelete.setVisibility(View.VISIBLE);
             }else{
                 ((StudentViewHolder) holder).answerDelete.setVisibility(View.GONE);
@@ -177,7 +177,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
                 map.put("question_number",studentNum);
-                map.put("student_number",questionNum);
+                map.put("number_user",questionNum);
                 return map;
             }
         };

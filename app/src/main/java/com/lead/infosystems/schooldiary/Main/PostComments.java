@@ -158,7 +158,7 @@ public class PostComments extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     UserDataSP userDataSP = new UserDataSP(getApplicationContext());
                     HashMap<String,String> map = new HashMap<>();
-                    map.put("student_number", userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     map.put("post_id", postAnimData.getPostID());
                     map.put("comment_text",commentText.getText().toString());
                     return map;
@@ -228,7 +228,7 @@ public class PostComments extends AppCompatActivity {
                 HashMap<String,String> map = new HashMap<>();
                 if(url == Utils.COMMENTS){
                     map.put("post_id", postAnimData.getPostID());
-                    map.put("student_number", userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 } else if(url == Utils.DELETE){
                     map.put("comment_id", items.get(position).getComment_id());
                 }
@@ -312,7 +312,7 @@ public class PostComments extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
-                map.put("student_number",user.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("number_user",user.getUserData(UserDataSP.NUMBER_USER));
                 map.put("comment_id",commentNum);
                 return map;
             }
