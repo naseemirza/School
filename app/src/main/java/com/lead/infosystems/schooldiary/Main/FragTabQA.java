@@ -172,8 +172,9 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("qa_data",response);
+
                         if(!response.isEmpty() && !response.contains("ERROR")){
-                            Log.e("qa_data",response);
 
                             if(MIN == "0"){
                                 swipeRefreshLayout.setRefreshing(false);

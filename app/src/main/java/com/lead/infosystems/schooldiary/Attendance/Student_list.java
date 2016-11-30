@@ -56,7 +56,7 @@ public class Student_list extends AppCompatActivity {
 
                             try {
                                 JSONObject jsonObject=new JSONObject();
-                                jsonObject.put("student_number",CustomList.items.get(i).getStudent_number());
+                                jsonObject.put("number_user",CustomList.items.get(i).getStudent_number());
                                 jsonObject.put("attendance",CustomList.items.get(i).getAttendance());
                                 jsonArray.put(jsonObject);
                             } catch (JSONException e) {
@@ -92,7 +92,7 @@ public class Student_list extends AppCompatActivity {
             JSONObject jsonobj = json.getJSONObject(i);
 
             items.add(new Datalist(jsonobj.getString("first_name") + " " + jsonobj.getString("last_name")
-                    ,jsonobj.getString("roll_number"),jsonobj.getString("student_number"),"p"));
+                    ,jsonobj.getString("roll_number"),jsonobj.getString("number_user"),"p"));
 
         }
 

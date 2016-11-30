@@ -120,7 +120,7 @@ UserDataSP userDataSP;
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 
                 Uri.Builder builder = new Uri.Builder();
-                builder.appendQueryParameter("student_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                builder.appendQueryParameter("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
 
                 String abc = builder.build().getQuery();
                 bufferedWriter.write(abc);
