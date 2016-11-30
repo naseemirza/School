@@ -10,6 +10,9 @@ import org.json.JSONObject;
 
 public class UserDataSP {
 
+
+
+    public static final String NUMBER_USER = "number_user";
     public static final String SCHOOL_NUMBER = "school_number";
     public static final String STUDENT_NUMBER = "student_number";
     public static final String SCHOOL_NUMBER = "school_number";
@@ -18,9 +21,9 @@ public class UserDataSP {
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
     public static final String FATHERS_NAME = "father_name";
-    public static final String MOBILE_NUM = "mobile_no";
+    public static final String MOBILE_NUMBER = "mobile";
     public static final String ADDRESS = "address";
-    public static final String EMAIL_ID = "email_id";
+    public static final String EMAIL_ID = "gmail_id";
     public static final String BLOOD_GROUP = "blood_group";
     public static final String CLASS = "class";
     public static final String CLOUD_ID = "cloud_id";
@@ -42,23 +45,39 @@ public class UserDataSP {
         JSONArray jsonArray = new JSONArray(json);
         JSONObject jsonObject = jsonArray.getJSONObject(0);
 
+
+
         editor.putString(SCHOOL_NUMBER,jsonObject.getString(SCHOOL_NUMBER));
-        editor.putString(STUDENT_NUMBER,jsonObject.getString(STUDENT_NUMBER));
-        editor.putString(DIVISION,jsonObject.getString(DIVISION));
-        editor.putString(ROLL_NO,jsonObject.getString(ROLL_NO));
+        editor.putString(NUMBER_USER,jsonObject.getString(NUMBER_USER));
+        //editor.putString(DIVISION,jsonObject.getString(DIVISION));
+        //editor.putString(ROLL_NO,jsonObject.getString(ROLL_NO));
         editor.putString(FIRST_NAME,jsonObject.getString(FIRST_NAME));
         editor.putString(LAST_NAME,jsonObject.getString(LAST_NAME));
         editor.putString(FATHERS_NAME,jsonObject.getString(FATHERS_NAME));
-        editor.putString(MOBILE_NUM,jsonObject.getString(MOBILE_NUM));
+        editor.putString(MOBILE_NUMBER,jsonObject.getString(MOBILE_NUMBER));
         editor.putString(ADDRESS,jsonObject.getString(ADDRESS));
         editor.putString(EMAIL_ID,jsonObject.getString(EMAIL_ID));
         editor.putString(BLOOD_GROUP,jsonObject.getString(BLOOD_GROUP));
-        editor.putString(CLASS,jsonObject.getString(CLASS));
+        //editor.putString(CLASS,jsonObject.getString(CLASS));
         editor.putString(SCHOOL_FEES,jsonObject.getString(SCHOOL_FEES));
 
         editor.putBoolean("LoggedIn",true);
         editor.commit();
     }
+
+    public void storeafterLoging(String json)throws JSONException{
+        JSONArray jsonArray = new JSONArray(json);
+        JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+
+        editor.putString(STUDENT_NUMBER,jsonObject.getString(STUDENT_NUMBER));
+        editor.putString(DIVISION,jsonObject.getString(DIVISION));
+        editor.putString(ROLL_NO,jsonObject.getString(ROLL_NO));
+        editor.putString(CLASS,jsonObject.getString(CLASS));
+        editor.commit();
+    }
+
+
     public void storeCloudId(String token){
         editor.putString(CLOUD_ID,token);
         editor.commit();

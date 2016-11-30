@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     FragmentTransaction frag;
     UserDataSP userDataSP;
+    public static String BACK_STACK_TAG = "tag";
 
 
     @Override
