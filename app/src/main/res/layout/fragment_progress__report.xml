@@ -2,15 +2,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lead.infosystems.schooldiary.Progress_Report">
+    tools:context="com.lead.infosystems.schooldiary.Progress.Progress_Report">
 
-    <TextView
-        android:text="Progress Report"
-        android:layout_width="wrap_content"
+
+    <ListView
+
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/list"></ListView>
+
+    <Button
+        android:text="Student Progress Report"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:textSize="36sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
+        android:id="@+id/button_prog"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="17dp" />
 </RelativeLayout>

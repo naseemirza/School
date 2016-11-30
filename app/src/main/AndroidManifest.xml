@@ -81,6 +81,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lead.infosystems.schooldiary.Main.ChatNew"/>
         </activity>
+
+        <activity
+            android:name=".Progress.GraphView"
+            android:screenOrientation="landscape" />
+        <activity android:name=".Progress.Marks" />
+        <activity
+            android:name=".Progress.SinlGraph"
+            android:screenOrientation="landscape" />
+
+        <activity android:name=".Attendance.Teacher_Attendance" />
+        <activity android:name=".Attendance.Student_list" />
+        <activity android:name=".Attendance.ShowAttendance"></activity>
+
     </application>
 
 </manifest>
