@@ -75,6 +75,7 @@ public class ChatNew extends AppCompatActivity {
 
     private void connect(){
         dataBase.clearContacts();
+        items.clear();
         progressBar.setVisibility(View.VISIBLE);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.POST, Utils.CHAT_CONTACT,
@@ -88,7 +89,7 @@ public class ChatNew extends AppCompatActivity {
                                 for(int i=0;i<jsonArray.length();i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                                    dataBase.insertIntoCOntact(jsonObject.getString("student_number")
+                                    dataBase.insertIntoCOntact(jsonObject.getString("number_user")
                                             ,jsonObject.getString("first_name")
                                             ,jsonObject.getString("last_name"));
                                 }

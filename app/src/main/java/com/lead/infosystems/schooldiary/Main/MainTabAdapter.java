@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 
-import com.lead.infosystems.schooldiary.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.R;
 
 import java.util.ArrayList;

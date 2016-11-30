@@ -119,7 +119,8 @@ public class MyDataBase extends SQLiteOpenHelper {
         Cursor data = db.rawQuery("select "+CHAT_ID+" from "+ACTIVE_CHAT_LIST_TABLE+" where ("+ USER1+" = "+myId+
                 " and "+USER2+ " = "+userID+") or ("+ USER1+" = "+userID+ " and "+USER2+ " = "+myId+")",null);
         if(data.getCount()>0){
-           Log.e( "mmmm", data.getString(1));
+            data.moveToNext();
+           Log.e( "mmmm", data.getString(0));
         }
     }
 }

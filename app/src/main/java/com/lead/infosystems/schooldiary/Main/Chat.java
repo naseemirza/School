@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -64,10 +65,19 @@ public class Chat extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        chatText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                chatText.setFocusableInTouchMode(true);
+                chatText.setFocusable(true);
+                return false;
+            }
+        });
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("tag","chicked");
                 if(chatText.getText().length()>0)
                 connect(chatText.getText().toString());
             }
@@ -118,9 +128,10 @@ public class Chat extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
-                map.put("to_user",userID);
+                map.put("to_user","1");
                 map.put("from_user",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));//neds to be changd
                 map.put("message",msg);
+                Log.e("params",userID+"   "+userDataSP.getUserData(UserDataSP.STUDENT_NUMBER)+"  "+msg);
                 return map;
             }
         };
