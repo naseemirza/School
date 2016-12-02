@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +19,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
-import com.lead.infosystems.schooldiary.Attendance.Attendance;
+import com.lead.infosystems.schooldiary.Attendance.Attendance_student;
+import com.lead.infosystems.schooldiary.Attendance.Attendance_teacher;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
@@ -125,11 +126,21 @@ public class MainActivity extends AppCompatActivity
             frag.commit();
 
         } else if (id == R.id.nav_attendance) {
-            Attendance blankFragment = new Attendance();
-            frag = getSupportFragmentManager().beginTransaction();
-            frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack(BACK_STACK_TAG);
-            frag.commit();
+            if(userDataSP.getUserData(UserDataSP.IDENTIFICATION).contains("student")) {
+                Attendance_student blankFragment = new Attendance_student();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con, blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
+            }
+            else
+            {
+                Attendance_teacher blankFragment = new Attendance_teacher();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con, blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
+            }
         } else if (id == R.id.nav_progress) {
             Progress_Report blankFragment = new Progress_Report();
             frag = getSupportFragmentManager().beginTransaction();

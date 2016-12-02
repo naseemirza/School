@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -61,33 +63,20 @@ public class Student_list extends AppCompatActivity {
                                 JSONObject jsonObject=new JSONObject();
                                 jsonObject.put("number_user",CustomList.items.get(i).getStudent_number());
                                 jsonObject.put("attendance",CustomList.items.get(i).getAttendance());
-                                jsonObject.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                                jsonObject.put("class",class_list);
-                                jsonObject.put("division",division_list);
+                                //jsonObject.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+                                //jsonObject.put("class",class_list);
+                                //jsonObject.put("division",division_list);
                                 jsonArray.put(jsonObject);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                 Log.e("attendance",jsonArray.toString());
+                sendAttendanceData();
 
 
             }
         });
-
-
-
-
-       // spData = new SPData(getApplicationContext());
-//        try {
-//            getJsonData(spData.getData(SPData.STU));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
-
-
-
     }
 
     public void getStudentData(){
@@ -148,38 +137,43 @@ public class Student_list extends AppCompatActivity {
         list.setAdapter(adapter);
 
     }
+    public void sendAttendanceData(){
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
 
 
-//    public void makeRequest(final String jsonData){
-//        RequestQueue requestQueue = Volley.newRequestQueue(Student_list.this);
-//
-//        StringRequest request = new StringRequest(Request.Method.POST, Utils.NEW_POST,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//
-//
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//
-//            }
-//        }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//
-//                HashMap<String,String> map =  new HashMap<>();
-//
-//                return null;
-//            }
-//        };
-//        int socketTimeout = 20000;
-//        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-//        request.setRetryPolicy(policy);
-//        requestQueue.add(request);
-//
-//    }
+                Toast.makeText(Student_list.this, ""+response, Toast.LENGTH_SHORT).show();
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> params = new HashMap<>();
+
+                params.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+                params.put("class",class_list);
+                params.put("division",division_list);
+                params.put("jsonString", jsonArray.toString());
+
+                return params;
+            }
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        request.setRetryPolicy(retryPolicy);
+        requestQueue.add(request);
+
+
+    }
+
+
+
 }
