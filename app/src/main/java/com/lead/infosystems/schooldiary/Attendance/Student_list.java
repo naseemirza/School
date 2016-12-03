@@ -63,10 +63,6 @@ public class Student_list extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-
-                Log.e("attendance",jsonArray.toString());
-
-
             }
         });
 

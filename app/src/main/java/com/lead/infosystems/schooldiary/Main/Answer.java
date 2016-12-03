@@ -101,8 +101,6 @@ public class Answer extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                Log.e("1",items.get(position).getStudentNumber());
-                Log.e("2",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
                 if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
                     final CharSequence[] item = { "Delete"};
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
@@ -231,7 +229,7 @@ public class Answer extends AppCompatActivity {
             AnswerData currentItem = items.get(position);
             name.setText(currentItem.getName().toString());
             text.setText(currentItem.getText().toString());
-            time.setText(currentItem.getTime().toString());
+            time.setText(currentItem.getTime());
 
             return v;
         }
@@ -242,7 +240,7 @@ public class Answer extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray(data);
             for(int i = 0 ; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                items.add(new AnswerData(jsonObject.getString("student_number"),jsonObject.getString("answer_number")
+                items.add(new AnswerData(jsonObject.getString("number_user"),jsonObject.getString("answer_number")
                         ,jsonObject.getString("student_name")
                         ,Utils.getTimeString(jsonObject.getString("date"))
                         ,jsonObject.getString("answer_text"),null));

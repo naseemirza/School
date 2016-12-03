@@ -111,7 +111,6 @@ public class Login extends AppCompatActivity {
                     e.printStackTrace();
                 }
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    Log.e("Data",s);
                 }else{
                     Toast.makeText(getApplicationContext(),"Wrong Username or Password",Toast.LENGTH_SHORT).show();
                 }

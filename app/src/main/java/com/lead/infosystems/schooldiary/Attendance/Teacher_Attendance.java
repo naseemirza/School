@@ -138,7 +138,6 @@ public  Button bt;
 
           SPData spData = new SPData(getApplicationContext());
           spData.storeData(result);
-          Log.e("result", result);
           String[] res = result.split("@@@");
           try {
               getJsonData(res[0]);

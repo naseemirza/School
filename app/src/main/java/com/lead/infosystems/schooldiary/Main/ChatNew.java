@@ -82,7 +82,6 @@ public class ChatNew extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("data",response);
                         if(response != null && !response.contains("ERROR")) {
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
@@ -110,7 +109,7 @@ public class ChatNew extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
-                map.put("school_number","1");
+                map.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
                 map.put("user_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
                 return map;
             }
@@ -125,7 +124,6 @@ public class ChatNew extends AppCompatActivity {
     private void getDataToList(){
         if(dataBase.getContacts().getCount()>0){
             Cursor data= dataBase.getContacts();
-            Log.e("count",data.getCount()+"");
             while (data.moveToNext()){
                 items.add(new ChatContact(data.getString(1)
                         ,data.getString(2),data.getString(3)));
@@ -148,8 +146,6 @@ public class ChatNew extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),Chat.class);
                 intent.putExtra(Chat.USER_ID,displayedList.get(position).getUserID());
                 intent.putExtra(Chat.FIRST_NAME,displayedList.get(position).getFirstName());
-                intent.putExtra(Chat.LAST_NAME,displayedList.get(position).getLastName());
-                intent.putExtra(Chat.FULL_NAME,displayedList.get(position).getName());
                 startActivity(intent);
             }
         });

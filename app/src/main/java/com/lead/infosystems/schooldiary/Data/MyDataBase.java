@@ -29,12 +29,14 @@ public class MyDataBase extends SQLiteOpenHelper {
     //active chats
     private static final String ACTIVE_CHAT_LIST_TABLE = "active_chat_table";
     private static final String CHAT_ID = "chat_id";
-    private static final String USER1 = "user1";
-    private static final String USER2 = "user2";
+    private static final String USER1_NAME = "user1_name";
+    private static final String USER1_ID = "user1_id";
+    private static final String USER2_NAME = "user2_name";
+    private static final String USER2_ID = "user2_id";
     private static final String LAST_MESSAGE = "message";
     private static final String DATE = "date";
-    String CREATE_ACTIVE_CHATS = "create table "+ACTIVE_CHAT_LIST_TABLE+" ("+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            CHAT_ID+" TEXT, "+USER1+" TEXT, "+USER2+" TEXT, "+LAST_MESSAGE+" TEXT, "+DATE+" TEXT)";
+    String CREATE_ACTIVE_CHATS = "create table "+ACTIVE_CHAT_LIST_TABLE+" ( "+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            CHAT_ID+" TEXT, "+USER1_NAME+" TEXT, "+USER1_ID+" TEXT, "+USER2_NAME+" TEXT, "+USER2_ID+" TEXT, "+LAST_MESSAGE+" TEXT, "+DATE+" TEXT)";
 
     //chat messages
     private static final String CHAT_MESSAFGE_TABLE = "chat_message_table";
@@ -85,20 +87,23 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
 
     ///////working with active chats
-    public void newChat(String chatId,String user1,String user2,String date,String lastMessage){
+    public void newChat(String chatId,String user1Name,String user1ID,String user2Name
+            ,String user2ID,String date,String lastMessage){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CHAT_ID,chatId);
-        contentValues.put(USER1,user1);
-        contentValues.put(USER2,user2);
+        contentValues.put(USER1_NAME,user1Name);
+        contentValues.put(USER1_ID,user1ID);
+        contentValues.put(USER2_NAME,user2Name);
+        contentValues.put(USER2_ID,user2ID);
         contentValues.put(LAST_MESSAGE,lastMessage);
         contentValues.put(DATE,date);
         int a = db.update(ACTIVE_CHAT_LIST_TABLE,contentValues,CHAT_ID+" = "+chatId,null);
         if(a==0){
-           int b= (int) db.insert(ACTIVE_CHAT_LIST_TABLE,null,contentValues);
-            Log.e("b",b+"");
+           db.insert(ACTIVE_CHAT_LIST_TABLE,null,contentValues);
         }
     }
     public Cursor getActiveChats(){
+
         return db.rawQuery("select * from "+ACTIVE_CHAT_LIST_TABLE,null);
     }
 
@@ -115,12 +120,14 @@ public class MyDataBase extends SQLiteOpenHelper {
     public Cursor getChatMessages(String chatId){
         return db.rawQuery("select * from "+CHAT_MESSAFGE_TABLE+" where "+CHAT_ID+" = "+chatId,null);
     }
-    public void getChatID(String myId, String userID) {
-        Cursor data = db.rawQuery("select "+CHAT_ID+" from "+ACTIVE_CHAT_LIST_TABLE+" where ("+ USER1+" = "+myId+
-                " and "+USER2+ " = "+userID+") or ("+ USER1+" = "+userID+ " and "+USER2+ " = "+myId+")",null);
+    public String getChatID(String myId, String userID) {
+        Cursor data = db.rawQuery("select "+CHAT_ID+" from "+ACTIVE_CHAT_LIST_TABLE+" where ( "+ USER1_ID+" = "+myId+
+                " and "+USER2_ID+ " = "+userID+" ) or ( "+ USER1_ID+" = "+userID+ " and "+USER2_ID+ " = "+myId+" )",null);
         if(data.getCount()>0){
             data.moveToNext();
-           Log.e( "mmmm", data.getString(0));
+            return data.getString(0);
+        }else{
+            return null;
         }
     }
 }

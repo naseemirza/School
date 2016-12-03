@@ -41,9 +41,6 @@ public class GraphView extends AppCompatActivity {
             barData = new BarData(getJsonExam(spdata.getData(SPData.SUB)), getJsonDataSet(spdata.getData(SPData.SUB)));
             barChart.setData(barData);
         }
-
-
-
     }
 
     private ArrayList<String> getJsonExam(String data) {
@@ -56,7 +53,6 @@ public class GraphView extends AppCompatActivity {
             for(int i = 0 ; i< json.length();i++) {
                 JSONObject job = json.getJSONObject(i);
                 String sub_details = job.getString("sub_name");
-                Log.e("subject", sub_details);
                 String exam_details = job.getString("sub_data");
 
                 JSONArray jsub = new JSONArray(exam_details);
@@ -70,7 +66,6 @@ public class GraphView extends AppCompatActivity {
 
             uniqueExamNames = new ArrayList<String>(unique);
             Collections.sort(uniqueExamNames);
-            Log.e("UNIQUE",uniqueExamNames.toString());
             return uniqueExamNames;
 
         } catch (JSONException e) {
@@ -82,62 +77,33 @@ public class GraphView extends AppCompatActivity {
 
     private ArrayList<BarDataSet> getJsonDataSet(String data) {
         ArrayList<BarDataSet> dataSets = null;
-
-
         try {
-            
             dataSets = new ArrayList<>();
             JSONArray json_data = new JSONArray(data);
-
             for (int j = 0; j < json_data.length(); j++) {
                 ArrayList<BarEntry> valueSet = new ArrayList<>();
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                Log.e("subject", sub_name);
                 String sub_data_exam = job_data.getString("sub_data");
                 JSONArray json_exam_data = new JSONArray(sub_data_exam);
                 for (int i = 0; i < json_exam_data.length(); i++) {
                     JSONObject json_obj_exam_data = json_exam_data.getJSONObject(i);
                     String exam_name = json_obj_exam_data.getString("exam_name");
-                    Log.e("exam_name", exam_name);
                     String exam_data = json_obj_exam_data.getString("exam_data");
-                    Log.e("exam_data", exam_data);
-
                     JSONArray json_marks = new JSONArray(exam_data);
-                    Log.e("marksJso", String.valueOf(json_marks));
                     for (int k = 0; k < json_marks.length(); k++) {
                         JSONObject json_obj_marks = json_marks.getJSONObject(k);
                         String marks_exam = json_obj_marks.getString("marks");
-                        Log.e("marks", marks_exam);
-
-
-
                             BarEntry barEntry = new BarEntry(Float.parseFloat(marks_exam), i);
                             valueSet.add(barEntry);
-
-
-
-
                     }
 
                 }
-
-
-
-
                     BarDataSet barDataSet = new BarDataSet(valueSet, sub_name);
                     barDataSet.setColor(Color.rgb(j * 100, 155, j * 50));
                     barDataSet.setValueTextSize(13);
                     barDataSet.setValueTextColor(Color.RED);
-
-
-
                     dataSets.add(barDataSet);
-
-
-
-                    Log.e("datasetlength", dataSets.size() + "");
-
             }
 
             return dataSets;

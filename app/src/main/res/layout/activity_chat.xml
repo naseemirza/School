@@ -53,7 +53,7 @@
             android:id="@+id/chatBtn"
             android:elevation="10dp"
             android:textColor="@color/cardview_light_background"
-            app:backgroundTint="@android:color/holo_blue_dark"
+            app:backgroundTint="@android:color/holo_purple"
             app:srcCompat="@drawable/ic_menu_send"
             android:onClick="commentBtn"
             android:layout_height="50dp"
@@ -97,6 +97,10 @@
             app:layout_constraintHorizontal_bias="0.6"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/comment_text_field"
-            android:id="@+id/chat_list" />
+            android:id="@+id/chat_list"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"/>
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout >

@@ -45,10 +45,10 @@ public class Utils {
         }else if(seconds < 604800){
             time = (int) (seconds / (60*60*24)) + " days ago";
         }else if(seconds > 518400) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-dd,  hh:mm a");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-dd,  HH:mm a");
             time = simpleDateFormat.format(new Date(date.getTime())).replace("  ", " at ");
         } else if((seconds/(60*60*24*30))>365){
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MMM-dd,  hh:mm a");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MMM-dd,  HH:mm a");
             time = simpleDateFormat.format(new Date(date.getTime())).replace("  ", " at ");
         }
         return time;
@@ -56,5 +56,15 @@ public class Utils {
            e.printStackTrace();
            return null;
        }
+    }
+    public static long getTimeInMili(String timeString){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = dateFormat.parse(timeString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

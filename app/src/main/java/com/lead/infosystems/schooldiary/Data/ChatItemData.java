@@ -5,12 +5,17 @@ package com.lead.infosystems.schooldiary.Data;
  */
 
 public class ChatItemData {
-    private String userId,message,time;
+    private String chatId,userId,message,time;
 
-    public ChatItemData(String userId, String message, String time) {
+    public ChatItemData(String chatId, String userId, String message, String time) {
         this.userId = userId;
         this.message = message;
         this.time = time;
+        this.chatId = chatId;
+    }
+
+    public String getChatId() {
+        return chatId;
     }
 
     public String getUserId() {

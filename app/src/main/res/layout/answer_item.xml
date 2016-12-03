@@ -60,14 +60,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/time_rcv"
-                android:layout_marginStart="208dp"
-                card_view:layout_constraintLeft_toRightOf="@+id/profile_image"
-                android:layout_marginLeft="208dp"
                 android:layout_marginEnd="16dp"
                 card_view:layout_constraintRight_toRightOf="parent"
                 android:layout_marginRight="16dp"
-                card_view:layout_constraintBottom_toBottomOf="@+id/name"
-                android:layout_marginBottom="8dp" />
+                tools:layout_editor_absoluteY="7dp" />
 
         </android.support.constraint.ConstraintLayout>
 
