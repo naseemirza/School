@@ -3,27 +3,18 @@ package com.lead.infosystems.schooldiary.Attendance;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Naseem on 25-11-2016.
- */
 
 public class CustomList extends ArrayAdapter<Datalist> {
 

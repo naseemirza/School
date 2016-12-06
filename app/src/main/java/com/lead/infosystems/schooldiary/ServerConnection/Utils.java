@@ -27,6 +27,8 @@ public class Utils {
     public static final String CHAT_CONTACT = SERVER_URL+"chat_contact.php";
     public static final String ATTENDANCE = SERVER_URL+"attendance_insert.php";
 
+    public static final String ATTENDANCE_FETCH = SERVER_URL+"attendance_fetch.php";
+
 
 
    public static String getTimeString(String dateString){
@@ -56,5 +58,18 @@ public class Utils {
            e.printStackTrace();
            return null;
        }
+    }
+    public static long getTimeMiliSec(String dateString)
+    {
+        Date date;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            date = dateFormat.parse(dateString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return Long.parseLong(null);
+        }
+
     }
 }

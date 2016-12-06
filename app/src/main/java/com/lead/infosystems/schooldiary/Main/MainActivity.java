@@ -22,6 +22,7 @@ import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_student;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_teacher;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Events.EventAll;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Profile.Profile;
@@ -163,6 +164,15 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_test) {
 
         } else if (id == R.id.nav_event) {
+
+            EventAll blankFragment = new EventAll();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
+
+
+
 
         }  else if (id == R.id.nav_teachers_feedback) {
 
