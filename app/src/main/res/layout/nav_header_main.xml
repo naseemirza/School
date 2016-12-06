@@ -28,7 +28,7 @@
         android:paddingTop="5dp"
         android:text="Umar Mujlae"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:id="@+id/name" />
+        android:id="@+id/title" />
 
     <TextView
         android:id="@+id/rollnum"

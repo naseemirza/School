@@ -16,7 +16,7 @@ public class QaData {
         this.time = time;
     }
 
-    public String getStudent_number() {
+    public String getUserNumber() {
         return student_number;
     }
 

@@ -106,11 +106,14 @@ public class Login extends AppCompatActivity {
                 try {
                     userDataSP = new UserDataSP(getApplicationContext());
                     userDataSP.storeLoggedInUser(s);
-                    getStudentData();
+                    if(userDataSP.isStudent()){
+                        getStudentData();
+                    }else{
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 }else{
                     Toast.makeText(getApplicationContext(),"Wrong Username or Password",Toast.LENGTH_SHORT).show();
                 }
@@ -128,6 +131,7 @@ public class Login extends AppCompatActivity {
                 userDataSP=new UserDataSP(getApplicationContext());
                 try {
                     userDataSP.storeafterLoging(response);
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

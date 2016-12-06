@@ -8,15 +8,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Data.QuestionData;
+import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -26,7 +41,7 @@ public class FragTabNotifications extends Fragment {
 
     View rootview;
     ListView list;
-    List<QuestionData> items = new ArrayList<QuestionData>();
+    List<NotificationData> items = new ArrayList<NotificationData>();
     ArrayAdapter adapter;
     public FragTabNotifications() {
         // Required empty public constructor
@@ -44,20 +59,46 @@ public class FragTabNotifications extends Fragment {
     }
 
 
-    //////////////////
+    private void getDataFromServer(){
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        StringRequest request = new StringRequest(Request.Method.POST, Utils.UPDATES, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if(response != null && !response.contentEquals("ERROR")){
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(response);
+                        for(int i = 0;i<jsonArray.length();i++){
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            //items.add(new NotificationData(jsonObject));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity().getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+
+                return map;
+            }
+        };
+    }
+
     private void populateListView(){
-        items.add(new QuestionData("Umar Mujale","1 hour ago","New Assignment for maths E2.3 questions",getResources().getDrawable(R.drawable.student1)));
-        items.add(new QuestionData("Ramesh Bhat","2 hour ago","No English Homework 2moro",getResources().getDrawable(R.drawable.student2)));
-        items.add(new QuestionData("Naseem Mirza","3 hour ago","Day after 2moro is holiday",getResources().getDrawable(R.drawable.student3)));
-        items.add(new QuestionData("Suresh Patil","4 hour ago","Social Science 2nd chapter questions as homework",getResources().getDrawable(R.drawable.student4)));
-        items.add(new QuestionData("Nitin Gauda","5 hour ago","2moro is english extra class after 2pm",getResources().getDrawable(R.drawable.student2)));
-        items.add(new QuestionData("Abrar Khan","6 hour ago","Day after 2moro white dress code",getResources().getDrawable(R.drawable.student7)));
         adapter = new MyListAdapter();
         list.setAdapter(adapter);
 
     }
 
-    private class MyListAdapter extends ArrayAdapter<QuestionData>{
+    private class MyListAdapter extends ArrayAdapter<NotificationData>{
 
         public MyListAdapter() {
             super(getActivity().getApplicationContext(), R.layout.messageview_item, items);
@@ -70,19 +111,13 @@ public class FragTabNotifications extends Fragment {
             if(itemView == null){
                 itemView = getActivity().getLayoutInflater().inflate(R.layout.messageview_item,parent,false);
             }
-            QuestionData item = items.get(position);
+            NotificationData item = items.get(position);
 
-            TextView name = (TextView) itemView.findViewById(R.id.name);
-            name.setText(item.getname());
-
+            TextView title = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
-            date.setText(item.getDate());
+            TextView text = (TextView) itemView.findViewById(R.id.text);
 
-            TextView message = (TextView) itemView.findViewById(R.id.question_text);
-            message.setText(item.getQuestion());
 
-            ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
-            propic.setImageDrawable(item.getDrawable());
 
             return itemView;
         }

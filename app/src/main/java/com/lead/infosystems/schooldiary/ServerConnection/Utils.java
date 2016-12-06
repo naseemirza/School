@@ -26,6 +26,7 @@ public class Utils {
     public static final String CHAT_LIST = SERVER_URL+"chat_list.php";
     public static final String CHAT_CONTACT = SERVER_URL+"chat_contact.php";
     public static final String NOTIFY = SERVER_URL+"push_notification.php";
+    public static final String UPDATES = SERVER_URL+"updates.php";
 
 
 

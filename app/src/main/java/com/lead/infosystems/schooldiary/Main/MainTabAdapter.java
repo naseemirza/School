@@ -1,7 +1,10 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -44,9 +47,8 @@ public class MainTabAdapter extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.fragment_main_frag, container, false);
-
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getChildFragmentManager());
         setupViewPager(viewPager);
         fab = (FloatingActionButton) rootview.findViewById(R.id.post_new_fab);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabs);
@@ -63,7 +65,6 @@ public class MainTabAdapter extends Fragment {
                 }else if(currentTab == QA_TAB){
 //                    rotateFab(fab,1);
                     loadQuestionFragDialog();
-                    startActivity(new Intent(getActivity(),ChatNew.class));
                 }
                 else if(currentTab == CHAT_TAB){
 //                    rotateFab(fab,2);
@@ -76,6 +77,7 @@ public class MainTabAdapter extends Fragment {
         });
         return rootview;
     }
+
 
     private void loadHomeFragDialog(){
         android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
@@ -90,8 +92,13 @@ public class MainTabAdapter extends Fragment {
     }
 
 
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter = new ViewPagerAdapter(getChildFragmentManager());
+        setupViewPager(viewPager);
+        setupTabIcons();
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(new FragTabHome(),"ONE");
@@ -133,10 +140,10 @@ public class MainTabAdapter extends Fragment {
 
 
     private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_home);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_question_answer);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_message);
-        tabLayout.getTabAt(3).setIcon(R.drawable.ic_net);
+        tabLayout.getTabAt(HOME_TAB).setIcon(R.drawable.ic_home);
+        tabLayout.getTabAt(QA_TAB).setIcon(R.drawable.ic_question_answer);
+        tabLayout.getTabAt(CHAT_TAB).setIcon(R.drawable.ic_message);
+        tabLayout.getTabAt(NOTIFICATION_TAB).setIcon(R.drawable.ic_net);
     }
 
 //    public void rotateFab(FloatingActionButton fab, int dir) {

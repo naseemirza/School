@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +64,8 @@ public class Answer extends AppCompatActivity {
         setContentView(R.layout.activity_answer);
         getSupportActionBar().setTitle("Answers");
         propic = (ImageView) findViewById(R.id.profile_image);
-        name = (TextView) findViewById(R.id.name);
-        text = (TextView) findViewById(R.id.question_text);
+        name = (TextView) findViewById(R.id.title);
+        text = (TextView) findViewById(R.id.text);
         time = (TextView) findViewById(R.id.time_rcv);
         list = (ExpandableHeightListView) findViewById(R.id.list);
         progressBar = (ProgressBar) findViewById(R.id.answers_progress);
@@ -101,7 +100,7 @@ public class Answer extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER))){
+                if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                     final CharSequence[] item = { "Delete"};
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                     dialog.setItems(item, new DialogInterface.OnClickListener() {
@@ -169,12 +168,12 @@ public class Answer extends AppCompatActivity {
                 if(answerText == null && answerNumber == null){
                     params.put("question_number",qaAnimData.getQuestionNum().trim());
                 }else if(answerNumber == null){
-                    params.put(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    params.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     params.put("question_number",qaAnimData.getQuestionNum());
                     params.put("answer",answerText);
                 }else if(answerNumber != null && studentNumber != null){
                     params.put("question_number",questionNum);
-                    params.put("student_number",studentNumber);
+                    params.put("number_user",studentNumber);
                     params.put("answer_number",answerNumber);
                 }
                 return params;
@@ -192,7 +191,7 @@ public class Answer extends AppCompatActivity {
     }
 
     private void addItem(String answer_number, String time, String answerText) {
-        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER),answer_number
+        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.NUMBER_USER),answer_number
                 ,userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
                 userDataSP.getUserData(UserDataSP.LAST_NAME),time,answerText,null));
         adaptor.notifyDataSetChanged();
@@ -221,9 +220,9 @@ public class Answer extends AppCompatActivity {
             if(v == null){
                 v = getLayoutInflater().inflate(R.layout.answer_item,parent,false);
             }
-            name = (TextView) v.findViewById(R.id.name);
+            name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
-            text = (TextView) v.findViewById(R.id.question_text);
+            text = (TextView) v.findViewById(R.id.text);
             propic = (ImageView) v.findViewById(R.id.profile_image);
 
             AnswerData currentItem = items.get(position);

@@ -7,7 +7,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +31,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.ChatContact;
-import com.lead.infosystems.schooldiary.Data.ChatListItems;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
@@ -44,9 +42,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,7 +170,7 @@ public class ChatNew extends AppCompatActivity {
             }
             ChatContact currentItem = displayedList.get(position);
 
-            TextView name = (TextView) itemView.findViewById(R.id.name);
+            TextView name = (TextView) itemView.findViewById(R.id.title);
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
 
             name.setText(currentItem.getName());

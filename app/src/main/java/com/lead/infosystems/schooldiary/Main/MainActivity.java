@@ -9,10 +9,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity
     UserDataSP userDataSP;
     public static String BACK_STACK_TAG = "tag";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity
 
     private void navViewSet(){
         View holder = navigationView.getHeaderView(0);
-        TextView name = (TextView) holder.findViewById(R.id.name);
+        TextView name = (TextView) holder.findViewById(R.id.title);
         TextView rollnum = (TextView) holder.findViewById(R.id.rollnum);
         name.setText(userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME));
         rollnum.setText(userDataSP.getUserData(UserDataSP.ROLL_NO).toString());
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.closeDrawer(GravityCompat.START);
             } else {
                 FragmentManager fn = getSupportFragmentManager();
-                fn.popBackStack(BACK_STACK_TAG,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fn.popBackStack(BACK_STACK_TAG,0);
                 super.onBackPressed();
             }
     }
@@ -93,6 +95,26 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView search = (SearchView) MenuItemCompat.getActionView(menuItem);
+        MenuItemCompat.setOnActionExpandListener(menuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                MainSearch blankFragment = new MainSearch();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                frag.addToBackStack("search");
+                frag.commit();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                FragmentManager fn = getSupportFragmentManager();
+                fn.popBackStack("search",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -102,7 +124,6 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the FragTabHome/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
 
 
@@ -164,7 +185,7 @@ public class MainActivity extends AppCompatActivity
             ApplicationForm myform=new ApplicationForm();
             frag=getSupportFragmentManager().beginTransaction();
                     frag.replace(R.id.main_con,myform);
-            frag.addToBackStack("tag");
+            frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
 
 

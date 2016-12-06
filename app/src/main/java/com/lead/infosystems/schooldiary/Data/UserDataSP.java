@@ -29,6 +29,7 @@ public class UserDataSP {
     public static final String POST_DATA = "POST_DATA";
     public static final String QA_DATA = "qa_data";
     public static final String SCHOOL_FEES = "school_fees";
+    public static final String IDENTIFICATION = "identification";
 
 
     SharedPreferences sharedPreferences;
@@ -48,8 +49,7 @@ public class UserDataSP {
 
         editor.putString(SCHOOL_NUMBER,jsonObject.getString(SCHOOL_NUMBER));
         editor.putString(NUMBER_USER,jsonObject.getString(NUMBER_USER));
-        //editor.putString(DIVISION,jsonObject.getString(DIVISION));
-        //editor.putString(ROLL_NO,jsonObject.getString(ROLL_NO));
+        editor.putString(IDENTIFICATION,jsonObject.getString(IDENTIFICATION));
         editor.putString(FIRST_NAME,jsonObject.getString(FIRST_NAME));
         editor.putString(LAST_NAME,jsonObject.getString(LAST_NAME));
         editor.putString(FATHERS_NAME,jsonObject.getString(FATHERS_NAME));
@@ -62,6 +62,10 @@ public class UserDataSP {
 
         editor.putBoolean("LoggedIn",true);
         editor.commit();
+    }
+
+    public boolean isStudent(){
+       return sharedPreferences.getString(IDENTIFICATION,"").contentEquals("student")? true:false;
     }
 
     public void storeafterLoging(String json)throws JSONException{

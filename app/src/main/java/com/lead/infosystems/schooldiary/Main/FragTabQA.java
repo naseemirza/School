@@ -166,12 +166,12 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
 
     public void loadData(String min){
         final String MIN = min;
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        final RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         StringRequest request = new StringRequest(Request.Method.POST, Utils.QA_FETCH,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if(!response.isEmpty() && !response.contains("ERROR")){
+                        if(response.contains(UserDataSP.NUMBER_USER)){
 
                             if(MIN == "0"){
                                 swipeRefreshLayout.setRefreshing(false);

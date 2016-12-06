@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ import com.lead.infosystems.schooldiary.Data.ChatListItems;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Data.QuestionData;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
@@ -125,9 +123,9 @@ public class FragTabChat extends Fragment {
             }
             ChatListItems currentItem = items.get(position);
 
-            TextView name = (TextView) itemView.findViewById(R.id.name);
+            TextView name = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
-            TextView message = (TextView) itemView.findViewById(R.id.question_text);
+            TextView message = (TextView) itemView.findViewById(R.id.text);
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
 
 
