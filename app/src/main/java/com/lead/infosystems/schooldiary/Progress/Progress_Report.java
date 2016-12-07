@@ -153,7 +153,6 @@ UserDataSP userDataSP;
         protected void onPostExecute(String result) {
             SPData spData = new SPData(getActivity().getApplicationContext());
             spData.storeData(result);
-            Log.e("result", result);
             String[] res = result.split("@@@");
             try {
                 getJsonData(res[0]);

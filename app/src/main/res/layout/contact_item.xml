@@ -24,7 +24,7 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/name"
+        android:id="@+id/title"
         android:layout_marginStart="32dp"
         app:layout_constraintLeft_toRightOf="@+id/propic"
         android:layout_marginLeft="32dp"

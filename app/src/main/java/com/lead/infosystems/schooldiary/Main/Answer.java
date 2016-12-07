@@ -65,14 +65,14 @@ public class Answer extends AppCompatActivity {
         setContentView(R.layout.activity_answer);
         getSupportActionBar().setTitle("Answers");
         propic = (ImageView) findViewById(R.id.profile_image);
-        name = (TextView) findViewById(R.id.name);
-        text = (TextView) findViewById(R.id.question_text);
+        name = (TextView) findViewById(R.id.title);
+        text = (TextView) findViewById(R.id.text);
         time = (TextView) findViewById(R.id.time_rcv);
         list = (ExpandableHeightListView) findViewById(R.id.list);
         progressBar = (ProgressBar) findViewById(R.id.answers_progress);
         answer = (TextView) findViewById(R.id.answer_noanswer);
         answerText = (EditText) findViewById(R.id.answer_text);
-        answerBtn = (FloatingActionButton) findViewById(R.id.answerBtn);
+        answerBtn = (FloatingActionButton) findViewById(R.id.chatBtn);
         userDataSP = new UserDataSP(getApplicationContext());
 
         populateView();
@@ -101,8 +101,6 @@ public class Answer extends AppCompatActivity {
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                Log.e("1",items.get(position).getStudentNumber());
-                Log.e("2",userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 if(Integer.parseInt(items.get(position).getStudentNumber()) == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                     final CharSequence[] item = { "Delete"};
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
@@ -223,15 +221,15 @@ public class Answer extends AppCompatActivity {
             if(v == null){
                 v = getLayoutInflater().inflate(R.layout.answer_item,parent,false);
             }
-            name = (TextView) v.findViewById(R.id.name);
+            name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
-            text = (TextView) v.findViewById(R.id.question_text);
+            text = (TextView) v.findViewById(R.id.text);
             propic = (ImageView) v.findViewById(R.id.profile_image);
 
             AnswerData currentItem = items.get(position);
             name.setText(currentItem.getName().toString());
             text.setText(currentItem.getText().toString());
-            time.setText(currentItem.getTime().toString());
+            time.setText(currentItem.getTime());
 
             return v;
         }

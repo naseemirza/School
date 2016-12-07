@@ -2,7 +2,10 @@ package com.lead.infosystems.schooldiary.Main;
 
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,8 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -59,7 +60,6 @@ public class FragTabHome extends Fragment implements PostAdaptor.OnLoadMoreListe
 
     @Override
     public void onStart() {
-        MyDataBase dataBase = new MyDataBase(getActivity().getApplicationContext());
         itemlist.clear();
         noMorePost = false;
         if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){
@@ -105,7 +105,6 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
     @Override
     public void onLoadMore() {
-
         if(ServerConnect.checkInternetConenction(getActivity()) && !noMorePost){
             new PostDataLoad().execute(POST_MIN);
             postAdaptor.setProgressMore(true);

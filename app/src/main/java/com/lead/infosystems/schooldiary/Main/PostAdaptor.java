@@ -264,9 +264,9 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             super(v);
             propic = (ImageView) v.findViewById(R.id.propic);
             postCardView = (CardView) v.findViewById(R.id.post_card_view);
-            name = (TextView) v.findViewById(R.id.name);
+            name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
-            text = (TextView) v.findViewById(R.id.question_text);
+            text = (TextView) v.findViewById(R.id.text);
             postImage = (ImageView) v.findViewById(R.id.postimage);
 
             like = (LinearLayout) v.findViewById(R.id.like);

@@ -11,7 +11,6 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         String token = FirebaseInstanceId.getInstance().getToken();
         UserDataSP userDataSP = new UserDataSP(getApplicationContext());
-        Log.e("TOKEN",token);
         userDataSP.storeCloudId(token);
     }
 }

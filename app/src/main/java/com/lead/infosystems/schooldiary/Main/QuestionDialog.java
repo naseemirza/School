@@ -29,9 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +46,7 @@ public class QuestionDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.answer_dialog,container,false);
         getDialog().setTitle("New Question");
-        questionText = (TextView) rootView.findViewById(R.id.question_text);
+        questionText = (TextView) rootView.findViewById(R.id.text);
         submit = (Button) rootView.findViewById(R.id.submit);
 
         questionText.setOnTouchListener(new View.OnTouchListener() {

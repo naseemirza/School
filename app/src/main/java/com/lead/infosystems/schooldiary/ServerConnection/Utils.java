@@ -25,8 +25,9 @@ public class Utils {
     public static final String QA_DELETE = SERVER_URL+"question_answer_delete.php";
     public static final String CHAT_LIST = SERVER_URL+"chat_list.php";
     public static final String CHAT_CONTACT = SERVER_URL+"chat_contact.php";
+    public static final String NOTIFY = SERVER_URL+"push_notification.php";
+    public static final String UPDATES = SERVER_URL+"updates.php";
     public static final String ATTENDANCE = SERVER_URL+"attendance_insert.php";
-
     public static final String ATTENDANCE_FETCH = SERVER_URL+"attendance_fetch.php";
 
 
@@ -47,10 +48,10 @@ public class Utils {
         }else if(seconds < 604800){
             time = (int) (seconds / (60*60*24)) + " days ago";
         }else if(seconds > 518400) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-dd,  hh:mm a");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM-dd,  HH:mm a");
             time = simpleDateFormat.format(new Date(date.getTime())).replace("  ", " at ");
         } else if((seconds/(60*60*24*30))>365){
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MMM-dd,  hh:mm a");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MMM-dd,  HH:mm a");
             time = simpleDateFormat.format(new Date(date.getTime())).replace("  ", " at ");
         }
         return time;
@@ -59,17 +60,14 @@ public class Utils {
            return null;
        }
     }
-    public static long getTimeMiliSec(String dateString)
-    {
-        Date date;
+    public static long getTimeInMili(String timeString){
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            date = dateFormat.parse(dateString);
+            Date date = dateFormat.parse(timeString);
             return date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
-            return Long.parseLong(null);
+            return 0;
         }
-
     }
 }

@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Main;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.ChatContact;
-import com.lead.infosystems.schooldiary.Data.ChatListItems;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
@@ -41,9 +43,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +54,8 @@ public class ChatNew extends AppCompatActivity {
     private List<ChatContact> orignalList ;
     private List<ChatContact> displayedList;
     private MyListAdapter myAdaptor;
+    private MyDataBase dataBase;
+    private ProgressBar progressBar;
     private ListView list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,31 +63,37 @@ public class ChatNew extends AppCompatActivity {
         setContentView(R.layout.activity_chat_new);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         list = (ListView) findViewById(R.id.contact_list);
+        progressBar = (ProgressBar) findViewById(R.id.contact_loading);
         userDataSP = new UserDataSP(getApplicationContext());
-        connect();
+        dataBase = new MyDataBase(getApplicationContext());
+        getDataToList();
     }
 
     private void connect(){
+        dataBase.clearContacts();
+        items.clear();
+        progressBar.setVisibility(View.VISIBLE);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.POST, Utils.CHAT_CONTACT,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("data",response);
                         if(response != null && !response.contains("ERROR")) {
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for(int i=0;i<jsonArray.length();i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    items.add(new ChatContact(jsonObject.getString("number_user")
-                                                                ,jsonObject.getString("first_name")
-                                                                ,jsonObject.getString("last_name")));
+
+                                    dataBase.insertIntoCOntact(jsonObject.getString("number_user")
+                                            ,jsonObject.getString("first_name")
+                                            ,jsonObject.getString("last_name"));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                       populateListAdaptor();
+                       getDataToList();
                         }
+                        progressBar.setVisibility(View.GONE);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -98,8 +105,8 @@ public class ChatNew extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
-                map.put("school_number","1");
-                map.put("user_number",userDataSP.getUserData(UserDataSP.NUMBER_USER));
+                map.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+                map.put("user_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
                 return map;
             }
         };
@@ -110,6 +117,18 @@ public class ChatNew extends AppCompatActivity {
 
     }
 
+    private void getDataToList(){
+        if(dataBase.getContacts().getCount()>0){
+            Cursor data= dataBase.getContacts();
+            while (data.moveToNext()){
+                items.add(new ChatContact(data.getString(1)
+                        ,data.getString(2),data.getString(3)));
+            }
+            populateListAdaptor();
+        }else{
+            connect();
+        }
+    }
     private void populateListAdaptor() {
         myAdaptor = new MyListAdapter();
         list.setAdapter(myAdaptor);
@@ -123,8 +142,6 @@ public class ChatNew extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),Chat.class);
                 intent.putExtra(Chat.USER_ID,displayedList.get(position).getUserID());
                 intent.putExtra(Chat.FIRST_NAME,displayedList.get(position).getFirstName());
-                intent.putExtra(Chat.LAST_NAME,displayedList.get(position).getLastName());
-                intent.putExtra(Chat.FULL_NAME,displayedList.get(position).getName());
                 startActivity(intent);
             }
         });
@@ -154,7 +171,7 @@ public class ChatNew extends AppCompatActivity {
             }
             ChatContact currentItem = displayedList.get(position);
 
-            TextView name = (TextView) itemView.findViewById(R.id.name);
+            TextView name = (TextView) itemView.findViewById(R.id.title);
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
 
             name.setText(currentItem.getName());
@@ -204,7 +221,7 @@ public class ChatNew extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.chat_contact_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
         SearchView search = (SearchView) MenuItemCompat.getActionView(menuItem);
 
@@ -234,6 +251,8 @@ public class ChatNew extends AppCompatActivity {
 
         if(id==R.id.search){
             return true;
+        }else if(id == R.id.refresh){
+            connect();
         }
         //noinspection SimplifiableIfStatement
 

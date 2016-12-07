@@ -24,34 +24,17 @@ public class SinlGraph extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sinl_graph);
         Intent intent = getIntent();
-
         sub_name = intent.getStringExtra("sub_name");
-
         LineChart chart=(LineChart)findViewById(R.id.chart);
         List<MarksData> data = new ArrayList<MarksData>();
         List<Entry> entries = new ArrayList<Entry>();
         data = Marks.items;
-        if (data.isEmpty())
-        {
-
-            Log.e("data", String.valueOf(data));
-        }
-
-        else
-        {
+        if (!data.isEmpty()){
             for (int i = 0; i < data.size(); i++) {
-
-
                 MarksData currentItem = data.get(i);
-
-
                     entries.add(new Entry(currentItem.getPercentage(), i));
-
                     s.add(currentItem.getExam_name() + "");
-
-
             }
-
             LineDataSet dataset = new LineDataSet(entries, sub_name);
             dataset.disableDashedLine();
             dataset.setValueTextSize(12);
@@ -71,11 +54,5 @@ public class SinlGraph extends AppCompatActivity {
             chart.invalidate();
 
         }
-
-
-
-
-
-
     }
 }

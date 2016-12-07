@@ -50,10 +50,10 @@
         <android.support.design.widget.FloatingActionButton
             android:text="Button"
             android:layout_width="wrap_content"
-            android:id="@+id/answerBtn"
+            android:id="@+id/chatBtn"
             android:elevation="10dp"
             android:textColor="@color/cardview_light_background"
-            app:backgroundTint="@android:color/holo_blue_dark"
+            app:backgroundTint="@android:color/holo_purple"
             app:srcCompat="@drawable/ic_menu_send"
             android:onClick="commentBtn"
             android:layout_height="50dp"
@@ -71,7 +71,7 @@
             android:layout_width="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/answerBtn"
+            app:layout_constraintRight_toLeftOf="@+id/chatBtn"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp">
 
@@ -84,19 +84,23 @@
                 android:background="@drawable/input_boder"
                 android:focusableInTouchMode="false"
                 android:focusable="false"
-                android:id="@+id/comment_text"
+                android:id="@+id/chat_text"
                 android:singleLine="false"
                 android:lines="2" />
         </android.support.design.widget.TextInputLayout>
 
         <ListView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.6"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/comment_text_field"
-            android:id="@+id/chat_list" />
+            android:id="@+id/chat_list"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"/>
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout >

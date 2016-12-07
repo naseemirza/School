@@ -70,7 +70,6 @@ public class Marks extends AppCompatActivity {
 
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                Log.e("subject", sub_name);
                 if(Objects.equals(sub_name_list, sub_name)) {
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
@@ -78,12 +77,9 @@ public class Marks extends AppCompatActivity {
                     for (int i = 0; i < json_exam_data.length(); i++) {
                         JSONObject json_obj_exam_data = json_exam_data.getJSONObject(i);
                         String exam_name = json_obj_exam_data.getString("exam_name");
-                        Log.e("exam_name", exam_name);
                         String exam_data = json_obj_exam_data.getString("exam_data");
-                        Log.e("exam_data", exam_data);
 
                         JSONArray json_marks = new JSONArray(exam_data);
-                        Log.e("marksJso", String.valueOf(json_marks));
                         for (int k = 0; k < json_marks.length(); k++) {
                             JSONObject json_obj_marks = json_marks.getJSONObject(k);
                             String marks_exam = json_obj_marks.getString("marks");
@@ -92,7 +88,6 @@ public class Marks extends AppCompatActivity {
                             int total = Integer.parseInt(total_marks);
                             String date = json_obj_marks.getString("date");
                             Float percentage = (float) ((marks * 100) / total);
-                            Log.e("marks", marks_exam);
                             items.add(new MarksData(date, exam_name, total, marks, percentage));
 
 
