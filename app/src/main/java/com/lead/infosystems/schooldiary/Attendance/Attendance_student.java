@@ -121,31 +121,27 @@ public class Attendance_student extends Fragment {
         Event e;
       for(int i=0; i<attendance.size(); i++) {
           AttendanceData allAttendance = attendance.get(i);
-          String year = allAttendance.getYear();
-          String day= allAttendance.getDay();
-          String month =  allAttendance.getMonth();
-          if(allAttendance.getAttendance().contains("A")) {
-              e = new Event(Color.RED, Utils.getTimeMiliSec(year + "-" + month + "-" + day + " " + 10 + ":" + 20 + ":" + 12), allAttendance.getAttendance());
-              calendarView.addEvent(e);
-          }
-          else if(allAttendance.getAttendance().contains("L"))
-          {
-              e = new Event(Color.YELLOW, Utils.getTimeMiliSec(year + "-" + month + "-" + day + " " + 10 + ":" + 20 + ":" + 12), allAttendance.getAttendance());
-              calendarView.addEvent(e);
-          }
-          else
-          {
-              e = new Event(Color.TRANSPARENT, Utils.getTimeMiliSec(year + "-" + month + "-" + day + " " + 10 + ":" + 20 + ":" + 12), allAttendance.getAttendance());
-              calendarView.addEvent(e);
-          }
+              if(allAttendance.getAttendance().contains("A")) {
+                  e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
+              else if(allAttendance.getAttendance().contains("L"))
+              {
+                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
+              else
+              {
+                  e = new Event(Color.TRANSPARENT,allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
           }
         calendarView.setVisibility(View.VISIBLE);
         calendarView.showCalendarWithAnimation();
-        calendarView.refreshDrawableState();
+       // calendarView.refreshDrawableState();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                //List<Event> events = calendarView.getEvents(dateClicked);
                 Toast.makeText(getActivity(), "There is no data", Toast.LENGTH_SHORT).show();
             }
 

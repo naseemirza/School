@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,6 +164,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.e("question delete" , response);
                 if(response != null && response.contains("DONE")){
                     deleteItem(pos);
                 }
@@ -176,8 +178,8 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
-                map.put("question_number",studentNum);
-                map.put("number_user",questionNum);
+                map.put("question_number",questionNum);
+                map.put("number_user",studentNum);
                 return map;
             }
         };

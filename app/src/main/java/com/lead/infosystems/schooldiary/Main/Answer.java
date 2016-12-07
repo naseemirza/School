@@ -3,11 +3,11 @@ package com.lead.infosystems.schooldiary.Main;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -132,13 +132,15 @@ public class Answer extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(response != ""){
-                    if(url == Utils.QA_FETCH){
+                Log.e("res", response);
+                if(response != "" && !response.contentEquals("ERROR")){
+                    if(url == Utils.QA_FETCH){//working
                         parseJson(response);
                         adaptor = new MyAdaptor();
                         list.setAdapter(adaptor);
                         list.setExpanded(true);
                     }else if(url == Utils.ANSWER_SUBMIT){
+                      //  Log.e("res", response);
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -167,7 +169,7 @@ public class Answer extends AppCompatActivity {
                 HashMap<String,String> params = new HashMap<>();
 
                 if(answerText == null && answerNumber == null){
-                    params.put("question_number",qaAnimData.getQuestionNum().trim());
+                    params.put("question_number",qaAnimData.getQuestionNum().trim());//working
                 }else if(answerNumber == null){
                     params.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     params.put("question_number",qaAnimData.getQuestionNum());
