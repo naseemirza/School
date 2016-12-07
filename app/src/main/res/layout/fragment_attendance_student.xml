@@ -5,20 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance_student">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/total_present"
-
-        />
-    </RelativeLayout>
-
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
         android:id="@+id/compactcalendar_view"
         android:layout_width="match_parent"
@@ -33,6 +19,22 @@
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:compactCalendarEventIndicatorStyle="fill_large_indicator"
         />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_event"
+        android:orientation="horizontal"
+        android:layout_marginTop="300dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="215dp"
+            android:id="@+id/total_present"
+            />
+
+    </RelativeLayout>
 
 </FrameLayout>
 
