@@ -66,11 +66,13 @@
 
         <activity
             android:name=".Progress.GraphView"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Progress.Marks" />
         <activity
             android:name=".Progress.SinlGraph"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".Attendance.Teacher_Attendance" />
         <activity android:name=".Attendance.Student_list" />

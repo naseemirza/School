@@ -2,7 +2,6 @@ package com.lead.infosystems.schooldiary.Data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,8 +9,6 @@ import org.json.JSONObject;
 
 public class UserDataSP {
 
-
-    public static final String IDENTIFICATION = "identification";
     public static final String NUMBER_USER = "number_user";
     public static final String STUDENT_NUMBER = "student_number";
     public static final String SCHOOL_NUMBER = "school_number";
