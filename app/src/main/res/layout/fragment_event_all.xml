@@ -4,10 +4,43 @@
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Events.EventAll">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/compactcalendar_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="300dp"
+        app:compactCalendarTargetHeight="300dp"
+        app:compactCalendarTextSize="12sp"
+        app:compactCalendarBackgroundColor="@color/colorPrimary"
+        app:compactCalendarTextColor="#fff"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+        app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
+        app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
+        app:compactCalendarEventIndicatorStyle="fill_large_indicator"
+        />
 
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_event"
+        android:orientation="horizontal"
+        android:layout_marginTop="300dp">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="215dp"
+            android:id="@+id/list_event"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="309dp"
+            android:id="@+id/add"
+            android:clickable="true"
+            android:src="@drawable/ic_add"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 </FrameLayout>
