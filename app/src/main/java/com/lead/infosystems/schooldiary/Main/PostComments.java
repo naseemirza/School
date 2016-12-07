@@ -67,9 +67,9 @@ public class PostComments extends AppCompatActivity {
 
         propic = (ImageView) findViewById(R.id.propic);
         post_img = (ImageView) findViewById(R.id.postimage);
-        name = (TextView) findViewById(R.id.name);
+        name = (TextView) findViewById(R.id.title);
         time = (TextView) findViewById(R.id.time_rcv);
-        text = (TextView) findViewById(R.id.question_text);
+        text = (TextView) findViewById(R.id.text);
         commentsList = (ExpandableHeightListView) findViewById(R.id.comment_list);
         commentText = (EditText) findViewById(R.id.comment_text);
         final ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView2);
@@ -253,9 +253,9 @@ public class PostComments extends AppCompatActivity {
                 itemView = getLayoutInflater().inflate(R.layout.post_comment_item,parent,false);
             }
 
-            TextView comment_name = (TextView) itemView.findViewById(R.id.name);
+            TextView comment_name = (TextView) itemView.findViewById(R.id.title);
             TextView time = (TextView) itemView.findViewById(R.id.time_rcv);
-            TextView text = (TextView) itemView.findViewById(R.id.question_text);
+            TextView text = (TextView) itemView.findViewById(R.id.text);
             final TextView likes = (TextView) itemView.findViewById(R.id.comment_likes_num);
             final LinearLayout likeView = (LinearLayout) itemView.findViewById(R.id.comments_likes);
             final TextView Like_btn = (TextView) itemView.findViewById(R.id.like);

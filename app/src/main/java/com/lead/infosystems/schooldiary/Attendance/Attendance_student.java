@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -40,7 +41,7 @@ public class Attendance_student extends Fragment {
 
     UserDataSP userDataSP;
      CompactCalendarView calendarView;
-    SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
 
 
@@ -57,8 +58,7 @@ public class Attendance_student extends Fragment {
         userDataSP=new UserDataSP(getActivity());
 
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
-//        getActivity().setTitle(simpleDateFormat.format(System.currentTimeMillis())+"");
-
+        getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
           getAttendanceData();
 
         return rootView;
@@ -113,10 +113,10 @@ public class Attendance_student extends Fragment {
             attendance.add(new AttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance")));
 
         }
-        getEventData();
+        getDataValues();
     }
 
-    private void getEventData()
+    private void getDataValues()
     {
         Event e;
       for(int i=0; i<attendance.size(); i++) {
@@ -135,10 +135,13 @@ public class Attendance_student extends Fragment {
           }
           else
           {
-              e = new Event(Color.GREEN, Utils.getTimeMiliSec(year + "-" + month + "-" + day + " " + 10 + ":" + 20 + ":" + 12), allAttendance.getAttendance());
+              e = new Event(Color.TRANSPARENT, Utils.getTimeMiliSec(year + "-" + month + "-" + day + " " + 10 + ":" + 20 + ":" + 12), allAttendance.getAttendance());
               calendarView.addEvent(e);
           }
           }
+        calendarView.setVisibility(View.VISIBLE);
+        calendarView.showCalendarWithAnimation();
+        calendarView.refreshDrawableState();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
@@ -148,7 +151,7 @@ public class Attendance_student extends Fragment {
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-               // getActivity().setTitle(simpleDateFormat.format(firstDayOfNewMonth.getTime())+"");
+                getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime())+"");
             }
         });
 

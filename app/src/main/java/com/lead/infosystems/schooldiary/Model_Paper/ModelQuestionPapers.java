@@ -144,7 +144,6 @@ UserDataSP userdatasp;
 
         @Override
         protected void onPostExecute(String result) {
-        Log.e("data",result);
             String[] res = result.split("@@@");
             try {
                 getJsonData(res[0]);

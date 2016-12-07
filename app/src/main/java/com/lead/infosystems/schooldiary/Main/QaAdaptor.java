@@ -133,7 +133,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                 }
             });
 
-            if(Integer.parseInt(itemList.get(position).getStudent_number()) ==
+            if(Integer.parseInt(itemList.get(position).getUserNumber()) ==
                     Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
                 ((StudentViewHolder) holder).answerDelete.setVisibility(View.VISIBLE);
             }else{
@@ -148,7 +148,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                     dialog.setItems(item, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            connect(Utils.QA_DELETE,itemList.get(position).getStudent_number()
+                            connect(Utils.QA_DELETE,itemList.get(position).getUserNumber()
                                     ,itemList.get(position).getqNum(),position);
                         }
                     });
@@ -224,9 +224,9 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
         public StudentViewHolder(View v) {
             super(v);
-            name = (TextView) v.findViewById(R.id.name);
+            name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
-            question_text = (TextView) v.findViewById(R.id.question_text);
+            question_text = (TextView) v.findViewById(R.id.text);
             propic = (ImageView) v.findViewById(R.id.profile_image);
             answerBtn = (Button) v.findViewById(R.id.answer_btn);
             answerDelete = (ImageButton) v.findViewById(R.id.delete_answer);

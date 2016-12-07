@@ -1,13 +1,18 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,10 +28,12 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseMessagingService;
 import com.lead.infosystems.schooldiary.Data.ChatListItems;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Data.QuestionData;
+import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
@@ -34,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +54,10 @@ public class FragTabChat extends Fragment {
     View rootview;
     ListView list;
     private UserDataSP userDataSP;
+    private MyListAdapter myListAdapter;
     List<ChatListItems> items = new ArrayList<>();
+    String myName;
+    private MyDataBase dataBase;
     public FragTabChat() {
         // Required empty public constructor
     }
@@ -58,8 +70,42 @@ public class FragTabChat extends Fragment {
         rootview =  inflater.inflate(R.layout.fragment_tab_chat, container, false);
         list = (ListView) rootview.findViewById(R.id.list_two);
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
-        connect();
+        dataBase = new MyDataBase(getActivity().getApplicationContext());
+        myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
+        myListAdapter = new MyListAdapter();
+        list.setAdapter(myListAdapter);
+        setItemClicks();
+        if(ServerConnect.checkInternetConenction(getActivity())){
+            connect();
+        }else{
+            getDataIntoList();
+        }
+        getActivity().registerReceiver(receiver,new IntentFilter(MyFirebaseMessagingService.INTENT_FILTER_CHAT));
         return rootview;
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getDataIntoList();
+        }
+    };
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDataIntoList();
+    }
+
+    private void setItemClicks(){
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(),Chat.class);
+                intent.putExtra(Chat.USER_ID,items.get(position).getOtherUserId(userDataSP.getUserData(UserDataSP.NUMBER_USER)));
+                intent.putExtra(Chat.FIRST_NAME,items.get(position).getChatUserName(myName));
+                startActivity(intent);
+            }
+        });
     }
 
     private class MyListAdapter extends ArrayAdapter<ChatListItems>{
@@ -77,20 +123,25 @@ public class FragTabChat extends Fragment {
             }
             ChatListItems currentItem = items.get(position);
 
-            TextView name = (TextView) itemView.findViewById(R.id.name);
+            TextView name = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
-            TextView message = (TextView) itemView.findViewById(R.id.question_text);
+            TextView message = (TextView) itemView.findViewById(R.id.text);
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
 
-            String myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
+
             name.setText(currentItem.getChatUserName(myName));
             date.setText(Utils.getTimeString(currentItem.getDate()));
             message.setText(currentItem.getLast_message());
 
+            if(currentItem.getUser1ID().contentEquals(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
+                message.setTextColor(getResources().getColor(R.color.colorBlue));
+            }else{
+                message.setTextColor(getResources().getColor(R.color.colorGreen));
+            }
+
             return itemView;
         }
     }
-
 
     private void connect(){
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -104,11 +155,12 @@ public class FragTabChat extends Fragment {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for(int i = 0; i< jsonArray.length();i++){
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    items.add(new ChatListItems(jsonObject.getString("chat_id"),jsonObject.getString("user1")
-                                                                ,jsonObject.getString("user2"),jsonObject.getString("date")
-                                                                ,jsonObject.getString("last_message")));
+                                    dataBase.newChat(jsonObject.getString("chat_id"),jsonObject.getString("user1")
+                                            ,jsonObject.getString("user1_id"),jsonObject.getString("user2")
+                                            ,jsonObject.getString("user2_id"),jsonObject.getString("date")
+                                            ,jsonObject.getString("last_message"));
                                 }
-                                populateListView();
+                                getDataIntoList();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -134,9 +186,33 @@ public class FragTabChat extends Fragment {
         requestQueue.add(request);
 
     }
-    private void populateListView(){
-        ArrayAdapter adapter = new MyListAdapter();
-        list.setAdapter(adapter);
 
+    private void getDataIntoList() {
+        items.clear();
+        if(dataBase.getActiveChats().getCount() >0){
+            Cursor data = dataBase.getActiveChats();
+            while (data.moveToNext()){
+                items.add(new ChatListItems(data.getString(1)
+                        ,data.getString(2),data.getString(3)
+                        ,data.getString(4),data.getString(5)
+                        ,data.getString(6),data.getString(7)));
+            }
+            Collections.sort(items,new MyComparator());
+            myListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class MyComparator implements Comparator<ChatListItems>{
+
+        @Override
+        public int compare(ChatListItems lhs, ChatListItems rhs) {
+            return (int) (Utils.getTimeInMili(rhs.getDate()) - Utils.getTimeInMili(lhs.getDate()));
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(receiver);
     }
 }
