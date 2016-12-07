@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 FragmentManager fn = getSupportFragmentManager();
-                fn.popBackStack("search",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fn.popBackStack("search",0);
                 return true;
             }
         });
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this,Profile.class));
         } else if (id == R.id.nav_diery) {
             StudentDiery blankFragment = new StudentDiery();
-        frag = getSupportFragmentManager().beginTransaction();
+            frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,blankFragment);
             frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
@@ -194,6 +195,8 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_log_out) {
             userDataSP.clearUserData();
+            MyDataBase myDataBase = new MyDataBase(getApplicationContext());
+            myDataBase.clearDb();
             startActivity(new Intent(getApplicationContext(), Login.class));
         }
 

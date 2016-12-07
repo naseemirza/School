@@ -91,15 +91,6 @@ public class MainTabAdapter extends Fragment {
         dialog.show(fragmentManager,"frag");
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        adapter = new ViewPagerAdapter(getChildFragmentManager());
-        setupViewPager(viewPager);
-        setupTabIcons();
-    }
-
     private void setupViewPager(ViewPager viewPager) {
         adapter.addFragment(new FragTabHome(),"ONE");
         adapter.addFragment(new FragTabQA(),"TWO");

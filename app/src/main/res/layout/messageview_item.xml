@@ -10,7 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_margin="5dp"
-        card_view:cardCornerRadius="1dp">
+        card_view:cardCornerRadius="1dp"
+        card_view:cardElevation="5dp"
+        card_view:cardBackgroundColor="@android:color/background_light">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"

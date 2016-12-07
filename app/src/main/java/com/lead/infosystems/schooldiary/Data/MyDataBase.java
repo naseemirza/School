@@ -46,7 +46,15 @@ public class MyDataBase extends SQLiteOpenHelper {
             CHAT_ID+" TEXT, "+USER_ID+" TEXT, "+MESSAGE+" TEXT, "+DATE+" TEXT)";
 
 
-
+    private static final String NOTIFICATION_TABLE = "notification_table";
+    private static final String NOTIFICATION_NUMBER = "notification_number";
+    private static final String CLASS = "class";
+    private static final String DIV = "div";
+    private static final String NOTIFICATION_TEXT = "text";
+    private static final String NOTIFICATION_TYPE = "type";
+    String CREATE_NOTIFICATION_TABLE = "create table "+NOTIFICATION_TABLE+" ("+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            NOTIFICATION_NUMBER+" TEXT, "+DATE+" TEXT, "+CLASS+" TEXT, "+DIV+" TEXT, "
+            +NOTIFICATION_TEXT+" TEXT, "+NOTIFICATION_TYPE+" TEXT)";
 
     SQLiteDatabase db;
 
@@ -60,6 +68,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         db.execSQL(CREATE_CHAT_CONTACT);
         db.execSQL(CREATE_ACTIVE_CHATS);
         db.execSQL(CREATE_CHAT_MESSAGE);
+        db.execSQL(CREATE_NOTIFICATION_TABLE);
     }
 
     @Override
@@ -67,9 +76,12 @@ public class MyDataBase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+CHAT_CONTACT_TABLE);
         db.execSQL("DROP TABLE IF EXISTS "+ACTIVE_CHAT_LIST_TABLE);
         db.execSQL("DROP TABLE IF EXISTS "+CHAT_MESSAFGE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS "+NOTIFICATION_TABLE);
         onCreate(db);
     }
-
+    public void clearDb(){
+        onUpgrade(db,0,0);
+    }
 /////////// working with chat contacts
     public void insertIntoCOntact(String userId,String firstName,String lastName){
         ContentValues contentValues = new ContentValues();
@@ -129,5 +141,24 @@ public class MyDataBase extends SQLiteOpenHelper {
         }else{
             return null;
         }
+    }
+
+    //working with notification table
+    public void incertNotification(String notificationNum,String date,String mClass,String div,String text,String type){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NOTIFICATION_NUMBER,notificationNum);
+        contentValues.put(DATE,date);
+        contentValues.put(CLASS,mClass);
+        contentValues.put(DIV,div);
+        contentValues.put(NOTIFICATION_TEXT,text);
+        contentValues.put(NOTIFICATION_TYPE,type);
+        db.insert(NOTIFICATION_TABLE,null,contentValues);
+    }
+    public void clearNotifications(){
+        db.execSQL("DROP TABLE IF EXISTS " +NOTIFICATION_TABLE);
+        db.execSQL(CREATE_NOTIFICATION_TABLE);
+    }
+    public Cursor getNotifications(){
+        return db.rawQuery("select * from "+NOTIFICATION_TABLE,null);
     }
 }
