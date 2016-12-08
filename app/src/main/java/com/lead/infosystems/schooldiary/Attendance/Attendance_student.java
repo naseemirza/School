@@ -56,14 +56,10 @@ public class Attendance_student extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_attendance_student, container, false);
         userDataSP=new UserDataSP(getActivity());
-
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
-          getAttendanceData();
-
+        getAttendanceData();
         return rootView;
-
-
     }
 
 
@@ -127,7 +123,7 @@ public class Attendance_student extends Fragment {
               }
               else if(allAttendance.getAttendance().contains("L"))
               {
-                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else
@@ -136,13 +132,13 @@ public class Attendance_student extends Fragment {
                   calendarView.addEvent(e);
               }
           }
-        calendarView.setVisibility(View.VISIBLE);
-        calendarView.showCalendarWithAnimation();
-       // calendarView.refreshDrawableState();
+
+
+        calendarView.showCalendar();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                Toast.makeText(getActivity(), "There is no data", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override

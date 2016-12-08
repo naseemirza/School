@@ -209,7 +209,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     }
 
     private void storeData(String s) throws JSONException {
-        if(!s.isEmpty() && s != "ERROR") {
+        if(s!=null && s != "ERROR") {
             itemlist.clear();
             if (POST_MIN == "0") {
                 swipeRefreshLayout.setRefreshing(false);

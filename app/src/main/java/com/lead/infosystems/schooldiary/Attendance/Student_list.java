@@ -86,13 +86,13 @@ public class Student_list extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
+                if(response != null && !response.contentEquals("ERROR")){
 
-                try {
-                    getJsonData(response);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        getJsonData(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }, new Response.ErrorListener() {

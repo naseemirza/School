@@ -13,11 +13,11 @@
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="@color/colorPrimary"
         app:compactCalendarTextColor="#fff"
-        android:visibility="invisible"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:compactCalendarEventIndicatorStyle="fill_large_indicator"
+        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
         />
 
 
