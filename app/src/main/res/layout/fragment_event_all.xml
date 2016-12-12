@@ -13,13 +13,12 @@
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="@color/colorPrimary"
         app:compactCalendarTextColor="#fff"
+        android:visibility="invisible"
         app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
-        app:compactCalendarEventIndicatorStyle="fill_large_indicator"
+        app:compactCalendarEventIndicatorStyle="small_indicator"
         />
-
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,13 +33,5 @@
             android:id="@+id/list_event"
             />
 
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="309dp"
-            android:id="@+id/add"
-            android:clickable="true"
-            android:src="@drawable/ic_add"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 </FrameLayout>
