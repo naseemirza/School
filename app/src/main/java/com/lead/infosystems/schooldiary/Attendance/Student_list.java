@@ -48,8 +48,9 @@ public class Student_list extends AppCompatActivity {
         setContentView(R.layout.activity_student_list);
         Intent intent = getIntent();
         userDataSP=new UserDataSP(this);
-        spData =new SPData(this);
+        spData =  new SPData(this);
         class_list = intent.getStringExtra("class");
+
         division_list = intent.getStringExtra("division");
         getStudentData();
 
@@ -63,9 +64,7 @@ public class Student_list extends AppCompatActivity {
                                 JSONObject jsonObject=new JSONObject();
                                 jsonObject.put("number_user",CustomList.items.get(i).getStudent_number());
                                 jsonObject.put("attendance",CustomList.items.get(i).getAttendance());
-                                //jsonObject.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                                //jsonObject.put("class",class_list);
-                                //jsonObject.put("division",division_list);
+
                                 jsonArray.put(jsonObject);
                             } catch (JSONException e) {
                                 e.printStackTrace();
