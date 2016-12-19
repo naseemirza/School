@@ -29,6 +29,8 @@ public class Utils {
     public static final String UPDATES = SERVER_URL+"updates.php";
     public static final String ATTENDANCE = SERVER_URL+"attendance_insert.php";
     public static final String ATTENDANCE_FETCH = SERVER_URL+"attendance_fetch.php";
+    public static final String EVENT_FETCH = SERVER_URL+"events_fetch.php";
+    public static final String EVENT_INSERT = SERVER_URL+"events_insert.php";
 
 
 

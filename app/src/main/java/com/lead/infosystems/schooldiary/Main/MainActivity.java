@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -184,16 +183,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_test) {
 
         } else if (id == R.id.nav_event) {
-
             EventAll blankFragment = new EventAll();
             frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con, blankFragment);
             frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
-
-
-
-
         }  else if (id == R.id.nav_teachers_feedback) {
 
         } else if (id == R.id.nav_suggestions) {

@@ -3,9 +3,11 @@ package com.lead.infosystems.schooldiary.Attendance;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -43,7 +45,10 @@ public class Attendance_student extends Fragment {
      CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
-
+    TextView presentView, absentView, leavesView;
+     public final int RED= Color.RED;
+    public final int YELLOW = Color.YELLOW;
+    public final int TRANSPARENT = Color.TRANSPARENT;
 
     public Attendance_student() {
         // Required empty public constructor
@@ -57,9 +62,15 @@ public class Attendance_student extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_attendance_student, container, false);
         userDataSP=new UserDataSP(getActivity());
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
+
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
+        presentView = (TextView)rootView.findViewById(R.id.total_present);
+        absentView = (TextView)rootView.findViewById(R.id.total_absent);
+        leavesView= (TextView)rootView.findViewById(R.id.total_leaves);
         getAttendanceData();
         return rootView;
+
+
     }
 
 
@@ -68,7 +79,7 @@ public class Attendance_student extends Fragment {
         StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE_FETCH, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+             Log.e("response", response);
 
                 try {
                     getJsonData(response);
@@ -118,40 +129,75 @@ public class Attendance_student extends Fragment {
       for(int i=0; i<attendance.size(); i++) {
           AttendanceData allAttendance = attendance.get(i);
               if(allAttendance.getAttendance().contains("A")) {
+
                   e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else if(allAttendance.getAttendance().contains("L"))
               {
-                  e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else
               {
+
                   e = new Event(Color.TRANSPARENT,allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
           }
 
-
+        calendarView.setVisibility(View.VISIBLE);
         calendarView.showCalendar();
+        List<Event> list = (List<Event>) calendarView.getEventsForMonth(calendarView.getFirstDayOfCurrentMonth());
+        getMonthData(list);
+
+       //calendarView.refreshDrawableState();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-
+                Toast.makeText(getActivity(), "There is no data", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime())+"");
+                List<Event> li= calendarView.getEventsForMonth(firstDayOfNewMonth);
+                getMonthData(li);
+                Log.e("event", String.valueOf(li));
+
             }
         });
+
+
 
 
     }
 
 
+private void getMonthData(List<Event> li)
+{
+    int present=0, absent=0, leaves=0;
+    for(int j=0; j<li.size(); j++)
+    {
+        if(li.get(j).getColor()==RED)
+        {
+            absent++;
+        }
+        else if(li.get(j).getColor()==YELLOW)
+        {
+            leaves++;
+        }
+        else
+        {
+            present++;
+        }
+    }
 
+    presentView.setText("Total Present:"+" "+present+"");
+    absentView.setText("Total Absent:"+" "+absent+"");
+    leavesView.setText("Total Leaves:"+" "+leaves+"");
+
+}
 
 
 
