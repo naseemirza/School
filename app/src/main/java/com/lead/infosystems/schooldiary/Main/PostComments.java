@@ -53,6 +53,7 @@ public class PostComments extends AppCompatActivity {
     private MyAdaptor adaptor;
     private boolean canClickLike = true;
     private UserDataSP user;
+    private UserDataSP userDataSP;
     Activity activity = this;
     private ExpandableHeightListView commentsList;
     PostAnimData postAnimData = FragTabHome.postAnimData;
@@ -75,6 +76,7 @@ public class PostComments extends AppCompatActivity {
         final ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView2);
         commentNoComment = (TextView) findViewById(R.id.comment_nocomment);
         progressBar = (ProgressBar) findViewById(R.id.comment_progress);
+        userDataSP = new UserDataSP(getApplicationContext());
 
         user = new UserDataSP(getApplicationContext());
         commentText.setOnTouchListener(new View.OnTouchListener() {
@@ -97,15 +99,20 @@ public class PostComments extends AppCompatActivity {
         commentsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                final CharSequence[] item = { "Delete"};
-                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                dialog.setItems(item, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        connect(Utils.DELETE,position);
-                    }
-                });
-                dialog.show();
+
+                String myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
+                if(myName.contentEquals(items.get(position).getName()) ||
+                        postAnimData.getItem().getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))) {
+                    final CharSequence[] item = {"Delete"};
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                    dialog.setItems(item, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            connect(Utils.DELETE, position);
+                        }
+                    });
+                    dialog.show();
+                }
                 return false;
             }
         });
@@ -136,16 +143,13 @@ public class PostComments extends AppCompatActivity {
             StringRequest request = new StringRequest(Request.Method.POST, Utils.LIKE, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    if(response != ""){
-                        if(response.contains("DONE")){
-
-                            // add only one item
-                            connect(Utils.COMMENTS,0);
-                            commentText.setText("");
-                            Snackbar.make(findViewById(android.R.id.content),"Long press to delete your comment",Snackbar.LENGTH_LONG)
-                                    .show();
-                            commentNoComment.setText("Comments");
-                        }
+                    if(response != null && response.contains("DONE")){
+                        // add only one item
+                        connect(Utils.COMMENTS,0);
+                        commentText.setText("");
+                        Snackbar.make(findViewById(android.R.id.content),"Long press to delete your comment",Snackbar.LENGTH_LONG)
+                                .show();
+                        commentNoComment.setText("Comments");
                     }
                 }
             }, new Response.ErrorListener() {
@@ -156,9 +160,9 @@ public class PostComments extends AppCompatActivity {
             }){
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    UserDataSP userDataSP = new UserDataSP(getApplicationContext());
+
                     HashMap<String,String> map = new HashMap<>();
-                    map.put("student_number", userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     map.put("post_id", postAnimData.getPostID());
                     map.put("comment_text",commentText.getText().toString());
                     return map;
@@ -228,7 +232,7 @@ public class PostComments extends AppCompatActivity {
                 HashMap<String,String> map = new HashMap<>();
                 if(url == Utils.COMMENTS){
                     map.put("post_id", postAnimData.getPostID());
-                    map.put("student_number", userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                    map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 } else if(url == Utils.DELETE){
                     map.put("comment_id", items.get(position).getComment_id());
                 }
@@ -312,7 +316,7 @@ public class PostComments extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
-                map.put("student_number",user.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("number_user",user.getUserData(UserDataSP.NUMBER_USER));
                 map.put("comment_id",commentNum);
                 return map;
             }

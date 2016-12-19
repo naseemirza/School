@@ -17,7 +17,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_margin="5dp"
-            app:cardElevation="5dp">
+            app:cardElevation="5dp"
+            app:cardBackgroundColor="@android:color/background_light">
 
                 <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
@@ -75,15 +76,15 @@
 
 
                         <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="200dp"
+                            android:layout_width="match_parent"
                             android:id="@+id/postimage"
                             app:layout_constraintTop_toBottomOf="@+id/text"
                             app:layout_constraintLeft_toLeftOf="parent"
                             android:layout_marginTop="10dp"
                             android:transitionName="@string/transition_name_post_image"
                             app:layout_constraintRight_toRightOf="parent"
-                            android:scaleType="fitCenter" />
+                            android:scaleType="fitCenter"
+                            android:layout_height="200dp" />
 
                         <LinearLayout
                             android:orientation="horizontal"

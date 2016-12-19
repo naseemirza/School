@@ -31,13 +31,9 @@ public class GraphView extends AppCompatActivity {
 
         spdata = new SPData(getApplicationContext());
         barChart = (BarChart) findViewById(R.id.chart);
-
-        barChart.animateXY(2000,2000);
+        barChart.animateY(2000);
         barChart.invalidate();
-        if ((getJsonExam(spdata.getData(SPData.SUB))==null) && (getJsonDataSet(spdata.getData(SPData.SUB))==null)){
-
-        }
-        else {
+        if ((getJsonExam(spdata.getData(SPData.SUB))!=null) && (getJsonDataSet(spdata.getData(SPData.SUB))!=null)){
             barData = new BarData(getJsonExam(spdata.getData(SPData.SUB)), getJsonDataSet(spdata.getData(SPData.SUB)));
             barChart.setData(barData);
         }
@@ -100,9 +96,9 @@ public class GraphView extends AppCompatActivity {
 
                 }
                     BarDataSet barDataSet = new BarDataSet(valueSet, sub_name);
-                    barDataSet.setColor(Color.rgb(j * 100, 155, j * 50));
-                    barDataSet.setValueTextSize(13);
-                    barDataSet.setValueTextColor(Color.RED);
+                    barDataSet.setColor(Color.rgb(j*20, j*40, j*80));
+                    barDataSet.setValueTextSize(10);
+                    barDataSet.setValueTextColor(Color.BLUE);
                     dataSets.add(barDataSet);
             }
 

@@ -9,17 +9,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.test.suitebuilder.TestMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,12 +49,16 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ApplicationForm extends Fragment {
+public class ApplicationForm extends Fragment implements IVolleyResponse {
 
-    FloatingActionButton button;
-    ListView list_model;
-    View rootView;
-    UserDataSP userdatasp;
+    private FloatingActionButton button;
+    private ListView list_model;
+    private View rootView;
+    private UserDataSP userdatasp;
+    private MyVolley myVolley;
+    private MyAdaptor myAdaptor;
+    private TextView notAvailable;
+    private ProgressBar progressBar;
 
     List<Application_form> items = new ArrayList<>();
     public ApplicationForm() {
@@ -58,10 +70,11 @@ public class ApplicationForm extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView= inflater.inflate(R.layout.fragment_application_form, container, false);
-        userdatasp=new UserDataSP(getActivity().getApplicationContext());
+        rootView= inflater.inflate(R.layout.frag_pdf, container, false);
+        getActivity().setTitle("Application Forms");
 
-        new Model(getActivity()).execute();
+        userdatasp=new UserDataSP(getActivity().getApplicationContext());
+        myVolley = new MyVolley(getActivity().getApplicationContext(),this);
         button = (FloatingActionButton) rootView.findViewById(R.id.add);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,126 +84,64 @@ public class ApplicationForm extends Fragment {
                 dialog_form.show(manager, "Dialog_form");
             }
         });
+        notAvailable = (TextView) rootView.findViewById(R.id.not_available);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.pdf_progress);
         list_model = (ListView) rootView.findViewById(R.id.list);
-
+        myAdaptor = new MyAdaptor();
+        list_model.setAdapter(myAdaptor);
+        connect();
         return rootView;
     }
 
+    private void connect(){
+        progressBar.setVisibility(View.VISIBLE);
+        myVolley.setUrl(Utils.APPLICATION_FORMS);
+        myVolley.setParams(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER));
+        myVolley.connect();
+    }
 
-    class Model extends AsyncTask<Void,Void,String> {
-
-        String json_url;
-        Activity activity;
-
-        Model(Activity activity) {
-            this.activity = activity;
+    @Override
+    public void volleyResponce(String result) {
+        progressBar.setVisibility(View.GONE);
+        try {
+            notAvailable.setVisibility(View.GONE);
+            getJsonData(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            notAvailable.setVisibility(View.VISIBLE);
         }
+    }
 
-
-        @Override
-        protected void onPreExecute() {
-
-            json_url = "leadinfosystems.com/school_diary/SchoolDiary/application_form_insert.php";
-
+    private void getJsonData(String re) throws JSONException {
+        JSONArray json = new JSONArray(re);
+        for (int i = 0; i <= json.length() - 1; i++) {
+            JSONObject jsonobj = json.getJSONObject(i);
+            items.add(new Application_form(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
         }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            try {
-                URL url = new URL("http://leadinfosystems.com/school_diary/SchoolDiary/application_form_insert.php");
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(10000);
-                httpURLConnection.setReadTimeout(15000);
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.connect();
-
-
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-
-                Uri.Builder builder = new Uri.Builder();
-
-                builder.appendQueryParameter("school",userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER) );
-
-                String abc = builder.build().getQuery();
-                bufferedWriter.write(abc);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
-
+        myAdaptor.notifyDataSetChanged();
+        list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String link= Utils.SERVER_URL+items.get(position).getLink();
+                String pdfLink = link.replace(" ","%20");
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(pdfLink),"application/pdf");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                try {
+                    startActivity(intent);
+                }catch (Exception e){
+                    intent = new Intent(Intent.ACTION_VIEW,Uri.parse(Utils.GOOGLE_DRIVE_VIEWER + pdfLink));
+                    startActivity(intent);
                 }
-                bufferedReader.close();
-                inputStream.close();
-
-
-                return stringBuilder.toString().trim();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
             }
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            String[] res = result.split("@@@");
-            try {
-                getJsonData(res[0]);
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-        private void getJsonData(String re) throws JSONException {
-            JSONArray json = new JSONArray(re);
-            for (int i = 0; i <= json.length() - 1; i++) {
-                JSONObject jsonobj = json.getJSONObject(i);
-                items.add(new Application_form(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
-            }
-
-            list_model.setAdapter(new MyAdaptor());
-
-            list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-                    Intent it=new Intent(Intent.ACTION_VIEW);
-                    String link="http://leadinfosystems.com/school_diary/SchoolDiary/"+items.get(position).getLink();
-                    it.setDataAndType(Uri.parse(link.replace(" ","%20")),"application/pdf");
-
-                    it.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getActivity().startActivity(it);
-
-
-                }
-            });
-
-        }
-
-
+        });
 
     }
+
     class MyAdaptor extends ArrayAdapter<Application_form> {
         public MyAdaptor() {
 
-            super(getActivity().getApplicationContext(), R.layout.form_pdf, items);
+            super(getActivity().getApplicationContext(), R.layout.pdf_names, items);
         }
 
         @NonNull
@@ -198,12 +149,19 @@ public class ApplicationForm extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
-                ItemView = getActivity().getLayoutInflater().inflate(R.layout.form_pdf, parent, false);
+                ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
             }
 
             Application_form currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
             name.setText(currentItem.getName());
+            ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
+
+            String firstletter = String.valueOf(currentItem.getName().charAt(0));
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+            int color = generator.getColor(getItem(position));
+            TextDrawable drawable = TextDrawable.builder().buildRound(firstletter.toUpperCase(),color);
+            imageName.setImageDrawable(drawable);
             return ItemView;
         }
     }

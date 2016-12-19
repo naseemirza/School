@@ -7,8 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -63,26 +62,24 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Main.PostComments"></activity>
-        <activity android:name=".Main.Answer"></activity>
-
+        <activity android:name=".Main.PostComments" />
+        <activity android:name=".Main.Answer" />
         <activity
             android:name=".Progress.GraphView"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Progress.Marks" />
         <activity
             android:name=".Progress.SinlGraph"
-            android:screenOrientation="landscape" />
-
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Attendance.Teacher_Attendance" />
         <activity android:name=".Attendance.Student_list" />
-        <activity android:name=".Attendance.ShowAttendance"></activity>
-
+        <activity android:name=".Attendance.ShowAttendance" />
         <activity
             android:name=".Main.ChatNew"
             android:label="Contact"
-            android:launchMode="singleTop"
-            >
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".Profile" />
@@ -90,27 +87,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lead.infosystems.schooldiary.Main.MainActivity" />
         </activity>
-        <activity android:name=".Main.Chat"
+        <activity
+            android:name=".Main.Chat"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lead.infosystems.schooldiary.Main.ChatNew"/>
+                android:value="com.lead.infosystems.schooldiary.Main.ChatNew" />
         </activity>
-        <activity android:name=".Main.PostComments"></activity>
-        <activity android:name=".Main.Answer"></activity>
-
-        <activity
-            android:name=".Progress.GraphView"
-            android:screenOrientation="landscape" />
-        <activity android:name=".Progress.Marks" />
-        <activity
-            android:name=".Progress.SinlGraph"
-            android:screenOrientation="landscape" />
-
-        <activity android:name=".Attendance.Teacher_Attendance" />
-        <activity android:name=".Attendance.Student_list" />
-        <activity android:name=".Attendance.ShowAttendance"></activity>
-
+        <activity android:name=".Attendance.Division" />
+        <activity android:name=".MainSearch"></activity>
     </application>
 
 </manifest>

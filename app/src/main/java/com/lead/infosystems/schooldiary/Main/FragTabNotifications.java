@@ -85,6 +85,7 @@ public class FragTabNotifications extends Fragment {
         StringRequest request = new StringRequest(Request.Method.POST, Utils.NOTIFICATION_FETCH, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.e("res",response);
                 if(response != null && !response.contentEquals("ERROR")){
                     myDataBase.clearNotifications();
                     JSONArray jsonArray = null;

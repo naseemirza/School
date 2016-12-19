@@ -3,14 +3,15 @@ package com.lead.infosystems.schooldiary.Attendance;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -23,40 +24,49 @@ import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Teacher_Attendance extends AppCompatActivity {
+public class Attendance_teacher extends Fragment {
 
-UserDataSP userDataSP;
+
+
+    UserDataSP userDataSP;
 
     SPData spData;
-    ListAdapter object;
-ListView clist;
-
+    ListView clist;
     public static List<ClassPage> classes = new ArrayList<ClassPage>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teacher__attendance);
 
-        userDataSP=new UserDataSP(this);
-        spData =new SPData(this);
-        clist=(ListView)findViewById(R.id.class_list);
+
+    public Attendance_teacher() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.activity_teacher__attendance, container, false);
+        userDataSP=new UserDataSP(getActivity());
+        spData =new SPData(getActivity());
+        clist=(ListView)rootView.findViewById(R.id.class_list);
 
         getClassData();
 
-
+        return rootView;
     }
 
     public void getClassData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
         StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -108,9 +118,9 @@ ListView clist;
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
 
-                    Intent intent = new Intent(view.getContext(), Division.class);
-                    intent.putExtra("class", classes.get(position).getClassName());
-                    startActivity(intent);
+                Intent intent = new Intent(view.getContext(), Division.class);
+                intent.putExtra("class", classes.get(position).getClassName());
+                startActivity(intent);
 
             }
         });
@@ -120,7 +130,7 @@ ListView clist;
     class MyAdaptor extends ArrayAdapter<ClassPage> {
 
         public MyAdaptor() {
-            super(getApplicationContext(), R.layout.class_div,classes);
+            super(getActivity().getApplicationContext(), R.layout.class_div,classes);
         }
 
         @NonNull
@@ -128,7 +138,7 @@ ListView clist;
         public View getView(int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
-                ItemView = getLayoutInflater().inflate(R.layout.class_div, parent, false);
+                ItemView = getActivity().getLayoutInflater().inflate(R.layout.class_div, parent, false);
             }
 
             ClassPage currentItem=classes.get(position);
@@ -143,6 +153,7 @@ ListView clist;
 
         }
     }
+
 
 
 

@@ -10,8 +10,6 @@ import org.json.JSONObject;
 
 public class UserDataSP {
 
-
-
     public static final String NUMBER_USER = "number_user";
     public static final String STUDENT_NUMBER = "student_number";
     public static final String SCHOOL_NUMBER = "school_number";
@@ -25,7 +23,7 @@ public class UserDataSP {
     public static final String EMAIL_ID = "gmail_id";
     public static final String BLOOD_GROUP = "blood_group";
     public static final String CLASS = "class";
-    public static final String CLOUD_ID = "cloud_id";
+    public static final String CLOUD_ID = "reg_id";
     public static final String POST_DATA = "POST_DATA";
     public static final String QA_DATA = "qa_data";
     public static final String SCHOOL_FEES = "school_fees";
@@ -46,7 +44,7 @@ public class UserDataSP {
         JSONObject jsonObject = jsonArray.getJSONObject(0);
 
 
-
+        editor.putString(IDENTIFICATION,jsonObject.getString(IDENTIFICATION));
         editor.putString(SCHOOL_NUMBER,jsonObject.getString(SCHOOL_NUMBER));
         editor.putString(NUMBER_USER,jsonObject.getString(NUMBER_USER));
         editor.putString(IDENTIFICATION,jsonObject.getString(IDENTIFICATION));
@@ -68,10 +66,9 @@ public class UserDataSP {
        return sharedPreferences.getString(IDENTIFICATION,"").contentEquals("student")? true:false;
     }
 
-    public void storeafterLoging(String json)throws JSONException{
+    public void storeStudentData(String json)throws JSONException{
         JSONArray jsonArray = new JSONArray(json);
         JSONObject jsonObject = jsonArray.getJSONObject(0);
-
 
         editor.putString(STUDENT_NUMBER,jsonObject.getString(STUDENT_NUMBER));
         editor.putString(DIVISION,jsonObject.getString(DIVISION));

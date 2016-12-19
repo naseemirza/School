@@ -7,6 +7,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +34,9 @@ import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.ChatContact;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
@@ -46,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatNew extends AppCompatActivity {
+public class ChatNew extends AppCompatActivity implements IVolleyResponse{
 
     private UserDataSP userDataSP;
     private List<ChatContact> items = new ArrayList<>();
@@ -56,6 +59,7 @@ public class ChatNew extends AppCompatActivity {
     private MyDataBase dataBase;
     private ProgressBar progressBar;
     private ListView list;
+    private MyVolley myVolley;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,65 +69,50 @@ public class ChatNew extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.contact_loading);
         userDataSP = new UserDataSP(getApplicationContext());
         dataBase = new MyDataBase(getApplicationContext());
+        myVolley = new MyVolley(getApplicationContext(),this);
+        populateListAdaptor();
         getDataToList();
     }
 
     private void connect(){
         dataBase.clearContacts();
         items.clear();
+        myAdaptor.notifyDataSetChanged();
         progressBar.setVisibility(View.VISIBLE);
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.CHAT_CONTACT,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response != null && !response.contains("ERROR")) {
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                for(int i=0;i<jsonArray.length();i++){
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                                    dataBase.insertIntoCOntact(jsonObject.getString("number_user")
-                                            ,jsonObject.getString("first_name")
-                                            ,jsonObject.getString("last_name"));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                       getDataToList();
-                        }
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getStackTrace();
-                Toast.makeText(getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map =  new HashMap<>();
-                map.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                map.put("user_number",userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
-                return map;
-            }
-        };
-        int socketTimeout = 20000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
-
+        myVolley.setUrl(Utils.CHAT_CONTACT);
+        myVolley.setParams(UserDataSP.SCHOOL_NUMBER,userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+        myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.connect();
     }
 
+    @Override
+    public void volleyResponce(String result) {
+        try {
+            JSONArray jsonArray = new JSONArray(result);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                dataBase.insertIntoCOntact(jsonObject.getString("number_user")
+                        ,jsonObject.getString("first_name")
+                        ,jsonObject.getString("last_name"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        getDataToList();
+        progressBar.setVisibility(View.GONE);
+    }
+
+
     private void getDataToList(){
+        items.clear();
         if(dataBase.getContacts().getCount()>0){
             Cursor data= dataBase.getContacts();
             while (data.moveToNext()){
                 items.add(new ChatContact(data.getString(1)
                         ,data.getString(2),data.getString(3)));
             }
-            populateListAdaptor();
+            myAdaptor.notifyDataSetChanged();
         }else{
             connect();
         }

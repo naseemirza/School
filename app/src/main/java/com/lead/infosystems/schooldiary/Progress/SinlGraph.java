@@ -32,7 +32,7 @@ public class SinlGraph extends AppCompatActivity {
         if (!data.isEmpty()){
             for (int i = 0; i < data.size(); i++) {
                 MarksData currentItem = data.get(i);
-                    entries.add(new Entry(currentItem.getPercentage(), i));
+                    entries.add(new Entry(Float.parseFloat(currentItem.getPercentage()), i));
                     s.add(currentItem.getExam_name() + "");
             }
             LineDataSet dataset = new LineDataSet(entries, sub_name);

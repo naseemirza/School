@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,25 +59,20 @@ UserDataSP userDataSP;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         rootView = inflater.inflate(R.layout.fragment_progress__report, container, false);
+        rootView = inflater.inflate(R.layout.fragment_progress__report, container, false);
         btn1=(Button)rootView.findViewById(R.id.button_prog);
         userDataSP=new UserDataSP(getActivity().getApplicationContext());
+        getActivity().setTitle("Progress Report");
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (examData.equals("null")){
+                if (examData == null){
                     Toast.makeText(getActivity(),"There is no data for Showing Graph..",Toast.LENGTH_SHORT).show();
-
                 }
                 else {
-
-                    Intent it = new Intent(Progress_Report.this.getActivity(), GraphView.class);
-                    getActivity().startActivity(it);
+                    Intent it = new Intent(getActivity().getApplicationContext(), GraphView.class);
+                    startActivity(it);
                 }
-
-
-
             }
         });
         new backg(getActivity()).execute();
@@ -86,27 +82,17 @@ UserDataSP userDataSP;
 
     class backg extends AsyncTask<Void,Void,String> {
 
-        String json_url;
         Activity activity;
 
         backg(Activity activity) {
             this.activity = activity;
         }
 
-
-
-        @Override
-        protected void onPreExecute() {
-
-            json_url = "leadinfosystems.com/school_diary/SchoolDiary/marks.php";
-
-        }
-
         @Override
         protected String doInBackground(Void... params) {
 
             try {
-                URL url = new URL("http://leadinfosystems.com/school_diary/SchoolDiary/marks.php");
+                URL url = new URL(Utils.MARKS);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(10000);
                 httpURLConnection.setReadTimeout(15000);
@@ -173,9 +159,6 @@ UserDataSP userDataSP;
                 JSONObject jsonobj = json.getJSONObject(i);
                 subjects.add(jsonobj.getString("sub_name"));
                 examData=jsonobj.getString("sub_data");
-
-
-
             }
 
             object = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, subjects);
@@ -188,9 +171,7 @@ UserDataSP userDataSP;
                     if (examData.equals("null")){
                         Toast.makeText(getActivity(),"There is no data in this Subject...",Toast.LENGTH_SHORT).show();
 
-                    }
-                    else {
-
+                    }else {
                         Intent intent = new Intent(view.getContext(), Marks.class);
                         intent.putExtra("sub_name", subjects.get(position));
                         startActivity(intent);
@@ -199,9 +180,6 @@ UserDataSP userDataSP;
                 }
             });
         }
-
-
-
     }
 
 }

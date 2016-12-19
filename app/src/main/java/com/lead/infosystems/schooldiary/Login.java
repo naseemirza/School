@@ -3,13 +3,10 @@ package com.lead.infosystems.schooldiary;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Looper;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,137 +21,102 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseInstanceIDService;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.Main.Answer;
 import com.lead.infosystems.schooldiary.Main.MainActivity;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
+import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements IVolleyResponse {
 
-    EditText eUsername;
-    EditText ePassword;
-    String username;
-    String password;
-    UserDataSP userDataSP;
+    private EditText eUsername;
+    private EditText ePassword;
+    private String username;
+    private String password;
+    private UserDataSP userDataSP;
+    private MyVolley myVolley;
+    private final String USERNAME = "username";
+    private final String PASSWORD = "password";
+    private ProgressDialog progressDialog;
+    public static final String DEVICE_NUM = "device_num";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         eUsername = (EditText) findViewById(R.id.username);
         ePassword = (EditText) findViewById(R.id.password);
+        userDataSP = new UserDataSP(getApplicationContext());
     }
+
     public void login_btn(View v){
         username = eUsername.getText().toString().trim();
         password = ePassword.getText().toString().trim();
-        if(ServerConnect.checkInternetConenction(this)){
             if(!username.isEmpty() && !password.isEmpty()){
-                new ProfileLogin().execute();
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("Logging In...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+
+                myVolley = new MyVolley(getApplicationContext(),this);
+                myVolley.setUrl(Utils.LOGIN);
+                myVolley.setParams(USERNAME,username);
+                myVolley.setParams(PASSWORD,password);
+                myVolley.connect();
             }else {
                 Toast.makeText(getApplicationContext(),"Please Enter all fields",Toast.LENGTH_SHORT).show();
                 eUsername.setText("");
                 ePassword.setText("");
             }
-        }else {
-
-            }
-
     }
 
-    public Context getContext(){
-        return getApplicationContext();
-    }
-
-
-    private class ProfileLogin extends AsyncTask<String,Void,String>{
-
-        ProgressDialog progressDialog = new ProgressDialog(Login.this);
-        @Override
-        protected void onPreExecute() {
-            progressDialog.setMessage("Logging In...");
-            progressDialog.setCancelable(true);
-            progressDialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Uri.Builder builder = new Uri.Builder();
-            builder.appendQueryParameter("username",username);
-            builder.appendQueryParameter("password",password);
-            try {
-                return ServerConnect.downloadUrl(Utils.LOGIN,builder.build().getEncodedQuery());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            progressDialog.dismiss();
-            if(s != null){
-                if(!s.contains("ERROR")){
+    @Override
+    public void volleyResponce(String result) {
+        //teacher login
+        Log.e("res",result);
+         if(result.contains(UserDataSP.NUMBER_USER) && !result.contains(UserDataSP.STUDENT_NUMBER)){
                 try {
-                    userDataSP = new UserDataSP(getApplicationContext());
-                    userDataSP.storeLoggedInUser(s);
-                    if(userDataSP.isStudent()){
-                        getStudentData();
-                    }else{
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    }
+                    userDataSP.storeLoggedInUser(result);
+                    Log.e("reg_id",userDataSP.getUserData(UserDataSP.CLOUD_ID)+" id");
+                    TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                    myVolley.setUrl(Utils.REGESTRATION);
+                    myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+                    myVolley.setParams(UserDataSP.CLOUD_ID,userDataSP.getUserData(UserDataSP.CLOUD_ID));
+                    myVolley.setParams(DEVICE_NUM,telephonyManager.getDeviceId());
+                    myVolley.connect();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                }else{
-                    Toast.makeText(getApplicationContext(),"Wrong Username or Password",Toast.LENGTH_SHORT).show();
-                }
-            }else{
-                Toast.makeText(getApplicationContext(),"Connection Error try again..",Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    public void getStudentData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.LOGIN, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                userDataSP=new UserDataSP(getApplicationContext());
-                try {
-                    userDataSP.storeafterLoging(response);
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
-
-                params.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
-
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-
-
+        // student login
+         }else if(result.contains(UserDataSP.STUDENT_NUMBER)){
+             try {
+                 userDataSP.storeStudentData(result);
+                 progressDialog.dismiss();
+                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+             } catch (JSONException e) {
+                 e.printStackTrace();
+             }
+             //FCM regestratation
+         }else{
+             if(result.contains("DONE")){
+                 if(userDataSP.isStudent()){
+                     myVolley.setUrl(Utils.LOGIN);
+                     myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+                     myVolley.connect();
+                 }else{
+                     progressDialog.dismiss();
+                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                 }
+             }else{
+                 progressDialog.dismiss();
+                 Toast.makeText(getApplicationContext(), "Wrong Username or Password", Toast.LENGTH_SHORT).show();
+             }
+         }
     }
 }

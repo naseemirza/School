@@ -100,7 +100,7 @@ public class QuestionDialog extends DialogFragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<>();
-                map.put("student_number", userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
                 map.put("question",questionText);
                 return map;
             }

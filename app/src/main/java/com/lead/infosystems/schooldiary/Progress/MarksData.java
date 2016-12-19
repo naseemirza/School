@@ -8,11 +8,11 @@ public class MarksData {
 
     String date;
     String exam_name;
-    int total_max;
-    int obtained_max;
-    float percentage;
+    String total_max;
+    String obtained_max;
+    String percentage;
 
-    public MarksData(String date, String exam_name, int total_max, int obtained_max, float percentage) {
+    public MarksData(String date, String exam_name, String total_max, String obtained_max, String percentage) {
         this.date = date;
         this.exam_name = exam_name;
         this.total_max = total_max;
@@ -28,15 +28,15 @@ public class MarksData {
         return exam_name;
     }
 
-    public int getTotal_max() {
+    public String getTotal_max() {
         return total_max;
     }
 
-    public int getObtained_max() {
+    public String getObtained_max() {
         return obtained_max;
     }
 
-    public float getPercentage() {
+    public String getPercentage() {
         return percentage;
     }
 }

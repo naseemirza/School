@@ -91,7 +91,7 @@ public class PostDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 textData = postText.getText().toString().trim();
-                if(!userDataSP.getUserData(UserDataSP.STUDENT_NUMBER).isEmpty()){
+                if(!userDataSP.getUserData(UserDataSP.NUMBER_USER).isEmpty()){
                     if(!textData.isEmpty() || uploadImage != null){
                         makeRequest(encoded_image);
                     }else{
@@ -297,8 +297,8 @@ public class PostDialog extends DialogFragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map =  new HashMap<>();
-                if(userDataSP.getUserData(UserDataSP.STUDENT_NUMBER) != null){
-                map.put(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.STUDENT_NUMBER));
+                if(userDataSP.getUserData(UserDataSP.NUMBER_USER) != null){
+                map.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                     if(textData != null){
                         map.put("text",textData);
                     }

@@ -105,4 +105,5 @@
     <string name="transition_name_time">post_time</string>
     <string name="transition_name_text">post_text</string>
     <string name="transition_name_post_image">post_image</string>
+    <string name="transition_name_login">login_tran</string>
 </resources>

@@ -22,6 +22,7 @@
         android:textStyle="normal|bold"
         android:textAllCaps="false"
         android:textAlignment="center"
+        android:transitionName="@string/transition_name_login"
         android:textSize="36sp"
         android:fontFamily="casual"
         android:textColor="@android:color/background_light" />
