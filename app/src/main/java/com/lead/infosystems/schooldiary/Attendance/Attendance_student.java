@@ -60,12 +60,6 @@ public class Attendance_student extends Fragment {
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         getAttendanceData();
         return rootView;
-
-        calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
-        getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
-          getAttendanceData();
-
-        return rootView;
     }
 
 
@@ -118,37 +112,29 @@ public class Attendance_student extends Fragment {
         getDataValues();
     }
 
-    private void getDataValues()
-    {
+    private void getDataValues() {
         Event e;
-      for(int i=0; i<attendance.size(); i++) {
-          AttendanceData allAttendance = attendance.get(i);
-              if(allAttendance.getAttendance().contains("A")) {
-                  e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                  calendarView.addEvent(e);
-              }
-              else if(allAttendance.getAttendance().contains("L"))
-              {
-                  e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                  calendarView.addEvent(e);
-              }
-              else
-              {
-                  e = new Event(Color.TRANSPARENT,allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                  calendarView.addEvent(e);
-              }
-          }
+        for (int i = 0; i < attendance.size(); i++) {
+            AttendanceData allAttendance = attendance.get(i);
+            if (allAttendance.getAttendance().contains("A")) {
+                e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                calendarView.addEvent(e);
+            } else if (allAttendance.getAttendance().contains("L")) {
+                e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                calendarView.addEvent(e);
+            } else {
+                e = new Event(Color.TRANSPARENT, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                calendarView.addEvent(e);
+            }
+        }
 
 
         calendarView.showCalendar();
-        calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-            @Override
-            public void onDayClick(Date dateClicked) {
 
         calendarView.setVisibility(View.VISIBLE);
         calendarView.showCalendarWithAnimation();
-       // calendarView.refreshDrawableState();
+        // calendarView.refreshDrawableState();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
@@ -157,17 +143,8 @@ public class Attendance_student extends Fragment {
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-                getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime())+"");
+                getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime()) + "");
             }
         });
-
-
     }
-
-
-
-
-
-
-
 }
