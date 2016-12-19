@@ -62,8 +62,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Main.PostComments" />
-        <activity android:name=".Main.Answer" />
+        <activity android:name=".Main.PostComments"></activity>
+        <activity android:name=".Main.Answer"></activity>
+
         <activity
             android:name=".Progress.GraphView"
             android:screenOrientation="landscape"

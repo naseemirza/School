@@ -173,7 +173,4 @@ public class Student_list extends AppCompatActivity {
         request.setRetryPolicy(retryPolicy);
         requestQueue.add(request);
     }
-
-
-
 }

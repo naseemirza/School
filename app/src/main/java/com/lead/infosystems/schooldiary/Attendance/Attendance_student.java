@@ -60,6 +60,12 @@ public class Attendance_student extends Fragment {
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         getAttendanceData();
         return rootView;
+
+        calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
+        getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
+          getAttendanceData();
+
+        return rootView;
     }
 
 
@@ -124,6 +130,7 @@ public class Attendance_student extends Fragment {
               else if(allAttendance.getAttendance().contains("L"))
               {
                   e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else
@@ -139,6 +146,13 @@ public class Attendance_student extends Fragment {
             @Override
             public void onDayClick(Date dateClicked) {
 
+        calendarView.setVisibility(View.VISIBLE);
+        calendarView.showCalendarWithAnimation();
+       // calendarView.refreshDrawableState();
+        calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                Toast.makeText(getActivity(), "There is no data", Toast.LENGTH_SHORT).show();
             }
 
             @Override
