@@ -3,11 +3,6 @@ package com.lead.infosystems.schooldiary.Attendance;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * Created by Naseem on 04-11-2016.
- */
-
-
 public class SPData {
     SharedPreferences.Editor editor;
     SharedPreferences sp;

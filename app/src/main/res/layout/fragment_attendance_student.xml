@@ -6,20 +6,50 @@
     tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance_student">
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/compactcalendar_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         app:compactCalendarTargetHeight="300dp"
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="@color/colorPrimary"
         app:compactCalendarTextColor="#fff"
-        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
-        android:visibility="invisible"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:compactCalendarEventIndicatorStyle="fill_large_indicator"
+        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
         />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_event"
+        android:orientation="horizontal"
+        android:layout_marginTop="300dp">
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="40dp"
+         android:id="@+id/total_present"
+         android:textSize="20dp"
+         android:textColor="@color/colorPrimary" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/total_absent"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_below="@+id/total_present"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/total_leaves"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_below="@+id/total_absent"/>
+
+    </RelativeLayout>
 
 
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/event_text_field"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:elevation="10dp"
+        android:hint="  Type Event Title"
+        android:layout_height="80dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/input_boder"
+            android:id="@+id/text_event"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:singleLine="false"
+            android:lines="2" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/event_detail_field"
+        android:layout_below="@+id/event_text_field"
+        android:layout_marginTop="-15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:elevation="10dp"
+        android:hint="  Type Event Details"
+        android:layout_height="80dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/input_boder"
+            android:id="@+id/text_eventdetails"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:singleLine="false"
+            android:lines="3" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_detail_field"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/cardview_light_background"
+        android:id="@+id/submit_event"
+        android:backgroundTint="@color/colorPrimary" />
+</RelativeLayout>
