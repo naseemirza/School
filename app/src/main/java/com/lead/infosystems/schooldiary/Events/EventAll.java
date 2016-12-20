@@ -69,9 +69,8 @@ public class EventAll extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event_all, container, false);
-        getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
         userDataSP=new UserDataSP(getActivity());
-       listview = (ListView)rootView.findViewById(R.id.list_event);
+        listview = (ListView)rootView.findViewById(R.id.list_event);
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         adapter = new MyAdapter();
@@ -79,6 +78,13 @@ public class EventAll extends Fragment {
         getEventData();
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
+    }
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -147,7 +153,7 @@ public class EventAll extends Fragment {
         Event e;
         for(int i=0; i<eventList.size(); i++) {
             EventsData allEvent = eventList.get(i);
-            e = new Event(Color.BLACK, Utils.getTimeInMili(allEvent.getEvent_date()), allEvent);
+            e = new Event(Color.BLACK, Utils.getTimeInMili(allEvent.getEvent_date()+" 10:00:00"), allEvent);
                 calendarView.addEvent(e);
         }
 
@@ -217,10 +223,8 @@ public class EventAll extends Fragment {
             EventsData currentItem = eventList.get(position);
             TextView eventName = (TextView) ItemView.findViewById(R.id.event_name);
             TextView eventDetail = (TextView) ItemView.findViewById(R.id.event_detail);
-            eventName.setText(currentItem.getEvent_name()+":");
-            eventDetail.setText(" "+currentItem.getEvent_detail());
-
-
+            eventName.setText(currentItem.getEvent_name());
+            eventDetail.setText(currentItem.getEvent_detail());
             return ItemView;
 
         }

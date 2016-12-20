@@ -65,6 +65,7 @@ public class FragTabNotifications extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.fragment_tab_notification, container, false);
+
         list = (ListView) rootview.findViewById(R.id.list_three);
         adapter = new MyListAdapter();
         list.setAdapter(adapter);
@@ -116,8 +117,10 @@ public class FragTabNotifications extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String,String> map = new HashMap<>();
                 UserDataSP user = new UserDataSP(getActivity().getApplicationContext());
-                map.put(UserDataSP.CLASS,user.getUserData(UserDataSP.CLASS));
-                map.put(UserDataSP.DIVISION,user.getUserData(UserDataSP.DIVISION));
+                if(user.isStudent()){
+                    map.put(UserDataSP.CLASS,user.getUserData(UserDataSP.CLASS));
+                    map.put(UserDataSP.DIVISION,user.getUserData(UserDataSP.DIVISION));
+                }
                 return map;
             }
         };

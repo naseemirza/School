@@ -68,7 +68,7 @@ public class MainTabAdapter extends Fragment {
                 }
                 else if(currentTab == CHAT_TAB){
 //                    rotateFab(fab,2);
-                        startActivity(new Intent(getActivity(),ChatNew.class));
+                    startActivity(new Intent(getActivity(),ChatNew.class));
                 }
                 else if(currentTab == NOTIFICATION_TAB){
 //                    rotateFab(fab,3);
@@ -79,6 +79,19 @@ public class MainTabAdapter extends Fragment {
     }
 
 
+    private void setTitle(int position){
+        if(position == HOME_TAB){
+            getActivity().setTitle("Home");
+        }else if(position == QA_TAB){
+            getActivity().setTitle("Q & A");
+        }
+        else if(position == CHAT_TAB){
+            getActivity().setTitle("Chat");
+        }
+        else if(position == NOTIFICATION_TAB){
+            getActivity().setTitle("Notifications");
+        }
+    }
     private void loadHomeFragDialog(){
         android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
         PostDialog dialog = new PostDialog();

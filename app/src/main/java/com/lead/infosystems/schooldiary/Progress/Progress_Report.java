@@ -43,7 +43,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Progress_Report extends Fragment {
-UserDataSP userDataSP;
+    UserDataSP userDataSP;
+    SPData spData;
     ListAdapter object;
     ListView list;
     public Button btn1;
@@ -137,14 +138,11 @@ UserDataSP userDataSP;
 
         @Override
         protected void onPostExecute(String result) {
-            SPData spData = new SPData(getActivity().getApplicationContext());
+            spData = new SPData(getActivity().getApplicationContext());
             spData.storeData(result);
             String[] res = result.split("@@@");
             try {
                 getJsonData(res[0]);
-
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }

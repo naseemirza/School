@@ -40,6 +40,7 @@ import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +60,7 @@ public class FragTabChat extends Fragment {
     List<ChatListItems> items = new ArrayList<>();
     String myName;
     private MyDataBase dataBase;
+    private TextView noChats;
     public FragTabChat() {
         // Required empty public constructor
     }
@@ -80,6 +82,7 @@ public class FragTabChat extends Fragment {
         dataBase = new MyDataBase(getActivity().getApplicationContext());
         myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
         myListAdapter = new MyListAdapter();
+        noChats = (TextView) rootview.findViewById(R.id.no_chats);
         list.setAdapter(myListAdapter);
         setItemClicks();
         if(ServerConnect.checkInternetConenction(getActivity())){
@@ -157,6 +160,7 @@ public class FragTabChat extends Fragment {
                     public void onResponse(String response) {
                         items.clear();
                         if(response != null && !response.contains("ERROR")) {
+                            noChats.setVisibility(View.GONE);
                             try {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for(int i = 0; i< jsonArray.length();i++){
@@ -170,6 +174,8 @@ public class FragTabChat extends Fragment {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                        }else{
+                            noChats.setVisibility(View.VISIBLE);
                         }
                     }
                 }, new Response.ErrorListener() {

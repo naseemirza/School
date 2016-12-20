@@ -56,10 +56,10 @@ public class Attendance_teacher extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.activity_teacher__attendance, container, false);
+        getActivity().setTitle("Attendance");
         userDataSP=new UserDataSP(getActivity());
         spData =new SPData(getActivity());
         clist=(ListView)rootView.findViewById(R.id.class_list);
-
         getClassData();
 
         return rootView;
