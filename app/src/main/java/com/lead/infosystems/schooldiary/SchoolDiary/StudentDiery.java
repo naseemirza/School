@@ -1,7 +1,6 @@
-package com.lead.infosystems.schooldiary;
+package com.lead.infosystems.schooldiary.SchoolDiary;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,8 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.DieryHomeWorkData;
-
-import org.w3c.dom.Text;
+import com.lead.infosystems.schooldiary.R;
 
 import java.util.ArrayList;
 import java.util.List;

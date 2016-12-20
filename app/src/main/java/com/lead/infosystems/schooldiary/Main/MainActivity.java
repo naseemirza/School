@@ -28,8 +28,9 @@ import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Profile.Profile;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiery;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
-import com.lead.infosystems.schooldiary.StudentDiery;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -122,6 +123,11 @@ public class MainActivity extends AppCompatActivity
                 frag.commit();
              }else{
                 //teacher homework post like attendance
+                StudentDiary_teacher blankFragment = new StudentDiary_teacher();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
                 }
 
         } else if (id == R.id.nav_attendance) {
