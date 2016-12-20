@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Progress_Report extends Fragment {
-UserDataSP userDataSP;
+    UserDataSP userDataSP;
     ListAdapter object;
     ListView list;
     public Button btn1;
