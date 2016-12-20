@@ -8,19 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
@@ -30,15 +23,14 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 
-public class Attendance_student extends Fragment {
+public class Attendance_student extends Fragment implements IVolleyResponse{
 
 
+    private MyVolley myVolley;
     UserDataSP userDataSP;
      CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
@@ -58,46 +50,29 @@ public class Attendance_student extends Fragment {
         userDataSP=new UserDataSP(getActivity());
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
+        myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getAttendanceData();
         return rootView;
     }
 
 
     public void getAttendanceData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE_FETCH, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
 
+        myVolley.setUrl(Utils.ATTENDANCE_FETCH);
+        myVolley.setParams(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.connect();
+    }
 
-                try {
-                    getJsonData(response);
+    @Override
+    public void volleyResponce(String result) {
 
+        try {
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+            getJsonData(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
 
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
-
-                params.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
-
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-
-
+        }
     }
 
     private void getJsonData(String re) throws JSONException {

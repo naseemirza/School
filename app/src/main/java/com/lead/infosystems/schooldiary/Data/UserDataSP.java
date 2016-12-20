@@ -26,6 +26,7 @@ public class UserDataSP {
     public static final String POST_DATA = "POST_DATA";
     public static final String QA_DATA = "qa_data";
     public static final String SCHOOL_FEES = "school_fees";
+    public static final String SCHOOL_WEBSITE_LINK = "school_websitelink";
     public static final String IDENTIFICATION = "identification";
 
 
@@ -56,6 +57,7 @@ public class UserDataSP {
         editor.putString(BLOOD_GROUP,jsonObject.getString(BLOOD_GROUP));
         //editor.putString(CLASS,jsonObject.getString(CLASS));
         editor.putString(SCHOOL_FEES,jsonObject.getString(SCHOOL_FEES));
+        editor.putString(SCHOOL_WEBSITE_LINK,jsonObject.getString(SCHOOL_WEBSITE_LINK));
 
         editor.putBoolean("LoggedIn",true);
         editor.commit();
