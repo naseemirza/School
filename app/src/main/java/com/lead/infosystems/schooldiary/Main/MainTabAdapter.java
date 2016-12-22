@@ -41,7 +41,6 @@ public class MainTabAdapter extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,7 +76,6 @@ public class MainTabAdapter extends Fragment {
         });
         return rootview;
     }
-
 
     private void setTitle(int position){
         if(position == HOME_TAB){
