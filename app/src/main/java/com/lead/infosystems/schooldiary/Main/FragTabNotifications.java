@@ -29,9 +29,9 @@ import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
-import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -174,7 +174,7 @@ public class FragTabNotifications extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (items.get(position).getType()){
                     case NotificationData.HOME_WORK:
-                        StudentDiery frag = new StudentDiery();
+                        StudentDiary_student frag = new StudentDiary_student();
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.main_con,frag);
                         transaction.addToBackStack(MainActivity.BACK_STACK_TAG);

@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 
 import com.lead.infosystems.schooldiary.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ManagmentSchool extends Fragment {
 
 
@@ -23,8 +20,9 @@ public class ManagmentSchool extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.managment_school, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.managment_school, container, false);
+        return rootView;
     }
 
 }

@@ -36,6 +36,11 @@ public class Utils {
     public static final String EVENT_FETCH = SERVER_URL+"events_fetch.php";
     public static final String EVENT_INSERT = SERVER_URL+"events_insert.php";
 
+    public static final String HOMEWORK_INSERT = SERVER_URL+"homework_insert.php";
+
+    public static final String HOMEWORK_FETCH = SERVER_URL+"homework_fetch.php";
+    public static final String EXAM_DETAIL = SERVER_URL+"exam_insert.php";
+
 
 
    public static String getTimeString(String dateString){

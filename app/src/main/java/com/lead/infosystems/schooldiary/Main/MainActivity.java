@@ -3,15 +3,14 @@ package com.lead.infosystems.schooldiary.Main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,18 +19,20 @@ import android.widget.TextView;
 import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_student;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_teacher;
-
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Events.EventAll;
+import com.lead.infosystems.schooldiary.ExamTest.ExamDetails;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.MainSearch;
+import com.lead.infosystems.schooldiary.Management.ManagmentSchool;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Profile.Profile;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
-import com.lead.infosystems.schooldiary.StudentDiery;
 
 
 public class MainActivity extends AppCompatActivity
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this,Profile.class));
         } else if (id == R.id.nav_diery) {
             if(userDataSP.getUserData(UserDataSP.IDENTIFICATION).contains("student")){
-                StudentDiery blankFragment = new StudentDiery();
+                StudentDiary_student blankFragment = new StudentDiary_student();
                 frag = getSupportFragmentManager().beginTransaction();
                 frag.replace(R.id.main_con,blankFragment);
                 frag.addToBackStack(BACK_STACK_TAG);
@@ -183,6 +184,11 @@ public class MainActivity extends AppCompatActivity
             frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
         } else if (id == R.id.nav_test) {
+            ExamDetails blankFragment = new ExamDetails();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
 
         } else if (id == R.id.nav_event) {
             EventAll blankFragment = new EventAll();
@@ -194,7 +200,11 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_management) {
 
-
+            ManagmentSchool blankFragment = new ManagmentSchool();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
         }else if (id==R.id.nav_formdownload) {
             ApplicationForm myform=new ApplicationForm();
             frag = getSupportFragmentManager().beginTransaction();

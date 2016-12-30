@@ -62,9 +62,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Main.PostComments"></activity>
-        <activity android:name=".Main.Answer"></activity>
-
+        <activity android:name=".Main.PostComments" />
+        <activity android:name=".Main.Answer" />
         <activity
             android:name=".Progress.GraphView"
             android:screenOrientation="landscape"
@@ -94,7 +93,10 @@
                 android:value="com.lead.infosystems.schooldiary.Main.ChatNew" />
         </activity>
         <activity android:name=".Attendance.Division" />
-        <activity android:name=".MainSearch"></activity>
+        <activity android:name=".MainSearch" />
+        <activity android:name=".SchoolDiary.StudentDivision" />
+        <activity android:name=".SchoolDiary.StudentSubject_list" />
+        <activity android:name=".SchoolDiary.StudentDiary_DatePicker"></activity>
     </application>
 
 </manifest>
