@@ -1,29 +1,60 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance_student">
+    tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance_student"
+    android:orientation="vertical">
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/compactcalendar_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         app:compactCalendarTargetHeight="300dp"
         app:compactCalendarTextSize="12sp"
         app:compactCalendarBackgroundColor="@color/colorPrimary"
         app:compactCalendarTextColor="#fff"
-        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
-        android:visibility="invisible"
-        app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorPrimary"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:compactCalendarEventIndicatorStyle="fill_large_indicator"
+        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"
+        android:visibility="gone"
+        android:layout_marginBottom="30dp"
         />
 
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/total_present"
+         android:textSize="18sp"
+         android:textColor="@color/colorGreen"
+         android:textStyle="normal|bold"
+         android:layout_margin="8dp"
+         android:textAlignment="center" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_absent"
+        android:textSize="18sp"
+        android:textColor="@color/colorRed"
+        android:layout_below="@+id/total_present"
+        android:layout_margin="8dp"
+        android:textStyle="normal|bold"
+        android:textAlignment="center" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_leaves"
+        android:textSize="18sp"
+        android:layout_margin="8dp"
+        android:textColor="@android:color/holo_orange_dark"
+        android:layout_below="@+id/total_absent"
+        android:textStyle="normal|bold"
+        android:textAlignment="center" />
 
-
-</FrameLayout>
+</LinearLayout>
 
 
 

@@ -8,12 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
@@ -23,14 +30,15 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
-public class Attendance_student extends Fragment implements IVolleyResponse{
+public class Attendance_student extends Fragment {
 
 
-    private MyVolley myVolley;
     UserDataSP userDataSP;
      CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
@@ -49,7 +57,11 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         View rootView = inflater.inflate(R.layout.fragment_attendance_student, container, false);
         userDataSP=new UserDataSP(getActivity());
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
+        getActivity().setTitle("Attendance");
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
+        presentView = (TextView)rootView.findViewById(R.id.total_present);
+        absentView = (TextView)rootView.findViewById(R.id.total_absent);
+        leavesView= (TextView)rootView.findViewById(R.id.total_leaves);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getAttendanceData();
         return rootView;
@@ -87,29 +99,35 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         getDataValues();
     }
 
-    private void getDataValues() {
+    private void getDataValues()
+    {
         Event e;
-        for (int i = 0; i < attendance.size(); i++) {
-            AttendanceData allAttendance = attendance.get(i);
-            if (allAttendance.getAttendance().contains("A")) {
-                e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                calendarView.addEvent(e);
-            } else if (allAttendance.getAttendance().contains("L")) {
-                e = new Event(Color.MAGENTA, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                calendarView.addEvent(e);
-            } else {
-                e = new Event(Color.TRANSPARENT, allAttendance.getTimeInMili(), allAttendance.getAttendance());
-                calendarView.addEvent(e);
-            }
-        }
+      for(int i=0; i<attendance.size(); i++) {
+          AttendanceData allAttendance = attendance.get(i);
+              if(allAttendance.getAttendance().contains("A")) {
 
+                  e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
+              else if(allAttendance.getAttendance().contains("L"))
+              {
+                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
+              else
+              {
 
-        calendarView.showCalendar();
+                  e = new Event(Color.TRANSPARENT,allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  calendarView.addEvent(e);
+              }
+          }
 
         calendarView.setVisibility(View.VISIBLE);
-        calendarView.showCalendarWithAnimation();
-        // calendarView.refreshDrawableState();
+        calendarView.showCalendar();
+        List<Event> list = (List<Event>) calendarView.getEventsForMonth(calendarView.getFirstDayOfCurrentMonth());
+        getMonthData(list);
+
+       //calendarView.refreshDrawableState();
         calendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
@@ -118,8 +136,46 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-                getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime()) + "");
+                getActivity().setTitle(dateFormatForMonth.format(firstDayOfNewMonth.getTime())+"");
+                List<Event> li= calendarView.getEventsForMonth(firstDayOfNewMonth);
+                getMonthData(li);
+                Log.e("event", String.valueOf(li));
+
             }
         });
+
+
+
+
     }
+
+
+private void getMonthData(List<Event> li)
+{
+    int present=0, absent=0, leaves=0;
+    for(int j=0; j<li.size(); j++)
+    {
+        if(li.get(j).getColor()==RED)
+        {
+            absent++;
+        }
+        else if(li.get(j).getColor()==YELLOW)
+        {
+            leaves++;
+        }
+        else
+        {
+            present++;
+        }
+    }
+
+    presentView.setText("Total Present:"+" "+present+"");
+    absentView.setText("Total Absent:"+" "+absent+"");
+    leavesView.setText("Total Leaves:"+" "+leaves+"");
+
+}
+
+
+
+
 }

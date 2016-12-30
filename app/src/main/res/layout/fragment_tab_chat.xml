@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Main.FragTabChat">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have no active Chats"
+        android:layout_centerInParent="true"
+        android:id="@+id/no_chats"
+        android:textStyle="normal|bold"
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
     <ListView
         android:layout_width="match_parent"
