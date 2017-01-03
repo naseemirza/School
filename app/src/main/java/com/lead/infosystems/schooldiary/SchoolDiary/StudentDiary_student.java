@@ -53,9 +53,6 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
         myVolley.setParams(UserDataSP.CLASS, userDataSp.getUserData(UserDataSP.CLASS));
         myVolley.setParams(UserDataSP.DIVISION, userDataSp.getUserData(UserDataSP.DIVISION));
         myVolley.connect();
-        Log.e("detail", userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
-        Log.e("detail 2", userDataSp.getUserData(UserDataSP.CLASS));
-        Log.e("detail 3", userDataSp.getUserData(UserDataSP.DIVISION));
 
     }
 

@@ -54,7 +54,6 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         View rootView = inflater.inflate(R.layout.fragment_attendance_student, container, false);
         userDataSP=new UserDataSP(getActivity());
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
-        getActivity().setTitle("Attendance");
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         presentView = (TextView)rootView.findViewById(R.id.total_present);
         absentView = (TextView)rootView.findViewById(R.id.total_absent);
