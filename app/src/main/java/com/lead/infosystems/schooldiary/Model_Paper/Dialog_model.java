@@ -5,24 +5,25 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadServiceBroadcastReceiver;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.util.UUID;
 
@@ -34,11 +35,11 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
     private static final int RESULT_OK =-1 ;
     public Button btn_upload;
     private ImageView btn_choose;
-    EditText file_name;
-    View rootview;
-    UserDataSP userdatasp;
-    String path;
-
+    private EditText file_name;
+    private View rootview;
+    private UserDataSP userdatasp;
+    private String path;
+    private String classNumber;
     private int PDF_REQ = 1;
     @Nullable
     @Override
@@ -53,10 +54,11 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         btn_choose.setOnClickListener(this);
         btn_upload.setOnClickListener(this);
         userdatasp=new UserDataSP(getActivity().getApplicationContext());
-
-
         return rootview;
+    }
 
+    public void setClassNumber(String classNumber){
+        this.classNumber  = classNumber;
     }
 
     public void uploadMultipart(String path) {
@@ -67,11 +69,14 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         } else {
             if (name.length()>3) {
                 try {
+                    if(userdatasp.isStudent()){
+                        this.classNumber = userdatasp.getUserData(UserDataSP.CLASS);
+                    }
                     String uploadId = UUID.randomUUID().toString();
                     new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.MODEL_PAPER)
                             .addFileToUpload(path, "pdf")
                             .addParameter("name", name)
-                            .addParameter("class",userdatasp.getUserData(UserDataSP.CLASS))
+                            .addParameter(UserDataSP.CLASS,this.classNumber)
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();

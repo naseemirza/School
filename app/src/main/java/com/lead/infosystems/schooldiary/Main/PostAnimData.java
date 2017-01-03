@@ -1,16 +1,20 @@
 package com.lead.infosystems.schooldiary.Main;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 
+import java.io.Serializable;
+
 /**
  * Created by Faheem on 20-11-2016.
  */
 
-public class PostAnimData {
+public class PostAnimData implements Serializable{
     private View propic, name, time, text, post_img, card;
     private Bitmap postImageBitmap;
     private boolean isImage;
@@ -82,4 +86,5 @@ public class PostAnimData {
     public TextView getComment_num() {
         return comment_num;
     }
+
 }

@@ -1,13 +1,10 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,22 +16,22 @@ import android.widget.Toast;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Model_Paper.FilePath;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
 
-import java.io.Console;
 import java.util.UUID;
 
 public class Dialog_form extends DialogFragment implements View.OnClickListener {
     private static final int RESULT_OK =-1 ;
-    Button  btn_upload;
-    EditText file_name;
-    View rootview;
-    UserDataSP userdatasp;
-    ImageView btn_choose;
-    String path;
+    private Button  btn_upload;
+    private EditText file_name;
+    private View rootview;
+    private UserDataSP userdatasp;
+    private ImageView btn_choose;
+    private String path;
+    public static final String APPLICATION_NAME = "application_name";
     private int REQ_PDF = 1;
 
     @Nullable
@@ -63,8 +60,9 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
                     String uploadId = UUID.randomUUID().toString();
                     new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.APPLICATION_FORMS)
                             .addFileToUpload(path, "pdf")
-                            .addParameter("name", name)
-                            .addParameter("school",userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
+                            .addParameter(APPLICATION_NAME, name)
+                            .addParameter(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
+                            .addParameter(UserDataSP.NUMBER_USER,userdatasp.getUserData(UserDataSP.NUMBER_USER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();

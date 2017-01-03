@@ -6,12 +6,12 @@ package com.lead.infosystems.schooldiary.Data;
 
 public class NotificationData {
     private String notificationNumber,date,mClass,division,notificationText,type;
-    public static final String HOME_WORK = "Home_Work";
-    public static final String MARKS = "Marks_Uploaded";
-    public static final String MODEL_QP = "New_Model_Question_paper";
-    public static final String TEST_EXAM = "Test_And_Exam";
-    public static final String EVENT = "New_Event";
-    public static final String APPLICATION_FORM = "New_Application_Form";
+    public static final String HOME_WORK = "HOME_WORK";
+    public static final String MARKS = "MARKS";
+    public static final String MODEL_QP = "M_Q_P";
+    public static final String TEST_EXAM = "EXAMS";
+    public static final String EVENT = "EVENT";
+    public static final String APPLICATION_FORM = "APPLICATION_FORM";
 
     public NotificationData(String notificationNumber,String date, String mClass, String division, String notificationText,String type) {
         this.notificationNumber = notificationNumber;

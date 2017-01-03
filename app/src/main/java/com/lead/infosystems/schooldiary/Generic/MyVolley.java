@@ -1,6 +1,7 @@
-package com.lead.infosystems.schooldiary.ServerConnection;
+package com.lead.infosystems.schooldiary.Generic;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class MyVolley {
     private Context context;
     private int RETRY_NUM = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
     private IVolleyResponse iVolleyResponse;
+    private static boolean toastShow = true;
     public static final String RESPONSE_ERROR="response_error";
 
 
@@ -58,20 +60,25 @@ public class MyVolley {
                 clear();
                 Log.e("res",response);
                 if(response != null && !response.contentEquals("ERROR")){
-                    iVolleyResponse.volleyResponce(response);
+                    iVolleyResponse.volleyResponse(response);
                 }else{
-                    iVolleyResponse.volleyResponce(RESPONSE_ERROR);
+                    iVolleyResponse.volleyResponse(RESPONSE_ERROR);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 clear();
-                Toast toast = new Toast(context);
-                toast.cancel();
-                toast.setText(ServerConnect.connectionError(error));
-                toast.setDuration(Toast.LENGTH_SHORT);
-                toast.show();
+                if(toastShow){
+                    toastShow = false;
+                    Toast.makeText(context,ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            toastShow = true;
+                        }
+                    },5000);
+                }
             }
         }){
             @Override

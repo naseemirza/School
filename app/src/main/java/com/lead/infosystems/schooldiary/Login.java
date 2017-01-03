@@ -1,9 +1,7 @@
 package com.lead.infosystems.schooldiary;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -12,25 +10,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseInstanceIDService;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Main.MainActivity;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Login extends AppCompatActivity implements IVolleyResponse {
 
@@ -76,13 +61,11 @@ public class Login extends AppCompatActivity implements IVolleyResponse {
     }
 
     @Override
-    public void volleyResponce(String result) {
-        //teacher login
-        Log.e("res",result);
+    public void volleyResponse(String result) {
+        //user login
          if(result.contains(UserDataSP.NUMBER_USER) && !result.contains(UserDataSP.STUDENT_NUMBER)){
                 try {
                     userDataSP.storeLoggedInUser(result);
-                    Log.e("reg_id",userDataSP.getUserData(UserDataSP.CLOUD_ID)+" id");
                     TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
                     myVolley.setUrl(Utils.REGESTRATION);
                     myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
@@ -109,7 +92,7 @@ public class Login extends AppCompatActivity implements IVolleyResponse {
                      myVolley.setUrl(Utils.LOGIN);
                      myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
                      myVolley.connect();
-                 }else{
+                 }else{//teacher login
                      progressDialog.dismiss();
                      startActivity(new Intent(getApplicationContext(), MainActivity.class));
                  }

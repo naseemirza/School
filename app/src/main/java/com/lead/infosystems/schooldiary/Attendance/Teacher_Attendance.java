@@ -21,8 +21,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,63 +35,35 @@ import java.util.Map;
 
 public class Teacher_Attendance extends AppCompatActivity {
 
-UserDataSP userDataSP;
+    private UserDataSP userDataSP;
+    private ListView clist;
 
-    SPData spData;
-    ListAdapter object;
-ListView clist;
-
-    public static List<ClassPage> classes = new ArrayList<ClassPage>();
+    public static List<String> classes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher__attendance);
-
         userDataSP=new UserDataSP(this);
-        spData =new SPData(this);
         clist=(ListView)findViewById(R.id.class_list);
-
         getClassData();
-
-
     }
 
     public void getClassData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE, new Response.Listener<String>() {
+
+        MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-
-
+            public void volleyResponse(String result) {
                 try {
-                    getJsonData(response);
-
-
+                    getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
-
-                params.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-
-
+        });
+        volley.setUrl(Utils.ATTENDANCE);
+        volley.setParams(UserDataSP.SCHOOL_NUMBER,userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+        volley.connect();
     }
 
     private void getJsonData(String re) throws JSONException {
@@ -98,8 +72,7 @@ ListView clist;
 
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            classes.add(new ClassPage(jsonobj.getString("class")));
-
+            classes.add(jsonobj.getString(UserDataSP.CLASS));
         }
 
         clist.setAdapter(new MyAdaptor());
@@ -107,17 +80,15 @@ ListView clist;
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-
                     Intent intent = new Intent(view.getContext(), Division.class);
-                    intent.putExtra("class", classes.get(position).getClassName());
+                    intent.putExtra(UserDataSP.CLASS, classes.get(position));
                     startActivity(intent);
-
             }
         });
 
 
     }
-    class MyAdaptor extends ArrayAdapter<ClassPage> {
+    class MyAdaptor extends ArrayAdapter<String> {
 
         public MyAdaptor() {
             super(getApplicationContext(), R.layout.class_div,classes);
@@ -131,21 +102,11 @@ ListView clist;
                 ItemView = getLayoutInflater().inflate(R.layout.class_div, parent, false);
             }
 
-            ClassPage currentItem=classes.get(position);
+            String currentItem=classes.get(position);
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
-            class_text.setText("class"+"  "+currentItem.getClassName());
-
-
-
-
-
+            class_text.setText("class"+"  "+currentItem);
             return ItemView;
 
         }
     }
-
-
-
-
-
 }

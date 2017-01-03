@@ -1,6 +1,5 @@
 package com.lead.infosystems.schooldiary.Attendance;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -24,10 +24,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.Progress.Marks;
-import com.lead.infosystems.schooldiary.Progress.SinlGraph;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,67 +46,35 @@ public class Division extends AppCompatActivity {
 
     ListView dlist;
     String class_list;
-    public static List<ClassPage> division= new ArrayList<ClassPage>();
+    public static List<String> division= new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_division);
-
-
         Intent intent = getIntent();
         class_list = intent.getStringExtra("class");
-
         dlist=(ListView)findViewById(R.id.div_list);
-
-
         userDataSP=new UserDataSP(this);
         spData =new SPData(this);
         getDivisionData();
-
     }
 
     public void getDivisionData(){
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE, new Response.Listener<String>() {
+        MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-
-
+            public void volleyResponse(String result) {
                 try {
-                    getJsonData(response);
-
-
+                    getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
-
-                params.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                params.put("class",class_list);
-
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-
-
+        });
+        volley.setUrl(Utils.ATTENDANCE);
+        volley.setParams(UserDataSP.SCHOOL_NUMBER,userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+        volley.setParams(UserDataSP.CLASS,class_list);
+        volley.connect();
     }
-
-
-
-
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
@@ -114,27 +82,22 @@ public class Division extends AppCompatActivity {
 
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            division.add(new ClassPage(jsonobj.getString("division")));
-
+            division.add(jsonobj.getString(UserDataSP.DIVISION));
         }
 
         dlist.setAdapter(new MyAdaptor());
         dlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-
                 Intent intent = new Intent(view.getContext(), Student_list.class);
-                intent.putExtra("division", division.get(position).getClassName());
-                intent.putExtra("class", class_list);
+                intent.putExtra(UserDataSP.DIVISION, division.get(position));
+                intent.putExtra(UserDataSP.CLASS, class_list);
                 startActivity(intent);
 
             }
         });
-
-
     }
-    class MyAdaptor extends ArrayAdapter<ClassPage> {
+    class MyAdaptor extends ArrayAdapter<String> {
 
         public MyAdaptor() {
             super(getApplicationContext(), R.layout.class_div,division);
@@ -148,14 +111,15 @@ public class Division extends AppCompatActivity {
                 ItemView = getLayoutInflater().inflate(R.layout.class_div, parent, false);
             }
 
-            ClassPage currentItem=division.get(position);
+            String div=division.get(position);
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
-            class_text.setText("Division"+"  "+currentItem.getClassName());
-
-
-
-
-
+            class_text.setText("Division");
+            ImageView img = (ImageView) ItemView.findViewById(R.id.class_image);
+            String firstletter = String.valueOf(div.charAt(0));
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+            int color = generator.getColor(getItem(position));
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            img.setImageDrawable(drawable);
             return ItemView;
 
         }

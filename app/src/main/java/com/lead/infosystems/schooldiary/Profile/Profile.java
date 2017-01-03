@@ -1,10 +1,16 @@
 package com.lead.infosystems.schooldiary.Profile;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,58 +18,220 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
-import com.lead.infosystems.schooldiary.Data.QuestionData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.Main.FragTabHome;
+import com.lead.infosystems.schooldiary.Generic.CompressImage;
+import com.lead.infosystems.schooldiary.ICompressedImage;
+import com.lead.infosystems.schooldiary.IPostInterface;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Main.PostAdaptor;
 import com.lead.infosystems.schooldiary.Main.PostAnimData;
 import com.lead.infosystems.schooldiary.Main.PostComments;
+import com.lead.infosystems.schooldiary.Main.PostDialog;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
-public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMoreListener,SwipeRefreshLayout.OnRefreshListener {
+public class Profile extends AppCompatActivity implements IPostInterface,SwipeRefreshLayout.OnRefreshListener,IVolleyResponse,ICompressedImage {
 
     private static ArrayList<Post_Data> itemlist = new ArrayList<Post_Data>();;
     private SwipeRefreshLayout swipeRefreshLayout;
     private static PostAdaptor postAdaptor;
-    String POST_MIN = "0";
-    static UserDataSP userDataSP;
-    JSONArray jsonPost,jsonLikes;
-    public static PostAnimData postAnimData;
-    RecyclerView recyclerView;
-    boolean backPressed = false;
-    boolean noMorePost = false;
+    private String POST_MIN = "0";
+    private RecyclerView recyclerView;
+    private JSONArray jsonPost,jsonLikes;
+    private boolean backPressed = false;
+    private boolean noMorePost = false;
+    private MyVolley myVolley;
+    private UserDataSP userDataSP;
+    Toolbar toolbar;
+    ImageView proPic;
+    ImageButton proPicChange;
+    private Activity activity;
+    private Bitmap newProPic;
+    private CompressImage compressImage;
+    private ProgressBar proPicProgressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         userDataSP = new UserDataSP(getApplicationContext());
         toolbar.setTitle(userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME));
+        proPicChange = (ImageButton) findViewById(R.id.change_propic);
+        activity = this;
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        initilize();
+        prepare();
+        mPropicChange();
     }
 
-    private void initilize(){
+    private void mPropicChange() {
+        proPicChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater factory = LayoutInflater.from(activity);
+                final View deleteDialogView = factory.inflate(R.layout.propic_dialog, null);
+                final AlertDialog deleteDialog = new AlertDialog.Builder(activity).create();
+                deleteDialog.setView(deleteDialogView);
+                deleteDialogView.findViewById(R.id.propic_camera).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        File f = new File(android.os.Environment
+                                .getExternalStorageDirectory(), Utils.TEMP_IMG);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                        startActivityForResult(intent, 0);
+                        deleteDialog.dismiss();
+                    }
+                });
+                deleteDialogView.findViewById(R.id.propic_gallery).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                1);
+                        deleteDialog.dismiss();
+                    }
+                });
+
+                deleteDialog.show();
+            }
+        });
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        compressImage = new CompressImage(activity,this);
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case 0:
+                if(resultCode == activity.RESULT_OK){
+                    newProPic = Utils.getCameraImage();
+                    compressImage.setImg(newProPic);
+                    compressImage.execute();
+                }
+                break;
+            case 1:
+                if(resultCode == activity.RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    InputStream img = null;
+                    try {
+
+                        img  = activity.getContentResolver().openInputStream(selectedImage);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if(img != null){
+                        newProPic = BitmapFactory.decodeStream(img);
+                        compressImage.setImg(newProPic);
+                        compressImage.execute();
+                    }
+                }
+
+                break;
+
+        }}
+    @Override
+    public void compressedImageFile(File imageFile) {
+        if(imageFile != null){
+            uploadMultipart(imageFile.getPath());
+            proPic.setAlpha(0.3f);
+        }else{
+            Toast.makeText(getApplicationContext(),"Some Error Occurred",Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void uploadMultipart(final String path) {
+        if (path == null) {
+            Toast.makeText(getApplicationContext(), "Please move your image to internal storage and retry", Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                String uploadId = UUID.randomUUID().toString();
+                proPicProgressBar.setVisibility(View.VISIBLE);
+                proPicProgressBar.setMax(100);
+                new MultipartUploadRequest(getApplicationContext(), uploadId, Utils.PROPIC_UPDATE)
+                        .addFileToUpload(path, "jpg")
+                        .addParameter(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER))
+                        .setMaxRetries(2)
+                        .setDelegate(new UploadStatusDelegate() {
+                    @Override
+                    public void onProgress(UploadInfo uploadInfo) {
+                        proPicProgressBar.setProgress(uploadInfo.getProgressPercent());
+                    }
+
+                    @Override
+                    public void onError(UploadInfo uploadInfo, Exception exception) {
+                        proPicProgressBar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+                        proPic.setAlpha(1f);
+                    }
+
+                    @Override
+                    public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                        proPicProgressBar.setVisibility(View.GONE);
+                        proPic.setBackgroundDrawable(Drawable.createFromPath(path));
+                        Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_SHORT).show();
+                        proPic.setAlpha(1f);
+                        Picasso.with(getApplicationContext()).invalidate(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL));
+                        loadProPic();
+                    }
+
+                    @Override
+                    public void onCancelled(UploadInfo uploadInfo) {
+                        proPicProgressBar.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
+                        proPic.setAlpha(1f);
+                    }
+                })
+                .startUpload();
+            } catch (Exception exc) {
+                Toast.makeText(getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
+                proPic.setAlpha(1f);
+            }
+        }
+    }
+    private void prepare(){
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        proPic = (ImageView) findViewById(R.id.pro_pic_toolbar);
+        if(userDataSP.getUserData(UserDataSP.PROPIC_URL).contains("jpeg")){
+           loadProPic();
+        }
+        proPicProgressBar = (ProgressBar) findViewById(R.id.propic_progress);
+        proPicProgressBar.setVisibility(View.GONE);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(true);
@@ -80,11 +248,39 @@ public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMore
                 R.color.colorPrimary,
                 R.color.colorPrimaryDark);
         swipeRefreshLayout.setOnRefreshListener(this);
+        myVolley = new MyVolley(getApplicationContext(),this);
+        swipeRefreshLayout.setEnabled(false);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int toolBarHeight = toolbar.getMeasuredHeight();
+                int appBarHeight = appBarLayout.getTotalScrollRange() + toolBarHeight;
+                Float f = ((((float) appBarHeight - toolBarHeight) + verticalOffset) / ( (float) appBarHeight - toolBarHeight)) * 255;
+                proPic.getBackground().setAlpha(Math.round(f));
+            }
+        });
     }
-    public void loadData(Activity activity) {
-        if(ServerConnect.checkInternetConenction(activity)){
-            new PostDataLoad().execute("0");
-        }
+
+    private void loadProPic(){
+        Picasso.with(getApplicationContext())
+                .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        proPic.setBackgroundDrawable(new BitmapDrawable(bitmap));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
     }
 
     @Override
@@ -92,7 +288,7 @@ public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMore
         itemlist.clear();
         noMorePost = false;
         if(ServerConnect.checkInternetConenction(this)&& !backPressed){
-            loadData(this);
+            refresh();
         }else{
             if(userDataSP.getPostData()!=""){
                 swipeRefreshLayout.setRefreshing(false);
@@ -103,37 +299,24 @@ public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMore
     }
 
 
-    private class PostDataLoad extends AsyncTask<String, Void, String> {
+    private void getData(String min){
+        myVolley.setUrl(Utils.POST_FETCH);
+        myVolley.setParams(Utils.POST_FETCH_PARAM, min);
+        myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.connect();
+    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Uri.Builder builder = new Uri.Builder();
-            builder.appendQueryParameter(Utils.POST_FETCH_PARAM, params[0]);
-            builder.appendQueryParameter(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
-            String query = builder.build().getQuery();
-            try {
-                return ServerConnect.downloadUrl(Utils.POST_FETCH, query);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            try {
-                storeData(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    @Override
+    public void volleyResponse(String result) {
+        try {
+            storeData(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
+
     private void storeData(String s) throws JSONException {
+        swipeRefreshLayout.setEnabled(false);
         if(!s.isEmpty() && s != "ERROR") {
             itemlist.clear();
             if (POST_MIN == "0") {
@@ -194,26 +377,35 @@ public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMore
     }
     @Override
     public void onRefresh() {
+        refresh();
+    }
+
+    private void refresh(){
+        swipeRefreshLayout.setEnabled(true);
+        swipeRefreshLayout.setRefreshing(true);
         POST_MIN = "0";
         noMorePost = false;
         postAdaptor.setMoreLoading(false);
-        loadData(this);
+        getData(POST_MIN);
     }
-
     @Override
     public void onLoadMore() {
         if(ServerConnect.checkInternetConenction(this) && !noMorePost){
-            new PostDataLoad().execute(POST_MIN);
+            getData(POST_MIN);
             postAdaptor.setProgressMore(true);
         }
     }
 
     @Override
     public void onCommentClick(PostAnimData postAnimData) {
-        backPressed = true;
-        Intent intent = new Intent(getApplicationContext(),PostComments.class);
         ActivityOptionsCompat activityOptionsCompat = null;
-        this.postAnimData = postAnimData;
+        backPressed = true;
+
+        Intent intent = new Intent(getApplicationContext(),PostComments.class);
+//        Bundle b = new Bundle();
+//        b.putSerializable(PostComments.ANIM_DATA,postAnimData);
+//        intent.putExtras(b);
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Pair<View,String> p1 = Pair.create(postAnimData.getName(), postAnimData.getName().getTransitionName());
             Pair<View,String> p2 = Pair.create(postAnimData.getTime(), postAnimData.getTime().getTransitionName());
@@ -238,4 +430,18 @@ public class Profile extends AppCompatActivity implements PostAdaptor.OnLoadMore
         getMenuInflater().inflate(R.menu.menu_profile,menu);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.action_settings){
+            refresh();
+        }else if(id == R.id.action_settings){
+            //startActivity(new Intent(this,ProfileEdit.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }

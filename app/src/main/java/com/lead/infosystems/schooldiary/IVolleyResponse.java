@@ -5,5 +5,5 @@ package com.lead.infosystems.schooldiary;
  */
 
 public interface IVolleyResponse {
-        void volleyResponce(String result);
+        void volleyResponse(String result);
 }

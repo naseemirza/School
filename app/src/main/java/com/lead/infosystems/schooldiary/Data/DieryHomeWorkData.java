@@ -1,6 +1,6 @@
 package com.lead.infosystems.schooldiary.Data;
 
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 /**
  * Created by Faheem on 07-12-2016.

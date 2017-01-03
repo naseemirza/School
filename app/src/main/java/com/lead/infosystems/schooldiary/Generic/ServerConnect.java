@@ -1,7 +1,6 @@
-package com.lead.infosystems.schooldiary.ServerConnection;
+package com.lead.infosystems.schooldiary.Generic;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.widget.Toast;
 

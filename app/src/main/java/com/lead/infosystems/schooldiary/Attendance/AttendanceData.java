@@ -1,6 +1,6 @@
 package com.lead.infosystems.schooldiary.Attendance;
 
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 /**
  * Created by MADHU on 12/6/2016.

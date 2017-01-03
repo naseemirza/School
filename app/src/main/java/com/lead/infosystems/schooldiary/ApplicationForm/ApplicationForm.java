@@ -1,16 +1,12 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.test.suitebuilder.TestMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,22 +22,13 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +47,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
     private TextView notAvailable;
     private ProgressBar progressBar;
 
-    List<Application_form> items = new ArrayList<>();
+    List<ApplicationFormData> items = new ArrayList<>();
     public ApplicationForm() {
         // Required empty public constructor
     }
@@ -76,6 +63,9 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         userdatasp=new UserDataSP(getActivity().getApplicationContext());
         myVolley = new MyVolley(getActivity().getApplicationContext(),this);
         button = (FloatingActionButton) rootView.findViewById(R.id.add);
+        if(userdatasp.isStudent()){
+            button.setVisibility(View.GONE);
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +91,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
     }
 
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
         progressBar.setVisibility(View.GONE);
         try {
             notAvailable.setVisibility(View.GONE);
@@ -116,7 +106,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new Application_form(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
+            items.add(new ApplicationFormData(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
         }
         myAdaptor.notifyDataSetChanged();
         list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -138,7 +128,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
     }
 
-    class MyAdaptor extends ArrayAdapter<Application_form> {
+    class MyAdaptor extends ArrayAdapter<ApplicationFormData> {
         public MyAdaptor() {
 
             super(getActivity().getApplicationContext(), R.layout.pdf_names, items);
@@ -152,7 +142,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
                 ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
             }
 
-            Application_form currentItem = items.get(position);
+            ApplicationFormData currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);

@@ -98,6 +98,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="propic_caution">The profile pic should contain proper student/teacher face or else strict actions will be taken from school.</string>
     <string name="home_work_diary"><![CDATA[Home Work & Diary]]></string>
     <string name="transition_name_propic">post_propic</string>
     <string name="transition_name_name">post_name</string>

@@ -33,8 +33,8 @@ import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.PostCommentData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,10 +54,11 @@ public class PostComments extends AppCompatActivity {
     private boolean canClickLike = true;
     private UserDataSP user;
     private UserDataSP userDataSP;
-    Activity activity = this;
+    private Activity activity = this;
     private ExpandableHeightListView commentsList;
-    PostAnimData postAnimData = FragTabHome.postAnimData;
+    private PostAnimData postAnimData = PostAdaptor.postAnimData;
     private ArrayList<PostCommentData> items = new ArrayList<>();
+    public static String ANIM_DATA = "anim_data";
 
     PostComments(){}
     @Override
@@ -65,7 +66,10 @@ public class PostComments extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_comments);
         getSupportActionBar().setTitle("Comment");
-
+        Bundle b = getIntent().getExtras();
+//        if(b != null){
+//            postAnimData = (PostAnimData) b.getSerializable(ANIM_DATA);
+//        }
         propic = (ImageView) findViewById(R.id.propic);
         post_img = (ImageView) findViewById(R.id.postimage);
         name = (TextView) findViewById(R.id.title);
@@ -77,7 +81,6 @@ public class PostComments extends AppCompatActivity {
         commentNoComment = (TextView) findViewById(R.id.comment_nocomment);
         progressBar = (ProgressBar) findViewById(R.id.comment_progress);
         userDataSP = new UserDataSP(getApplicationContext());
-
         user = new UserDataSP(getApplicationContext());
         commentText.setOnTouchListener(new View.OnTouchListener() {
             @Override

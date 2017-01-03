@@ -23,9 +23,10 @@ import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IPostInterface;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private final int VIEW_PROG = 0;
     private static ArrayList<Post_Data> itemList;
 
-    private OnLoadMoreListener onLoadMoreListener;
+    private IPostInterface iPostInterface;
     private LinearLayoutManager mLinearLayoutManager;
     private Context context;
     Activity activity;
@@ -46,14 +47,11 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private boolean isMoreLoading = false;
     private int visibleThreshold = 3;
     int firstVisibleItem, visibleItemCount, totalItemCount;
+    public static PostAnimData postAnimData;
 
-    public interface OnLoadMoreListener {
-        void onLoadMore();
-        void onCommentClick(PostAnimData postAnimData);
-    }
 
-    public PostAdaptor(OnLoadMoreListener onLoadMoreListener, Activity activity) {
-        this.onLoadMoreListener = onLoadMoreListener;
+    public PostAdaptor(IPostInterface iPostInterface, Activity activity) {
+        this.iPostInterface = iPostInterface;
         this.activity = activity;
         this.context = activity.getApplicationContext();
         userDataSP = new UserDataSP(context);
@@ -73,8 +71,8 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 totalItemCount = mLinearLayoutManager.getItemCount();
                 firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
                 if (!isMoreLoading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                    if (onLoadMoreListener != null) {
-                        onLoadMoreListener.onLoadMore();
+                    if (iPostInterface != null) {
+                        iPostInterface.onLoadMore();
                     }
                     isMoreLoading = true;
                 }
@@ -182,7 +180,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             ((StudentViewHolder) holder).comment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onLoadMoreListener.onCommentClick(new PostAnimData(((StudentViewHolder) holder).propic,
+                    postAnimData = new PostAnimData(((StudentViewHolder) holder).propic,
                             ((StudentViewHolder) holder).name
                             ,((StudentViewHolder) holder).time
                             , ((StudentViewHolder) holder).text
@@ -193,7 +191,9 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                             , isImageAvailable[0]
                             ,singleItem.getId()
                             ,singleItem
-                            ,position));
+                            ,position);
+                    iPostInterface.onCommentClick(postAnimData);
+
                 }
             });
 

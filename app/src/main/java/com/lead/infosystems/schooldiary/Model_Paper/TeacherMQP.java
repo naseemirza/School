@@ -1,9 +1,10 @@
-package com.lead.infosystems.schooldiary.Attendance;
+package com.lead.infosystems.schooldiary.Model_Paper;
 
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,43 +16,31 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
-import com.lead.infosystems.schooldiary.IVolleyResponse;
-import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
+import com.lead.infosystems.schooldiary.Main.MainActivity;
+import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class Attendance_teacher extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class TeacherMQP extends Fragment {
 
-
-
-    UserDataSP userDataSP;
-
-    SPData spData;
-    ListView clist;
+    private UserDataSP userDataSP;
+    private ListView clist;
+    private MyAdaptor adaptor;
     public static List<String> classes = new ArrayList<>();
 
-
-
-    public Attendance_teacher() {
+    public TeacherMQP() {
         // Required empty public constructor
     }
 
@@ -60,16 +49,15 @@ public class Attendance_teacher extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.activity_teacher__attendance, container, false);
-        getActivity().setTitle("Attendance");
+        View rootView = inflater.inflate(R.layout.fragment_teacher_mqp, container, false);
+        getActivity().setTitle("Model Question Paper");
         userDataSP=new UserDataSP(getActivity());
-        spData =new SPData(getActivity());
-        clist=(ListView)rootView.findViewById(R.id.class_list);
+        clist=(ListView)rootView.findViewById(R.id.list);
+        adaptor = new MyAdaptor();
+        clist.setAdapter(adaptor);
         getClassData();
-
         return rootView;
     }
-
     public void getClassData(){
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
@@ -95,13 +83,16 @@ public class Attendance_teacher extends Fragment {
             classes.add(jsonobj.getString(UserDataSP.CLASS));
         }
 
-        clist.setAdapter(new MyAdaptor());
+        adaptor.notifyDataSetChanged();
         clist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(view.getContext(), Division.class);
-                intent.putExtra(UserDataSP.CLASS, classes.get(position));
-                startActivity(intent);
+                ModelQuestionPapers blankFragment = new ModelQuestionPapers(classes.get(position));
+                FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                MainActivity.setTag(MainActivity.BACK_STACK_TMQP);
+                frag.addToBackStack(MainActivity.BACK_STACK_TMQP);
+                frag.commit();
             }
         });
 

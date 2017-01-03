@@ -22,8 +22,8 @@ import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,11 +43,15 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private ProgressBar progressBar;
     private MyVolley myVolley;
     private TextView notAvailable;
+    private String classNumber;
 
     List<Model_paper> items = new ArrayList<>();
 
-    public ModelQuestionPapers() {
 
+    public ModelQuestionPapers() {}
+
+    public ModelQuestionPapers(String classNumber) {
+        this.classNumber = classNumber;
     }
 
     @Override
@@ -70,6 +74,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
             public void onClick(View v) {
                 android.app.FragmentManager manager = getActivity().getFragmentManager();
                 Dialog_model dialog_model = new Dialog_model();
+                dialog_model.setClassNumber(classNumber);
                 dialog_model.show(manager, "Dialog_model");
             }
         });
@@ -78,13 +83,16 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
 
     private void getDataFromServer(){
+        if(userdatasp.isStudent()){
+            classNumber = userdatasp.getUserData(UserDataSP.CLASS);
+        }
           progressBar.setVisibility(View.VISIBLE);
           myVolley.setUrl(Utils.MODEL_PAPER);
-          myVolley.setParams(UserDataSP.CLASS,userdatasp.getUserData(UserDataSP.CLASS));
+          myVolley.setParams(UserDataSP.CLASS,classNumber);
           myVolley.connect();
     }
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
         try {
             notAvailable.setVisibility(View.GONE);
             getJsonData(result);
@@ -97,7 +105,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
-        for (int i = 0; i <= json.length() - 1; i++) {
+        for (int i = json.length() - 1; i >= 0; i--) {
             JSONObject jsonobj = json.getJSONObject(i);
             items.add(new Model_paper(jsonobj.getString("paper_name"), jsonobj.getString("paper_link")));
         }

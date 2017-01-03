@@ -3,6 +3,7 @@ package com.lead.infosystems.schooldiary.Main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
@@ -16,33 +17,39 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_student;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_teacher;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
+import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Events.EventAll;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.MainSearch;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
+import com.lead.infosystems.schooldiary.Model_Paper.TeacherMQP;
 import com.lead.infosystems.schooldiary.Profile.Profile;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-    Toolbar toolbar;
-    DrawerLayout drawer;
-    ActionBarDrawerToggle toggle;
-    NavigationView navigationView;
-    FragmentTransaction frag;
-    UserDataSP userDataSP;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Toolbar toolbar;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
+    private NavigationView navigationView;
+    private FragmentTransaction frag;
+    private UserDataSP userDataSP;
+    private static boolean backExit = false;
     public static String BACK_STACK_TAG = "tag";
+    public static String BACK_STACK_TMQP = "tag_tmqp";
+    public static String BACK_TAG ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +58,8 @@ public class MainActivity extends AppCompatActivity
         userDataSP = new UserDataSP(getApplicationContext());
         toolbar  = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Home");
-        MainTabAdapter frag = new MainTabAdapter();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_con,frag);
-        transaction.addToBackStack("main");
-        transaction.commit();
+
+        openFrag();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -64,35 +67,66 @@ public class MainActivity extends AppCompatActivity
         if(!userDataSP.isStudent()){
             Menu m = navigationView.getMenu();
             m.findItem(R.id.nav_progress).setVisible(false);
-            navViewSet();
+            navViewSet(userDataSP.getUserData(UserDataSP.EMAIL_ID));
+        }else{
+            navViewSet("Class: "+userDataSP.getUserData(UserDataSP.CLASS)+" "+userDataSP.getUserData(UserDataSP.DIVISION));
         }
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void navViewSet(){
+    private void openFrag() {
+        try {
+            if(getIntent().getAction().contains(NotificationData.EVENT)){
+                openEventFrag();
+            }
+        }catch (Exception e){
+            MainTabAdapter frag = new MainTabAdapter();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_con,frag);
+            transaction.addToBackStack("main");
+            transaction.commit();
+        }
+
+    }
+
+    public static void setTag(String stakTag){
+        BACK_TAG = stakTag;
+    }
+    private void navViewSet(String s){
         View holder = navigationView.getHeaderView(0);
         TextView name = (TextView) holder.findViewById(R.id.title);
         TextView rollnum = (TextView) holder.findViewById(R.id.rollnum);
         name.setText(userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME));
-        rollnum.setText(userDataSP.getUserData(UserDataSP.ROLL_NO).toString());
+        rollnum.setText(s);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final FragmentManager fn = getSupportFragmentManager();
         if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            } else {
-                FragmentManager fn = getSupportFragmentManager();
-                fn.popBackStack(BACK_STACK_TAG,FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            MainTabAdapter frag = new MainTabAdapter();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_con,frag);
-            transaction.addToBackStack(BACK_STACK_TAG);
+        }else if(BACK_TAG == BACK_STACK_TMQP){
+            fn.popBackStack(BACK_STACK_TMQP,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        } else if(fn.getBackStackEntryCount() > 1){
+            fn.popBackStack(BACK_STACK_TAG,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }else{
+            if(backExit){
+                finish();
+            }else{
+                backExit = true;
+                Toast.makeText(getApplicationContext(),"Press back button one more time to exit",Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      backExit = false;
+                    }
+                },1000);
             }
+        }
     }
 
     @Override
@@ -138,7 +172,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
         } else if (id == R.id.nav_attendance) {
-            if(userDataSP.getUserData(UserDataSP.IDENTIFICATION).contains("student")) {
+            if(userDataSP.isStudent()) {
                 Attendance_student blankFragment = new Attendance_student();
                 frag = getSupportFragmentManager().beginTransaction();
                 frag.replace(R.id.main_con, blankFragment);
@@ -172,19 +206,23 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         } else if (id == R.id.nav_question_papers) {
-            ModelQuestionPapers blankFragment = new ModelQuestionPapers();
-            frag = getSupportFragmentManager().beginTransaction();
-            frag.replace(R.id.main_con,blankFragment);
-            frag.addToBackStack(BACK_STACK_TAG);
-            frag.commit();
+            if(userDataSP.isStudent()){
+                ModelQuestionPapers blankFragment = new ModelQuestionPapers();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
+            }else {
+                TeacherMQP blankFragment = new TeacherMQP();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
+            }
         } else if (id == R.id.nav_test) {
 
         } else if (id == R.id.nav_event) {
-            EventAll blankFragment = new EventAll();
-            frag = getSupportFragmentManager().beginTransaction();
-            frag.replace(R.id.main_con, blankFragment);
-            frag.addToBackStack(BACK_STACK_TAG);
-            frag.commit();
+           openEventFrag();
         } else if (id == R.id.nav_suggestions) {
 
         }else if (id == R.id.nav_management) {
@@ -209,5 +247,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void openEventFrag() {
+        EventAll blankFragment = new EventAll();
+        frag = getSupportFragmentManager().beginTransaction();
+        frag.replace(R.id.main_con, blankFragment);
+        frag.addToBackStack(BACK_STACK_TAG);
+        frag.commit();
     }
 }

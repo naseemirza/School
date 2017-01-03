@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,32 +16,33 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.lead.infosystems.schooldiary.Data.AnswerData;
+import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Events.EventAll;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
+import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
+import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
+import static com.lead.infosystems.schooldiary.Main.MainActivity.BACK_STACK_TAG;
 
 
 /**
@@ -50,11 +50,13 @@ import java.util.Map;
  */
 public class FragTabNotifications extends Fragment {
 
-    View rootview;
-    ListView list;
-    List<NotificationData> items = new ArrayList<NotificationData>();
-    ArrayAdapter adapter;
+    private View rootview;
+    private ListView list;
+    private List<NotificationData> items = new ArrayList<NotificationData>();
+    private ArrayAdapter adapter;
+    private UserDataSP userDataSP;
     private MyDataBase myDataBase;
+
     public FragTabNotifications() {
         // Required empty public constructor
     }
@@ -70,7 +72,7 @@ public class FragTabNotifications extends Fragment {
         adapter = new MyListAdapter();
         list.setAdapter(adapter);
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
-
+        userDataSP = new UserDataSP(getActivity().getApplicationContext());
         if(ServerConnect.checkInternetConenction(getActivity())){
             getDataFromServer();
         }else{
@@ -82,51 +84,35 @@ public class FragTabNotifications extends Fragment {
 
 
     private void getDataFromServer(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.NOTIFICATION_FETCH, new Response.Listener<String>() {
+        MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-                Log.e("res",response);
-                if(response != null && !response.contentEquals("ERROR")){
-                    myDataBase.clearNotifications();
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(response);
-                        for(int i = 0;i<jsonArray.length();i++){
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            myDataBase.incertNotification(jsonObject.getString("notification_number")
-                                    ,jsonObject.getString("date")
-                                    ,jsonObject.getString("class")
-                                    ,jsonObject.getString("division")
-                                    ,jsonObject.getString("notification_text")
-                                    ,jsonObject.getString("type"));
-                        }
-                        putDataIntoList();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            public void volleyResponse(String result) {
+                myDataBase.clearNotifications();
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(result);
+                    for(int i = 0;i<jsonArray.length();i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        myDataBase.incertNotification(jsonObject.getString("notification_number")
+                                ,jsonObject.getString("date")
+                                ,jsonObject.getString("class")
+                                ,jsonObject.getString("division")
+                                ,jsonObject.getString("notification_text")
+                                ,jsonObject.getString("type"));
                     }
+                    putDataIntoList();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity().getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map = new HashMap<>();
-                UserDataSP user = new UserDataSP(getActivity().getApplicationContext());
-                if(user.isStudent()){
-                    map.put(UserDataSP.CLASS,user.getUserData(UserDataSP.CLASS));
-                    map.put(UserDataSP.DIVISION,user.getUserData(UserDataSP.DIVISION));
-                }
-                return map;
-            }
-        };
-        RetryPolicy retry = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retry);
-        requestQueue.add(request);
+        });
+        volley.setUrl(Utils.NOTIFICATION_FETCH);
+        UserDataSP user = new UserDataSP(getActivity().getApplicationContext());
+        if(user.isStudent()) {
+            volley.setParams(UserDataSP.CLASS, user.getUserData(UserDataSP.CLASS));
+            volley.setParams(UserDataSP.DIVISION, user.getUserData(UserDataSP.DIVISION));
+        }
+        volley.connect();
     }
 
     private void putDataIntoList() {
@@ -138,9 +124,11 @@ public class FragTabNotifications extends Fragment {
                         ,data.getString(3),data.getString(4),
                         data.getString(5),data.getString(6)));
             }
+            Collections.sort(items,new MyComparator());
            adapter.notifyDataSetChanged();
         }else{
             Toast.makeText(getActivity().getApplicationContext(),"No notifications",Toast.LENGTH_SHORT).show();
+            //change....
         }
     }
 
@@ -170,32 +158,69 @@ public class FragTabNotifications extends Fragment {
         }
     }
 
+    private class MyComparator implements Comparator<NotificationData> {
+
+        @Override
+        public int compare(NotificationData lhs, NotificationData rhs) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.DATE_FORMAT);
+            try {
+                Date date1 = dateFormat.parse(lhs.getDate());
+                Date date2 = dateFormat.parse(rhs.getDate());
+                return date2.compareTo(date1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+    }
     private void setItemClick(){
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (items.get(position).getType()){
                     case NotificationData.HOME_WORK:
-                        StudentDiery frag = new StudentDiery();
-                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.main_con,frag);
-                        transaction.addToBackStack(MainActivity.BACK_STACK_TAG);
-                        transaction.commit();
+                        StudentDiery frag1 = new StudentDiery();
+                        FragmentTransaction transaction1 = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction1.replace(R.id.main_con,frag1);
+                        transaction1.addToBackStack(BACK_STACK_TAG);
+                        transaction1.commit();
                         break;
                     case NotificationData.MARKS:
-                        Log.e("selected",NotificationData.MARKS);
+                        if(userDataSP.isStudent()){
+                            Progress_Report frag = new Progress_Report();
+                            FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                            transaction2.replace(R.id.main_con,frag);
+                            transaction2.addToBackStack(BACK_STACK_TAG);
+                            transaction2.commit();
+                        }
                         break;
                     case NotificationData.MODEL_QP:
-                        Log.e("selected",NotificationData.MODEL_QP);
+                        ModelQuestionPapers frag2 = new ModelQuestionPapers();
+                        FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction2.replace(R.id.main_con,frag2);
+                        transaction2.addToBackStack(BACK_STACK_TAG);
+                        transaction2.commit();
                         break;
                     case NotificationData.TEST_EXAM:
-                        Log.e("selected",NotificationData.TEST_EXAM);
+                        ModelQuestionPapers frag3 = new ModelQuestionPapers();
+                        FragmentTransaction transaction3 = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction3.replace(R.id.main_con,frag3);
+                        transaction3.addToBackStack(BACK_STACK_TAG);
+                        transaction3.commit();
                         break;
                     case NotificationData.EVENT:
-                        Log.e("selected",NotificationData.EVENT);
+                        EventAll frag4 = new EventAll();
+                        FragmentTransaction transaction4 = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction4.replace(R.id.main_con,frag4);
+                        transaction4.addToBackStack(BACK_STACK_TAG);
+                        transaction4.commit();
                         break;
                     case NotificationData.APPLICATION_FORM:
-                        Log.e("selected",NotificationData.APPLICATION_FORM);
+                        ApplicationForm frag5 = new ApplicationForm();
+                        FragmentTransaction transaction5 = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction5.replace(R.id.main_con,frag5);
+                        transaction5.addToBackStack(BACK_STACK_TAG);
+                        transaction5.commit();
                         break;
                 }
             }

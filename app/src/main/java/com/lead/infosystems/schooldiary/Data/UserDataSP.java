@@ -9,8 +9,10 @@ import org.json.JSONObject;
 
 public class UserDataSP {
 
+    public static final String LOGGEDIN = "logged_in";
     public static final String NUMBER_USER = "number_user";
     public static final String STUDENT_NUMBER = "student_number";
+    public static final String PROPIC_URL = "profilePic_link";
     public static final String SCHOOL_NUMBER = "school_number";
     public static final String DIVISION = "division";
     public static final String ROLL_NO = "roll_number";
@@ -46,6 +48,7 @@ public class UserDataSP {
         editor.putString(IDENTIFICATION,jsonObject.getString(IDENTIFICATION));
         editor.putString(SCHOOL_NUMBER,jsonObject.getString(SCHOOL_NUMBER));
         editor.putString(NUMBER_USER,jsonObject.getString(NUMBER_USER));
+        editor.putString(PROPIC_URL,jsonObject.getString(PROPIC_URL));
         editor.putString(IDENTIFICATION,jsonObject.getString(IDENTIFICATION));
         editor.putString(FIRST_NAME,jsonObject.getString(FIRST_NAME));
         editor.putString(LAST_NAME,jsonObject.getString(LAST_NAME));
@@ -54,10 +57,9 @@ public class UserDataSP {
         editor.putString(ADDRESS,jsonObject.getString(ADDRESS));
         editor.putString(EMAIL_ID,jsonObject.getString(EMAIL_ID));
         editor.putString(BLOOD_GROUP,jsonObject.getString(BLOOD_GROUP));
-        //editor.putString(CLASS,jsonObject.getString(CLASS));
         editor.putString(SCHOOL_FEES,jsonObject.getString(SCHOOL_FEES));
 
-        editor.putBoolean("LoggedIn",true);
+        editor.putBoolean(LOGGEDIN,true);
         editor.commit();
     }
 
@@ -110,7 +112,7 @@ public class UserDataSP {
     }
 
     public boolean isUserLoggedIn(){
-        return sharedPreferences.getBoolean("LoggedIn",false);
+        return sharedPreferences.getBoolean(LOGGEDIN,false);
     }
 
     public void clearUserData(){

@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
     <TextView
-        android:text="TextView"
-        android:textColor="@color/colorPrimary"
-        android:layout_width="match_parent"
+        android:text="Class"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/class_id"
-        android:textSize="24sp"
-        android:layout_margin="8dp"/>
+        android:textSize="20sp"
+        android:layout_margin="12dp"
+        android:paddingRight="10dp"/>
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/class_image"
+        android:layout_margin="5dp"/>
 </LinearLayout>

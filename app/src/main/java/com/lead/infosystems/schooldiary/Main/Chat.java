@@ -33,9 +33,11 @@ import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseMessagingServic
 import com.lead.infosystems.schooldiary.Data.ChatItemData;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +52,10 @@ public class Chat extends AppCompatActivity {
     public static String USER_ID = "user_id";
     public static String CHAT_ID = "chat_id";
     public static String FIRST_NAME = "first_name";
+    public static String TO = "to_user";
+    public static String FROM = "from_user";
+    public static String TIME = "time";
+    public static String MESSAGE = "message";
 
     private String myName,myId,userID,firstName,chatId;
 
@@ -128,51 +134,31 @@ public class Chat extends AppCompatActivity {
     }
 
     private void connect(final String msg){
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.NOTIFY,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response != null && !response.contains("ERROR")) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                if(jsonObject.getBoolean("success")){
-                                    chatText.setText("");
-                                    myDataBase.newChat(jsonObject.getString("chat_id"),myName,myId,firstName
-                                            ,userID,jsonObject.getString("time"),msg);
-                                    myDataBase.chatMessage(jsonObject.getString("chat_id"),myId,msg,jsonObject.getString("time"));
+        MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    if(jsonObject.getBoolean("success")){
+                        chatText.setText("");
+                        myDataBase.newChat(jsonObject.getString(CHAT_ID),myName,myId,firstName
+                                ,userID,jsonObject.getString(TIME),msg);
+                        myDataBase.chatMessage(jsonObject.getString(CHAT_ID),myId,msg,jsonObject.getString(TIME));
 
-                                    getDataIntoList(jsonObject.getString("chat_id"));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            chatText.setText("");
-                            Toast.makeText(getApplicationContext(), "sending failed", Toast.LENGTH_SHORT ).show();
-                        }
+                        getDataIntoList(jsonObject.getString(CHAT_ID));
+                    }else {
+                        Toast.makeText(getApplicationContext(),"Failed to deliver",Toast.LENGTH_SHORT).show();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getStackTrace();
-                Toast.makeText(getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map =  new HashMap<>();
-                map.put("to_user",userID);
-                map.put("from_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
-                map.put("message",msg);
-                return map;
-            }
-        };
-        int socketTimeout = 20000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
-
+        });
+        volley.setUrl(Utils.CHAT_MESSAGE_SEND);
+        volley.setParams(TO,userID);
+        volley.setParams(FROM,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        volley.setParams(MESSAGE,msg);
+        volley.connect();
     }
 
     private void getDataIntoList(String chatId){

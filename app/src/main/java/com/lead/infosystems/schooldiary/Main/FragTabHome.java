@@ -2,10 +2,7 @@ package com.lead.infosystems.schooldiary.Main;
 
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,18 +12,17 @@ import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IPostInterface;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,13 +30,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragTabHome extends Fragment implements PostAdaptor.OnLoadMoreListener,SwipeRefreshLayout.OnRefreshListener{
+public class FragTabHome extends Fragment implements IPostInterface,SwipeRefreshLayout.OnRefreshListener{
 
     View rootview;
     private static ArrayList<Post_Data> itemlist = new ArrayList<Post_Data>();;
@@ -50,7 +45,6 @@ public class FragTabHome extends Fragment implements PostAdaptor.OnLoadMoreListe
     Activity activity;
     static UserDataSP userDataSP;
     JSONArray jsonPost,jsonLikes;
-    public static PostAnimData postAnimData;
     boolean backPressed = false;
     boolean noMorePost = false;
 
@@ -111,6 +105,30 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
         }
     }
 
+    @Override
+    public void onCommentClick(PostAnimData postAnimData) {
+        backPressed = true;
+        Intent intent = new Intent(getActivity(),PostComments.class);
+        ActivityOptionsCompat activityOptionsCompat = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Pair<View,String> p1 = Pair.create(postAnimData.getName(), postAnimData.getName().getTransitionName());
+            Pair<View,String> p2 = Pair.create(postAnimData.getTime(), postAnimData.getTime().getTransitionName());
+            Pair<View,String> p3 = Pair.create(postAnimData.getText(), postAnimData.getText().getTransitionName());
+            Pair<View,String> p4 = Pair.create(postAnimData.getPropic(), postAnimData.getPropic().getTransitionName());
+            if(postAnimData.isImageAvailable()){
+                Pair<View,String> p5 = Pair.create(postAnimData.getPost_img(), postAnimData.getPost_img().getTransitionName());
+                activityOptionsCompat = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4,p5);
+            }else{
+                activityOptionsCompat = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4);
+            }
+            startActivity(intent,activityOptionsCompat.toBundle());
+        }else{
+            startActivity(intent);
+        }
+    }
+
     public static void addPostedItem(String text, String link,String dateString,String postid){
         itemlist.clear();
         itemlist.add(new Post_Data(userDataSP.getUserData(UserDataSP.NUMBER_USER)
@@ -119,7 +137,6 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                 ,postid,text,link,dateString,false,new ArrayList<String>(),"0"));
         postAdaptor.addItemAtTop(itemlist);
         prefixItemData(postid,text,link,dateString);
-
     }
 
     private static void prefixItemData(String postid, String text, String link, String dateString) {
@@ -144,30 +161,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
         }
     }
 
-    @Override
-    public void onCommentClick(PostAnimData postAnimData) {
-        backPressed = true;
-        Intent intent = new Intent(getActivity(),PostComments.class);
-        ActivityOptionsCompat activityOptionsCompat = null;
-        this.postAnimData = postAnimData;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Pair<View,String> p1 = Pair.create(postAnimData.getName(), postAnimData.getName().getTransitionName());
-            Pair<View,String> p2 = Pair.create(postAnimData.getTime(), postAnimData.getTime().getTransitionName());
-            Pair<View,String> p3 = Pair.create(postAnimData.getText(), postAnimData.getText().getTransitionName());
-            Pair<View,String> p4 = Pair.create(postAnimData.getPropic(), postAnimData.getPropic().getTransitionName());
-            if(postAnimData.isImageAvailable()){
-                Pair<View,String> p5 = Pair.create(postAnimData.getPost_img(), postAnimData.getPost_img().getTransitionName());
-                activityOptionsCompat = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4,p5);
-            }else{
-            activityOptionsCompat = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(),p1,p2,p3,p4);
-            }
-            startActivity(intent,activityOptionsCompat.toBundle());
-        }else{
-            startActivity(intent);
-        }
-    }
+
 
     @Override
     public void onRefresh() {

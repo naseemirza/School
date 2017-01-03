@@ -7,13 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,8 +34,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.CompressImage;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.ICompressedImage;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.Utils;
+
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,21 +56,24 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
-public class PostDialog extends DialogFragment {
+public class PostDialog extends DialogFragment implements ICompressedImage{
 
-    View rootView;
-    EditText postText;
-    Button postBtn;
-    ImageView postImage;
-    Bitmap uploadImage;
-    String textData;
-    String encoded_image;
-    ProgressDialog progressDialog;
-    UserDataSP userDataSP;
+    private View rootView;
+    private EditText postText;
+    private Button postBtn;
+    private ImageView postImage;
+    private Bitmap uploadImage;
+    private String textData;
+    private String encoded_image;
+    private ProgressDialog progressDialog;
+    private UserDataSP userDataSP;
     private final int MAX_IMAGE_SIZE = 150;
-
+    private CompressImage compressImage;
+    private Bitmap postImageBitmap;
+    private String imageFilePath;
     public PostDialog() {}
 
     @Nullable
@@ -73,6 +86,7 @@ public class PostDialog extends DialogFragment {
         postImage = (ImageView) rootView.findViewById(R.id.upload_post_image);
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
         progressDialog = new ProgressDialog(getActivity());
+        compressImage = new CompressImage(getActivity(),this);
         postText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -91,12 +105,13 @@ public class PostDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 textData = postText.getText().toString().trim();
-                if(!userDataSP.getUserData(UserDataSP.NUMBER_USER).isEmpty()){
-                    if(!textData.isEmpty() || uploadImage != null){
-                        makeRequest(encoded_image);
-                    }else{
-                        Toast.makeText(getActivity(),"No Image or Text..",Toast.LENGTH_SHORT).show();
-                    }
+                progressDialog.setTitle("Uploading Post..");
+                if(textData.length()>0 && imageFilePath != null){
+                    uploadMultipart(imageFilePath,textData);
+                }else if(textData.length() == 0 && imageFilePath.length()>0){
+                    uploadMultipart(imageFilePath,"  ");
+                }else if(textData.length()>0 && imageFilePath == null){
+                    postWithoutImage(textData);
                 }
             }
         });
@@ -115,7 +130,7 @@ public class PostDialog extends DialogFragment {
                 if (items[item].equals("Camera")) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     File f = new File(android.os.Environment
-                            .getExternalStorageDirectory(), "temp.jpg");
+                            .getExternalStorageDirectory(), Utils.TEMP_IMG);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                     startActivityForResult(intent, 0);
 
@@ -139,23 +154,24 @@ public class PostDialog extends DialogFragment {
         switch(requestCode) {
             case 0:
                 if(resultCode == getActivity().RESULT_OK){
-                    getCameraImage();
+                    postImageBitmap = Utils.getCameraImage();
+                    compressImage.setImg(postImageBitmap);
+                    compressImage.execute();
                 }
-                new UploadImage().execute();
                 break;
             case 1:
                 if(resultCode == getActivity().RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
                     InputStream img = null;
                     try {
-
-                       img  = getActivity().getContentResolver().openInputStream(selectedImage);
+                        img  = getActivity().getContentResolver().openInputStream(selectedImage);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     if(img != null){
-                        uploadImage = BitmapFactory.decodeStream(img);
-                        new UploadImage().execute();
+                        postImageBitmap = BitmapFactory.decodeStream(img);
+                        compressImage.setImg(postImageBitmap);
+                        compressImage.execute();
                     }
                 }
 
@@ -164,157 +180,92 @@ public class PostDialog extends DialogFragment {
         }
 
     }
-    private void getCameraImage(){
-        File f = new File(Environment.getExternalStorageDirectory()
-                .toString());
-        for (File temp : f.listFiles()) {
-            if (temp.getName().equals("temp.jpg")) {
-                f = temp;
-                break;
-            }
-        }
-        try {
-            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-            uploadImage = BitmapFactory.decodeFile(f.getAbsolutePath(),
-                    btmapOptions);
-            new UploadImage().execute();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    @Override
+    public void compressedImageFile(File imageFile) {
+        if(imageFile != null){
+            postImage.setImageDrawable(Drawable.createFromPath(imageFile.getPath()));
+            imageFilePath = imageFile.getPath();
+        }else{
+            Toast.makeText(getActivity().getApplicationContext(),"Some Error Occurred",Toast.LENGTH_SHORT).show();
         }
     }
-
-
-    private class UploadImage extends AsyncTask<Void,Void,Boolean>{
-        @Override
-        protected void onPreExecute() {
-            progressDialog.setMessage("Compressing Image please wait...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            if(uploadImage != null){
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                uploadImage.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
-                int size = byteArrayOutputStream.toByteArray().length/1024;
-                if(size>MAX_IMAGE_SIZE) {
-                    Bitmap b = uploadImage;
-                    uploadImage = null;
-                    int wr = 16;
-                    int hr = 9;
-                    int res = 55;
-                    int quality = 100;
-                    uploadImage = resize(b, wr*res, hr*res);
-                    do {
-                        b = uploadImage;
-                        uploadImage = null;
-                        byteArrayOutputStream = new ByteArrayOutputStream();
-                        b.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
-                        uploadImage = BitmapFactory.decodeByteArray(byteArrayOutputStream.toByteArray(),0,
-                                        byteArrayOutputStream.toByteArray().length);
-                        size = byteArrayOutputStream.toByteArray().length / 1024;
-                        quality = quality - 10;
-                        if(quality < 70){
-                            res = res -10;
-                            uploadImage = resize(uploadImage,wr *res, hr*res );
-                            quality = 100;}
-                    }while (size > MAX_IMAGE_SIZE);
-                }
-                encoded_image = Base64.encodeToString(byteArrayOutputStream.toByteArray(),0);
-                return true;
-            }else{
-                return false;
-            }
-        }
-        @Override
-        protected void onPostExecute(Boolean send) {
-            progressDialog.dismiss();
-            if(send){
-                postImage.setImageBitmap(uploadImage);
-            }
-        }
-
-    }
-
-    public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
-        if (maxHeight > 0 && maxWidth > 0) {
-            int width = image.getWidth();
-            int height = image.getHeight();
-            float ratioBitmap = (float) width / (float) height;
-            float ratioMax = (float) maxWidth / (float) maxHeight;
-
-            int finalWidth = maxWidth;
-            int finalHeight = maxHeight;
-            if (ratioMax > 1) {
-                finalWidth = (int) ((float)maxHeight * ratioBitmap);
-            } else {
-                finalHeight = (int) ((float)maxWidth / ratioBitmap);
-            }
-            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
-            return image;
-        } else {
-            return image;
-        }
-    }
-
-    public void makeRequest(final String imageData){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        progressDialog.setMessage("Please Wait...");
-        progressDialog.setCancelable(true);
+    private void uploadMultipart(String path,String textData) {
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMax(100);
         progressDialog.show();
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.NEW_POST,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        progressDialog.dismiss();
-                        if(response.contains("post_id")){
-                            Toast.makeText(getActivity(),"Done",Toast.LENGTH_SHORT).show();
-                            JSONArray jsonArray = null;
-                            try {
-                                jsonArray = new JSONArray(response);
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                FragTabHome.addPostedItem(textData,jsonObject.getString("src_link")
-                                        ,jsonObject.getString("date"),jsonObject.getString("post_id"));
-                                getDialog().dismiss();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+        if (path == null) {
+            Toast.makeText(getActivity().getApplicationContext(), "Please move your image to internal storage and retry", Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                String uploadId = UUID.randomUUID().toString();
+                new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.NEW_POST)
+                        .addFileToUpload(path, "jpg")
+                        .addParameter(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER))
+                        .addParameter(Utils.POST_TEXT,textData)
+                        .setMaxRetries(2)
+                        .setDelegate(new UploadStatusDelegate() {
+                            @Override
+                            public void onProgress(UploadInfo uploadInfo) {
+                                progressDialog.setProgress(uploadInfo.getProgressPercent());
                             }
-                        }else{
-                            Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
-                        }
-                        new FragTabHome();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.getStackTrace();
-                        progressDialog.dismiss();
-                        Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
-                    }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map =  new HashMap<>();
-                if(userDataSP.getUserData(UserDataSP.NUMBER_USER) != null){
-                map.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
-                    if(textData != null){
-                        map.put("text",textData);
-                    }
-                    if(imageData != null){
-                        map.put("encoded_image",imageData);
-                    }
-                }
-                return map;
-            }
-        };
-        int socketTimeout = 20000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
 
+                            @Override
+                            public void onError(UploadInfo uploadInfo, Exception exception) {
+                                Toast.makeText(getActivity().getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                                success(serverResponse.getBodyAsString());
+                            }
+
+                            @Override
+                            public void onCancelled(UploadInfo uploadInfo) {
+                                Toast.makeText(getActivity().getApplicationContext(),"Cancelled",Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                            }
+                        })
+                .startUpload();
+            } catch (Exception exc) {
+                Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        }
     }
 
+    private void postWithoutImage(String textData){
+        progressDialog.setMessage("Please Wait..");
+        progressDialog.show();
+        MyVolley myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+                success(result);
+            }
+        });
+        myVolley.setUrl(Utils.NEW_POST);
+        myVolley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.setParams("text", textData);
+        myVolley.connect();
+    }
 
+    private void success(String result){
+        if(result.contains("post_id")){
+            Toast.makeText(getActivity(),"Done",Toast.LENGTH_SHORT).show();
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = new JSONArray(result);
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                FragTabHome.addPostedItem(PostDialog.this.textData,jsonObject.getString("src_link")
+                        ,jsonObject.getString("date"),jsonObject.getString("post_id"));
+                getDialog().dismiss();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
+        }
+        progressDialog.dismiss();
+    }
 }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,17 +35,19 @@ import com.lead.infosystems.schooldiary.Data.ChatListItems;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -218,7 +221,15 @@ public class FragTabChat extends Fragment {
 
         @Override
         public int compare(ChatListItems lhs, ChatListItems rhs) {
-            return (int) (Utils.getTimeInMili(rhs.getDate()) - Utils.getTimeInMili(lhs.getDate()));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Utils.DATE_FORMAT);
+            try {
+                Date date1 = dateFormat.parse(lhs.getDate());
+                Date date2 = dateFormat.parse(rhs.getDate());
+                return date2.compareTo(date1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
+            }
         }
     }
 

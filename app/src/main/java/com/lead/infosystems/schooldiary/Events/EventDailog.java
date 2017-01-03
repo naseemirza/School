@@ -22,9 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,22 +37,21 @@ import java.util.Map;
 
 public class EventDailog extends DialogFragment{
     public static final String INTENT_FILTER="intent_filter";
+
     public static final String EVENT_NAME = "event_name";
-    public static final String EVENT_DETAIL = "event_detail";
+    public static final String EVENT_DETAIL = "event_details";
     public static final String EVENT_DATE = "event_date";
     public static final String SUBMIT_DATE = "submit_date";
 
-    View rootView;
-    TextView eventTitle;
-    TextView eventDetail;
-    Button submit;
-    String event_date;
-    String submit_date;
-    UserDataSP userDataSP;
-    public EventDailog() {
+    private View rootView;
+    private TextView eventTitle;
+    private TextView eventDetail;
+    private Button submit;
+    private String event_date;
+    private String submit_date;
+    private UserDataSP userDataSP;
 
-    }
-
+    public EventDailog() {}
 
     public EventDailog(String event_date) {
         this.event_date = event_date;
@@ -89,7 +90,7 @@ public class EventDailog extends DialogFragment{
 
                 if(eventTitle.getText().length() > 0){
                     if(eventDetail.getText().length()>0) {
-                        submitEvents(eventTitle.getText().toString(), eventDetail.getText().toString());
+                        submitEvent(eventTitle.getText().toString(), eventDetail.getText().toString());
                     }
                     else
                     {
@@ -104,51 +105,34 @@ public class EventDailog extends DialogFragment{
         return rootView;
     }
 
-    private void submitEvents(final String eventText, final String eventDetails){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        final StringRequest request = new StringRequest(Request.Method.POST, Utils.EVENT_INSERT, new Response.Listener<String>() {
+    private void submitEvent(final String eventText, final String eventDetails){
+        MyVolley myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-                if(response != null){
-                    if(!response.contains("ERROR")){
-                        getDialog().dismiss();
-                        Toast.makeText(getActivity().getApplicationContext(), "Event Inserted", Toast.LENGTH_SHORT).show();
-                        try {
-                            parseDataEvent(eventText, eventDetails, response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Log.e("response_event", response);
-                       // Intent intent = new Intent(INTENT_FILTER);
-                    }
+            public void volleyResponse(String result) {
+                getDialog().dismiss();
+                Toast.makeText(getActivity().getApplicationContext(), "Event Inserted", Toast.LENGTH_SHORT).show();
+                try {
+                    parseDataEvent(eventText, eventDetails, result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity().getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("event_name", eventText);
-                map.put("event_details", eventDetails);
-                map.put("event_date",event_date);
-                map.put("school_number", userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                return map;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-    }
+        });
+        myVolley.setUrl(Utils.EVENT_INSERT);
 
+        myVolley.setParams(EVENT_NAME, eventText);
+        myVolley.setParams(EVENT_DETAIL, eventDetails);
+        myVolley.setParams(EVENT_DATE,event_date);
+        myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+        myVolley.setParams(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
+
+        myVolley.connect();
+    }
     private void parseDataEvent(String event_name, String event_details, String re) throws JSONException {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            submit_date = jsonobj.getString("submit_date");
+            submit_date = jsonobj.getString(SUBMIT_DATE);
 
         }
         Intent intent = new Intent(INTENT_FILTER);
@@ -156,14 +140,9 @@ public class EventDailog extends DialogFragment{
         intent.putExtra(EVENT_DETAIL, event_details);
         intent.putExtra(EVENT_DATE, event_date);
         intent.putExtra(SUBMIT_DATE, submit_date);
-        intent.putExtra("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
+        intent.putExtra(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         getActivity().getApplicationContext().sendBroadcast(intent);
 
 
     }
-
-
-
-
-
   }
