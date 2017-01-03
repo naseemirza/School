@@ -1,25 +1,25 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.test.suitebuilder.TestMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -33,15 +33,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +88,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.APPLICATION_FORMS);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER));
+
         myVolley.connect();
     }
 
@@ -114,9 +106,10 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
+        Log.e("value..... ", re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new Application_form(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
+            items.add(new Application_form(jsonobj.getString("form_name"),jsonobj.getString("form_link"),jsonobj.getString(UserDataSP.NUMBER_USER)));
         }
         myAdaptor.notifyDataSetChanged();
         list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -135,7 +128,6 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
                 }
             }
         });
-
     }
 
     class MyAdaptor extends ArrayAdapter<Application_form> {
@@ -146,14 +138,15 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
         @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
                 ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
             }
 
-            Application_form currentItem = items.get(position);
+            final Application_form currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
+            ImageButton delete = (ImageButton) ItemView.findViewById(R.id.paper_delete);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
 
@@ -162,6 +155,57 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
             int color = generator.getColor(getItem(position));
             TextDrawable drawable = TextDrawable.builder().buildRound(firstletter.toUpperCase(),color);
             imageName.setImageDrawable(drawable);
+            if(currentItem.getDeleteUser()== Integer.parseInt(userdatasp.getUserData(UserDataSP.NUMBER_USER)))
+            {
+                delete.setVisibility(View.VISIBLE);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+                    alert.setTitle("Alert");
+                    alert.setMessage("Are you sure to delete record");
+                    alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+                                @Override
+                                public void volleyResponce(String result) {
+                                    Log.e("after delete", result);
+
+
+                                    if(result.contains("DONE"))
+                                    {
+                                        items.remove(position);
+                                        myAdaptor.notifyDataSetChanged();
+                                        Toast.makeText(getActivity().getApplicationContext(), ""+result, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
+
+                            myVolley.setUrl(Utils.APPLICATIONFORM_DELETE);
+                            myVolley.setParams(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
+                            myVolley.setParams("form_link", currentItem.getLink() );
+                            myVolley.connect();
+
+                            dialog.dismiss();
+
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.show();
+                    }
+                });
+
+            }
+            else{
+                delete.setVisibility(View.GONE);
+            }
             return ItemView;
         }
     }

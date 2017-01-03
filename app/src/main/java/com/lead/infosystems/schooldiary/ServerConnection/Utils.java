@@ -16,6 +16,8 @@ public class Utils {
     public static final String NEW_POST = SERVER_URL + "post.php";
     public static final String LIKE = SERVER_URL+"like_comment.php";
     public static final String DELETE = SERVER_URL+"delete_post_like.php";
+
+    public static final String APPLICATIONFORM_DELETE = SERVER_URL+"application_form_delete.php";
     public static final String COMMENTS = SERVER_URL+"comment_fetch.php";
     public static final String POST_FETCH_PARAM = "min";
     public static final String REGESTRATION = SERVER_URL+"reg_user.php";
@@ -41,6 +43,7 @@ public class Utils {
 
     public static final String HOMEWORK_FETCH = SERVER_URL+"homework_fetch.php";
     public static final String EXAM_DETAIL = SERVER_URL+"exam_insert.php";
+    public static final String MANAGEMENT_DETAIL = SERVER_URL+"management_fetch.php";
 
 
 

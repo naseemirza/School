@@ -21,4 +21,15 @@
         android:layout_weight="1"
         android:textStyle="normal|italic"
         android:textAlignment="viewStart" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete"
+        android:id="@+id/paper_delete"
+        android:background="@color/cardview_shadow_end_color"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:visibility="gone"
+        android:layout_marginRight="5dp" />
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.lead.infosystems.schooldiary.ServerConnection;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -66,7 +65,7 @@ public class MyVolley {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-             clear();
+                clear();
 //                Toast toast = new Toast(context);
 //                toast.cancel();
 //                toast.setText(ServerConnect.connectionError(error));
