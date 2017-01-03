@@ -48,7 +48,6 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
             viewHolder.circleImage_content = (ImageView)cell.findViewById(R.id.circlecell_content);
             cell.setTag(viewHolder);
         } else {
-            // for existing cell set valid valid state(without animation)
             if (unfoldedIndexes.contains(position)) {
                 cell.unfold(true);
             } else {
@@ -56,8 +55,6 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
             }
             viewHolder = (ViewHolder) cell.getTag();
         }
-
-        // bind data from selected element to view through view holder
 
         viewHolder.homework_title.setText(item.getHomework_title()+"");
         viewHolder.homework_contents.setText(item.getHomework_contents()+"");
@@ -76,7 +73,6 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
         return cell;
     }
 
-    // simple methods for register cell state changes
     public void registerToggle(int position) {
         if (unfoldedIndexes.contains(position))
             registerFold(position);
@@ -101,7 +97,7 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
     }
 
     // View lookup cache
-    private static class ViewHolder {
+    public static class ViewHolder {
         TextView homework_title;
         TextView homework_contents;
         TextView lastDate_submission;

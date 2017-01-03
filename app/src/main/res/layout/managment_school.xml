@@ -1,13 +1,54 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.lead.infosystems.schooldiary.Management.ManagmentSchool">
+    tools:context="com.lead.infosystems.schooldiary.Management.ManagmentSchool"
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+        android:id="@+id/first_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="130dp">
+        <ListView
+            android:id="@+id/principle"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
 
-</FrameLayout>
+        </ListView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/second_layout"
+        android:layout_below="@+id/first_layout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp">
+        <ListView
+
+            android:id="@+id/director"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+        </ListView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/third_layout"
+        android:layout_below="@+id/second_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListView
+
+            android:id="@+id/proffesor"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+        </ListView>
+
+    </RelativeLayout>
+
+
+    director
+</LinearLayout>

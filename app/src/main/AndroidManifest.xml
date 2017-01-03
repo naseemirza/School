@@ -96,7 +96,7 @@
         <activity android:name=".MainSearch" />
         <activity android:name=".SchoolDiary.StudentDivision" />
         <activity android:name=".SchoolDiary.StudentSubject_list" />
-        <activity android:name=".SchoolDiary.StudentDiary_DatePicker"></activity>
+        <activity android:name=".SchoolDiary.StudentDiary_DatePicker" />
     </application>
 
 </manifest>

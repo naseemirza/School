@@ -21,7 +21,6 @@ import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class StudentSubject_list extends AppCompatActivity implements IVolleyResponse{

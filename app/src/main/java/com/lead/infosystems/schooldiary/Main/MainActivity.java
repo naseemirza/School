@@ -33,6 +33,7 @@ import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
 import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.Suggestion.Suggestion_Complain;
 
 
 public class MainActivity extends AppCompatActivity
@@ -197,6 +198,11 @@ public class MainActivity extends AppCompatActivity
             frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
         } else if (id == R.id.nav_suggestions) {
+            Suggestion_Complain blankFragment = new Suggestion_Complain();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
 
         }else if (id == R.id.nav_management) {
 

@@ -31,6 +31,7 @@ public class Utils {
     public static final String NOTIFICATION_FETCH = SERVER_URL+"notification_fetch.php";
     public static final String MARKS = SERVER_URL+"marks.php";
     public static final String MODEL_PAPER = SERVER_URL+"model_paper_insert.php";
+    public static final String SUGGESTION_COMPLAIN = SERVER_URL+"suggestion_complain_insert.php";
     public static final String GOOGLE_DRIVE_VIEWER = "http://drive.google.com/viewer?url=";
     public static final String APPLICATION_FORMS = SERVER_URL+"application_form_insert.php";
     public static final String EVENT_FETCH = SERVER_URL+"events_fetch.php";

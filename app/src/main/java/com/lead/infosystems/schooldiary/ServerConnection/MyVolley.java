@@ -66,12 +66,12 @@ public class MyVolley {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                clear();
-                Toast toast = new Toast(context);
-                toast.cancel();
-                toast.setText(ServerConnect.connectionError(error));
-                toast.setDuration(Toast.LENGTH_SHORT);
-                toast.show();
+             clear();
+//                Toast toast = new Toast(context);
+//                toast.cancel();
+//                toast.setText(ServerConnect.connectionError(error));
+//                toast.setDuration(Toast.LENGTH_SHORT);
+//                toast.show();
             }
         }){
             @Override
