@@ -59,7 +59,6 @@ public class Suggestion_Post extends DialogFragment {
         myVolley.setParams(UserDataSP.NUMBER_USER,userdatasp.getUserData(UserDataSP.NUMBER_USER));
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.connect();
-
         getDialog().dismiss();
     }
 
