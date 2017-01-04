@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -29,6 +31,8 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     private ArrayList<Item> items;
     private MyVolley myVolley;
     UserDataSP userDataSp;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     public StudentDiary_student() {
         // Required empty public constructor
     }
@@ -38,6 +42,8 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_diary_student, container, false);
         userDataSp = new UserDataSP(getActivity());
+        progressBar = (ProgressBar)view.findViewById(R.id.homework_progress);
+        notAvailable = (TextView) view.findViewById(R.id.homeworknot_available);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getActivity().setTitle("HOME WORK");
         list = (ListView) view.findViewById(R.id.list_detail);
@@ -47,7 +53,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     }
 
     public void getHomeWorkData()
-    {
+    {   progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.HOMEWORK_FETCH);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams(UserDataSP.CLASS, userDataSp.getUserData(UserDataSP.CLASS));
@@ -60,12 +66,14 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     public void volleyResponce(String result) {
 
         try {
+            notAvailable.setVisibility(View.GONE);
             Log.e("res....", result);
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
-
+            notAvailable.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
 
@@ -75,7 +83,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
 
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate")));
+            items.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER)));
 
         }
         items.get(0).setRequestBtnClickListener(new View.OnClickListener() {
@@ -88,6 +96,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
 
 
         final FoldingCellListAdapter adapter = new FoldingCellListAdapter(getActivity(), items);
+
         adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

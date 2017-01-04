@@ -38,10 +38,11 @@ dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:1.9.3'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.google.firebase:firebase-messaging:9.6.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.ramotion.foldingcell:folding-cell:1.0.1'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 

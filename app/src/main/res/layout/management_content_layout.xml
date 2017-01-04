@@ -19,7 +19,6 @@
             android:id="@+id/profile_content"
             android:layout_alignParentStart="true" />
         <TextView
-            android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/teacher_name_content"
@@ -46,13 +45,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/designation_t"
-                android:text="Designation"
                 />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/qualification_t"
-                android:text="Qualification"
                 android:layout_below="@+id/designation_t"
 
                 />
@@ -60,7 +57,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/mobile_no"
-                android:text="Mobile No."
                 android:layout_below="@+id/qualification_t"
 
                 />
@@ -68,7 +64,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/gmail"
-                android:text="Email Id"
                 android:layout_below="@+id/mobile_no"
 
                 />
@@ -77,7 +72,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/field"
-                android:text="Field"
                 android:layout_below="@+id/gmail"
 
                 />
@@ -86,7 +80,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:id="@+id/contactDetail"
-                android:text="contact detail"
                 android:layout_below="@+id/field"
 
                 />

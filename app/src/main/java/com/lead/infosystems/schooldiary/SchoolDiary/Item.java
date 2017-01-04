@@ -4,15 +4,21 @@ import android.view.View;
 
 public class Item {
     private String homework_title, homework_contents, lastDate_submission, subject,homeworkDate;
+    int userUpload;
 
     private View.OnClickListener requestBtnClickListener;
 
-    public Item(String homework_title, String homework_contents, String lastDate_submission, String subject, String homeworkDate) {
+    public Item(String homework_title, String homework_contents, String lastDate_submission, String subject, String homeworkDate, String userUpload) {
         this.homework_title = homework_title;
         this.homework_contents = homework_contents;
         this.lastDate_submission = lastDate_submission;
         this.subject=subject;
         this.homeworkDate = homeworkDate;
+        this.userUpload = Integer.parseInt(userUpload);
+    }
+
+    public int getUserUpload() {
+        return userUpload;
     }
 
     public String getHomework_title() {
