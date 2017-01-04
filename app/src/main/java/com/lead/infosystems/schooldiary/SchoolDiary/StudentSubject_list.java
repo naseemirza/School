@@ -40,10 +40,7 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
         Intent intent = getIntent();
         class_list = intent.getStringExtra("class");
         division_list = intent.getStringExtra("division");
-
         list_subject=(ListView)findViewById(R.id.list_subject);
-
-
         userDataSP=new UserDataSP(this);
         myVolley = new MyVolley(getApplicationContext(), this);
 
@@ -90,7 +87,7 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                Intent intent = new Intent(view.getContext(), StudentDiary_DatePicker.class);
+                Intent intent = new Intent(view.getContext(), HomeworkList_teacher.class);
                 intent.putExtra("class", class_list);
                 intent.putExtra("division", division_list);
                 intent.putExtra("subject", subjects.get(position));

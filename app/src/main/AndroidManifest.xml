@@ -97,6 +97,7 @@
         <activity android:name=".SchoolDiary.StudentDivision" />
         <activity android:name=".SchoolDiary.StudentSubject_list" />
         <activity android:name=".SchoolDiary.StudentDiary_DatePicker" />
+        <activity android:name=".SchoolDiary.HomeworkList_teacher"></activity>
     </application>
 
 </manifest>

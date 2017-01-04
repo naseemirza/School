@@ -36,21 +36,22 @@
             android:layout_marginTop="20dp"
             />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete"
+            android:id="@+id/homework_delete_content"
+            android:background="@color/cardview_shadow_end_color"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            />
+
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="@color/bgContent"
-        android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="9dp">
-
-        <!-- avatar and name part -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -75,8 +76,6 @@
 
                  />
 
-
-        </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 

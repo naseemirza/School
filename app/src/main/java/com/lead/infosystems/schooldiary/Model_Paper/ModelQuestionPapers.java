@@ -1,21 +1,25 @@
 package com.lead.infosystems.schooldiary.Model_Paper;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -43,7 +47,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private ProgressBar progressBar;
     private MyVolley myVolley;
     private TextView notAvailable;
-
+    private ImageButton delete_button;
     List<Model_paper> items = new ArrayList<>();
 
     public ModelQuestionPapers() {
@@ -99,7 +103,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new Model_paper(jsonobj.getString("paper_name"), jsonobj.getString("paper_link")));
+            items.add(new Model_paper(jsonobj.getString("paper_name"), jsonobj.getString("paper_link"), jsonobj.getString(UserDataSP.NUMBER_USER)));
         }
         adaptor.notifyDataSetChanged();
 
@@ -127,13 +131,14 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
         @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
                 ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
             }
 
-            Model_paper currentItem = items.get(position);
+            final Model_paper currentItem = items.get(position);
+            delete_button = (ImageButton)ItemView.findViewById(R.id.paper_delete);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
@@ -143,6 +148,58 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
             int color = generator.getColor(getItem(position));
             TextDrawable drawable = TextDrawable.builder().buildRound(firstletter.toUpperCase(),color);
             imageName.setImageDrawable(drawable);
+
+            if(currentItem.getUserUpload()== Integer.parseInt(userdatasp.getUserData(UserDataSP.NUMBER_USER)))
+            {
+                delete_button.setVisibility(View.VISIBLE);
+                delete_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+                        alert.setTitle("Alert");
+                        alert.setMessage("Are you sure to delete record");
+                        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+                                    @Override
+                                    public void volleyResponce(String result) {
+                                        Log.e("after delete", result);
+
+
+                                        if(result.contains("DONE"))
+                                        {
+                                            items.remove(position);
+                                            adaptor.notifyDataSetChanged();
+                                            Toast.makeText(getActivity().getApplicationContext(), ""+result, Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                });
+
+                                myVolley.setUrl(Utils.MODELPAPER_DELETE);
+                                myVolley.setParams(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
+                                myVolley.setParams("paper_link",currentItem.getLink() );
+                                myVolley.connect();
+
+                                dialog.dismiss();
+
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alert.show();
+                    }
+                });
+
+            }
+            else{
+                delete_button.setVisibility(View.GONE);
+            }
 
             return ItemView;
         }

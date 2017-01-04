@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,8 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     private MyVolley myVolley;
     UserDataSP userDataSp;
      private ExpandableHeightListView list;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     FoldingCell firstCell, secondCell;
     private ArrayList<ItemDetail> items;
     TextView principalNameTitle, directorNameTitle, principalNameContent, directorNameContent,  mobileNP,  gmailIdP, designationP, qualificationsP, interests_fieldP, contact_detailP,  mobileND,  gmailIdD, designationD, qualificationsD, interests_fieldD, contact_detailD;
@@ -51,6 +54,9 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         // Inflate the layout for this fragment
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
+        progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
+
+        notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
         list = (ExpandableHeightListView) rootView.findViewById(R.id.listF);
        firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
        secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
@@ -111,7 +117,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     }
 
     public void getTeacherDetail()
-    {
+    {   progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.MANAGEMENT_DETAIL);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.connect();
@@ -119,11 +125,14 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     @Override
     public void volleyResponce(String result)
     {
+        progressBar.setVisibility(View.GONE);
         try {
+            notAvailable.setVisibility(View.GONE);
             getJsonData(result);
         }
         catch (JSONException e){
             e.printStackTrace();
+            notAvailable.setVisibility(View.VISIBLE);
         }
     }
 
