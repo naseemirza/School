@@ -228,7 +228,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_settings) {
 
-        }else if (id == R.id.nav_log_out) {
+        }
+        else if (id == R.id.nav_log_out) {
             String cloudID = userDataSP.getUserData(UserDataSP.CLOUD_ID);
             userDataSP.clearUserData();
             userDataSP.storeCloudId(cloudID);
