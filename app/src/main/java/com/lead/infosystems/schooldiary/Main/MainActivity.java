@@ -4,15 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import com.lead.infosystems.schooldiary.ApplicationForm.ApplicationForm;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_student;
 import com.lead.infosystems.schooldiary.Attendance.Attendance_teacher;
-
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -31,11 +29,18 @@ import com.lead.infosystems.schooldiary.Events.EventAll;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.MainSearch;
+import com.lead.infosystems.schooldiary.Management.ManagmentSchool;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Model_Paper.TeacherMQP;
 import com.lead.infosystems.schooldiary.Profile.Profile;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.ShareButton.MyConfig;
+import com.lead.infosystems.schooldiary.Suggestion.Suggestion_Complain;
+import com.sromku.simple.fb.SimpleFacebook;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
 import com.squareup.picasso.NetworkPolicy;
@@ -54,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String BACK_STACK_TAG = "tag";
     public static String BACK_STACK_TMQP = "tag_tmqp";
     public static String BACK_TAG ;
+    static SimpleFacebook fb;
     private ImageView propic;
 
     @Override
@@ -65,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         openFrag();
+
+        SimpleFacebook.setConfiguration(new MyConfig().getMyConfigs());
+        fb=SimpleFacebook.getInstance(this);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -96,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fb.onActivityResult(requestCode,resultCode,data);
+    }
     public static void setTag(String stakTag){
         BACK_TAG = stakTag;
     }
@@ -116,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        fb=SimpleFacebook.getInstance(this);
         Picasso.with(getApplicationContext())
                 .load(Utils.SERVER_URL+(userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb")))
                 .networkPolicy(ServerConnect.checkInternetConenction(this)?
@@ -182,13 +197,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this,Profile.class));
         } else if (id == R.id.nav_diery) {
             if(userDataSP.getUserData(UserDataSP.IDENTIFICATION).contains("student")){
-                StudentDiery blankFragment = new StudentDiery();
+                StudentDiary_student blankFragment = new StudentDiary_student();
                 frag = getSupportFragmentManager().beginTransaction();
                 frag.replace(R.id.main_con,blankFragment);
                 frag.addToBackStack(BACK_STACK_TAG);
                 frag.commit();
              }else{
                 //teacher homework post like attendance
+                StudentDiary_teacher blankFragment = new StudentDiary_teacher();
+                frag = getSupportFragmentManager().beginTransaction();
+                frag.replace(R.id.main_con,blankFragment);
+                frag.addToBackStack(BACK_STACK_TAG);
+                frag.commit();
                 }
 
         } else if (id == R.id.nav_attendance) {
@@ -240,22 +260,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 frag.commit();
             }
         } else if (id == R.id.nav_test) {
-
+            ExamDetails blankFragment = new ExamDetails();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
         } else if (id == R.id.nav_event) {
            openEventFrag();
         } else if (id == R.id.nav_suggestions) {
+            Suggestion_Complain blankFragment = new Suggestion_Complain();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
 
         }else if (id == R.id.nav_management) {
 
+            ManagmentSchool blankFragment = new ManagmentSchool();
+            frag = getSupportFragmentManager().beginTransaction();
+            frag.replace(R.id.main_con, blankFragment);
+            frag.addToBackStack(BACK_STACK_TAG);
+            frag.commit();
         }else if (id==R.id.nav_formdownload) {
             ApplicationForm myform=new ApplicationForm();
             frag = getSupportFragmentManager().beginTransaction();
             frag.replace(R.id.main_con,myform);
             frag.addToBackStack(BACK_STACK_TAG);
             frag.commit();
-        }else if (id == R.id.nav_settings) {
+        }
+        else if(id ==R.id.nav_abtschool)
+        {
+            String link= userDataSP.getUserData(UserDataSP.SCHOOL_WEBSITE_LINK);
+            String pdfLink = link.replace(" ","%20");
+            Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse(pdfLink));
+            startActivity(intent);
 
-        }else if (id == R.id.nav_log_out) {
+        }
+        else if (id == R.id.nav_settings) {
+
+        }
+        else if (id == R.id.nav_log_out) {
             String cloudID = userDataSP.getUserData(UserDataSP.CLOUD_ID);
             userDataSP.clearUserData();
             userDataSP.storeCloudId(cloudID);

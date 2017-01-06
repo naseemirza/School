@@ -37,7 +37,6 @@ import java.util.Map;
 
 public class EventDailog extends DialogFragment{
     public static final String INTENT_FILTER="intent_filter";
-
     public static final String EVENT_NAME = "event_name";
     public static final String EVENT_DETAIL = "event_details";
     public static final String EVENT_DATE = "event_date";

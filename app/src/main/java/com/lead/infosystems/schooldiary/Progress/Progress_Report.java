@@ -3,6 +3,7 @@ package com.lead.infosystems.schooldiary.Progress;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.Utils;
@@ -42,7 +44,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Progress_Report extends Fragment {
-    UserDataSP userDataSP;
+   private UserDataSP userDataSP;
+    private MyDataBase myDataBase;
     SPData spData;
     ListAdapter object;
     ListView list;
@@ -62,6 +65,7 @@ public class Progress_Report extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_progress__report, container, false);
         btn1=(Button)rootView.findViewById(R.id.button_prog);
         userDataSP=new UserDataSP(getActivity().getApplicationContext());
+        myDataBase = new MyDataBase(getActivity().getApplicationContext());
         getActivity().setTitle("Progress Report");
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,10 +158,28 @@ public class Progress_Report extends Fragment {
             final List<String> subjects = new ArrayList<String>();
             for (int i = 0; i <= json.length() - 1; i++) {
                 JSONObject jsonobj = json.getJSONObject(i);
-                subjects.add(jsonobj.getString("sub_name"));
+                myDataBase.insertSubjectData(jsonobj.getString("sub_name"));
                 examData=jsonobj.getString("sub_data");
+                putIntoList();
+
             }
 
+        }
+
+        public void putIntoList()
+        {
+            final List<String> subjects = new ArrayList<String>();
+            Cursor data = myDataBase.getSubjectData();
+            if(data.getCount()>0)
+            {
+                while (data.moveToNext())
+                {
+                    subjects.add(data.getString(1));
+                }
+            }
+            else{
+                Toast.makeText(getActivity().getApplicationContext(),"No Home Work Data",Toast.LENGTH_SHORT).show();
+            }
             object = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, subjects);
             list = (ListView)rootView.findViewById(R.id.list);
             list.setAdapter(object);
@@ -176,7 +198,10 @@ public class Progress_Report extends Fragment {
 
                 }
             });
+
+
         }
+
     }
 
 }

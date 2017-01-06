@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -29,6 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
@@ -63,6 +66,13 @@ public class EventAll extends Fragment {
     private MyAdapter adapter;
     private Boolean dateDoubleClick = false;
     private Date selectedDate;
+    private MyDataBase myDataBase;
+    private UserDataSP userDataSP;
+    CompactCalendarView calendarView;
+    ListView listview;
+    List<EventsData> eventList = new ArrayList<>();
+    MyAdapter adapter;
+    Boolean dateDoubleClick = false;
 
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
 
@@ -74,13 +84,20 @@ public class EventAll extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_event_all, container, false);
         getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
         userDataSP=new UserDataSP(getActivity());
+        myDataBase = new MyDataBase(getActivity().getApplicationContext());
         listview = (ListView)rootView.findViewById(R.id.list_event);
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         adapter = new MyAdapter();
         listview.setAdapter(adapter);
-        getData();
+        getEventData();
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -127,7 +144,26 @@ public class EventAll extends Fragment {
             JSONObject jsonobj = json.getJSONObject(i);
             eventList.add(new EventsData(jsonobj.getString(EVENT_NAME), jsonobj.getString(EVENT_DETAIL),
                     jsonobj.getString(EVENT_DATE), jsonobj.getString(SUBMIT_DATE), jsonobj.getString(UserDataSP.SCHOOL_NUMBER)));
+            myDataBase.insertEventData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number"));
+           // eventList.add(new EventsData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number")));
 
+        }
+        putEventDataList();
+
+    }
+
+    public void putEventDataList()
+    {
+        Cursor data = myDataBase.getEventData();
+        if(data.getCount()>0)
+        {
+            while(data.moveToNext())
+            {
+                eventList.add(new EventsData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Event Data",Toast.LENGTH_SHORT).show();
         }
         getDataValues();
     }

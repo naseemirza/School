@@ -35,6 +35,8 @@ public class Utils {
     public static final String NEW_POST = SERVER_URL + "post.php";
     public static final String LIKE = SERVER_URL+"like_comment.php";
     public static final String DELETE = SERVER_URL+"delete_post_like.php";
+
+    public static final String APPLICATIONFORM_DELETE = SERVER_URL+"application_form_delete.php";
     public static final String COMMENTS = SERVER_URL+"comment_fetch.php";
     public static final String POST_FETCH_PARAM = "min";
     public static final String REGESTRATION = SERVER_URL+"reg_user.php";
@@ -50,11 +52,21 @@ public class Utils {
     public static final String NOTIFICATION_FETCH = SERVER_URL+"notification_fetch.php";
     public static final String MARKS = SERVER_URL+"marks.php";
     public static final String MODEL_PAPER = SERVER_URL+"model_paper_insert.php";
+    public static final String MODELPAPER_DELETE = SERVER_URL+"model_paper_delete.php";
+    public static final String SUGGESTION_COMPLAIN = SERVER_URL+"suggestion_complain_insert.php";
     public static final String GOOGLE_DRIVE_VIEWER = "http://drive.google.com/viewer?url=";
     public static final String APPLICATION_FORMS = SERVER_URL+"application_form_insert.php";
     public static final String EVENT_FETCH = SERVER_URL+"events_fetch.php";
     public static final String EVENT_INSERT = SERVER_URL+"events_insert.php";
     public static final String PROPIC_UPDATE = SERVER_URL+"propic_change.php";
+
+    public static final String HOMEWORK_INSERT = SERVER_URL+"homework_insert.php";
+
+    public static final String HOMEWORK_FETCH = SERVER_URL+"homework_fetch.php";
+
+    public static final String HOMEWORK_DELETE= SERVER_URL+"homework_delete.php";
+    public static final String EXAM_DETAIL = SERVER_URL+"exam_insert.php";
+    public static final String MANAGEMENT_DETAIL = SERVER_URL+"management_fetch.php";
 
 
 

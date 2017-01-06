@@ -27,6 +27,10 @@ import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
+import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
@@ -57,7 +61,6 @@ public class FragTabNotifications extends Fragment {
     private ArrayAdapter adapter;
     private UserDataSP userDataSP;
     private MyDataBase myDataBase;
-
     public FragTabNotifications() {
         // Required empty public constructor
     }

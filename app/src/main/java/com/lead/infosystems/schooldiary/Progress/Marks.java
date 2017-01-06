@@ -2,11 +2,11 @@ package com.lead.infosystems.schooldiary.Progress;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
@@ -27,6 +28,7 @@ import java.util.Objects;
 public class Marks extends AppCompatActivity {
 
     public Button btn;
+    private MyDataBase myDataBase;
     SPData spdata;
     ListView marks;
     String subName;
@@ -49,7 +51,7 @@ public class Marks extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_marks);
-
+        myDataBase = new MyDataBase(this);
         Intent intent = getIntent();
 
         subName = intent.getStringExtra("sub_name");
@@ -64,7 +66,6 @@ public class Marks extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void getJsonExam(String data) {
         try {
-            items.clear();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
 
@@ -89,11 +90,10 @@ public class Marks extends AppCompatActivity {
                             int total = Integer.parseInt(total_marks);
                             String date = json_obj_marks.getString("date");
                             Float percentage = (float) ((marks * 100) / total);
-
-                            items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
-
-
+                            myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
+                           // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
+                        putMarksDataList();
 
                     }
                 }
@@ -103,6 +103,21 @@ public class Marks extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
 
+        }
+    }
+
+
+    public  void putMarksDataList()
+    {
+        Cursor data = myDataBase.getMarksData();
+
+        items.clear();
+        if(data.getCount()>0)
+        {
+            while (data.moveToNext())
+            {
+                items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+            }
         }
     }
     class MyAdaptor extends ArrayAdapter<MarksData> {

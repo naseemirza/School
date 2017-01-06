@@ -41,7 +41,7 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
         rootview= inflater.inflate(R.layout.dialog_layout,null);
         getDialog().setTitle("Upload PDF");
         btn_choose=(ImageView) rootview.findViewById(R.id.upload_pdf);
-        btn_upload=(Button)rootview.findViewById(R.id.button_upload);
+        btn_upload=(Button)rootview.findViewById(R.id.button_post);
         file_name=(EditText)rootview.findViewById(R.id.editText_name);
         btn_choose.setOnClickListener(this);
         btn_upload.setOnClickListener(this);

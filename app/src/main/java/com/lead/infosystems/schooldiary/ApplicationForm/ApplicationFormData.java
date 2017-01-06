@@ -7,10 +7,16 @@ package com.lead.infosystems.schooldiary.ApplicationForm;
 public class ApplicationFormData {
 
     String name,link;
+    int deleteUser;
 
-    public ApplicationFormData(String name, String link) {
+    public ApplicationFormData(String name, String link, String number_user ) {
         this.name = name;
         this.link = link;
+        this.deleteUser= Integer.parseInt(number_user);
+    }
+
+    public int getDeleteUser() {
+        return deleteUser;
     }
 
     public String getName() {

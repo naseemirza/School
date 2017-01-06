@@ -1,21 +1,27 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.test.suitebuilder.TestMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -143,7 +149,9 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
             }
 
             ApplicationFormData currentItem = items.get(position);
+            final Application_form currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
+            ImageButton delete = (ImageButton) ItemView.findViewById(R.id.paper_delete);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
 
@@ -152,6 +160,57 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
             int color = generator.getColor(getItem(position));
             TextDrawable drawable = TextDrawable.builder().buildRound(firstletter.toUpperCase(),color);
             imageName.setImageDrawable(drawable);
+            if(currentItem.getDeleteUser()== Integer.parseInt(userdatasp.getUserData(UserDataSP.NUMBER_USER)))
+            {
+                delete.setVisibility(View.VISIBLE);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+                    alert.setTitle("Alert");
+                    alert.setMessage("Are you sure to delete record");
+                    alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+                                @Override
+                                public void volleyResponce(String result) {
+                                    Log.e("after delete", result);
+
+
+                                    if(result.contains("DONE"))
+                                    {
+                                        items.remove(position);
+                                        myAdaptor.notifyDataSetChanged();
+                                        Toast.makeText(getActivity().getApplicationContext(), ""+result, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
+
+                            myVolley.setUrl(Utils.APPLICATIONFORM_DELETE);
+                            myVolley.setParams(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
+                            myVolley.setParams("form_link", currentItem.getLink() );
+                            myVolley.connect();
+
+                            dialog.dismiss();
+
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.show();
+                    }
+                });
+
+            }
+            else{
+                delete.setVisibility(View.GONE);
+            }
             return ItemView;
         }
     }

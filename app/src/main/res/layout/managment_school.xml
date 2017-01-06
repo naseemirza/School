@@ -1,0 +1,90 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:folding-cell="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lead.infosystems.schooldiary.Management.ManagmentSchool"
+    android:orientation="horizontal">
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/management_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No question papers Available"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/detailNotAvailable"
+        android:visibility="gone"
+        android:textAlignment="center" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+    <com.ramotion.foldingcell.FoldingCell
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/firstCellView"
+        folding-cell:additionalFlipsCount="3"
+        folding-cell:animationDuration="800"
+        folding-cell:backSideColor="@color/cardview_light_background">
+        <!-- CONTENT (UNFOLDED) LAYOUT (MUST BE AT LEAST 2x times BIGGER than content layout bellow)-->
+        <include layout="@layout/principal_content_layout" />
+        <!-- TITLE (FOLDED) LAYOUT (MUST BE AT LEAST 2x times SMALLER than content layout above) -->
+        <include layout="@layout/principal_title_layout" />
+
+    </com.ramotion.foldingcell.FoldingCell>
+
+
+    <!-- divider line -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="9dp"
+        android:src="@color/contentDividerLine" />
+
+    <com.ramotion.foldingcell.FoldingCell
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        folding-cell:additionalFlipsCount="3"
+        folding-cell:animationDuration="800"
+        android:id="@+id/secondCellView"
+        folding-cell:backSideColor="@color/cardview_light_background">
+        <!-- CONTENT (UNFOLDED) LAYOUT (MUST BE AT LEAST 2x times BIGGER than content layout bellow)-->
+        <include layout="@layout/director_content_layout" />
+        <!-- TITLE (FOLDED) LAYOUT (MUST BE AT LEAST 2x times SMALLER than content layout above) -->
+        <include layout="@layout/director_title_layout" />
+    </com.ramotion.foldingcell.FoldingCell>
+
+    <!-- divider line -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="9dp"
+        android:src="@color/contentDividerLine" />
+
+        <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listF"/>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

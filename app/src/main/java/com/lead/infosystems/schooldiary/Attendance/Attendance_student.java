@@ -1,5 +1,6 @@
 package com.lead.infosystems.schooldiary.Attendance;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,20 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
+import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,12 +32,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static android.graphics.Color.RED;
+import static android.graphics.Color.YELLOW;
 
-public class Attendance_student extends Fragment {
 
+public class Attendance_student extends Fragment implements IVolleyResponse{
 
-    UserDataSP userDataSP;
-     CompactCalendarView calendarView;
+    private MyVolley myVolley;
+    private UserDataSP userDataSP;
+    private MyDataBase myDatabase;
+    TextView presentView, absentView, leavesView;
+    CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
     TextView presentView, absentView, leavesView;
@@ -67,6 +67,8 @@ public class Attendance_student extends Fragment {
         presentView = (TextView)rootView.findViewById(R.id.total_present);
         absentView = (TextView)rootView.findViewById(R.id.total_absent);
         leavesView= (TextView)rootView.findViewById(R.id.total_leaves);
+        myVolley = new MyVolley(getActivity().getApplicationContext(), this);
+        myDatabase = new MyDataBase(getActivity().getApplicationContext());
         getAttendanceData();
         return rootView;
 
@@ -75,52 +77,58 @@ public class Attendance_student extends Fragment {
 
 
     public void getAttendanceData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.ATTENDANCE_FETCH, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-             Log.e("response", response);
 
-                try {
-                    getJsonData(response);
+        myVolley.setUrl(Utils.ATTENDANCE_FETCH);
+        myVolley.setParams(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.connect();
+    }
 
+    @Override
+    public void volleyResponce(String result) {
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        try {
 
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
+            getJsonData(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
 
-                params.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
-
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
-
-
+        }
     }
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
-
-
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            attendance.add(new AttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance")));
+            Log.e("year", jsonobj.getString("year"));
+            Log.e("day", jsonobj.getString("day"));
+            Log.e("month", jsonobj.getString("month"));
+
+            myDatabase.insertAttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance"));
 
         }
+        putAttendanceIntoList();
+    }
+
+    public void putAttendanceIntoList()
+    {
+        Cursor data = myDatabase.getAttendanceData();
+        if(data.getCount()>0)
+        {
+            attendance = new ArrayList<>();
+            while (data.moveToNext())
+            {
+                Log.e("data1...", data.getString(1));
+                Log.e("data2...", data.getString(2));
+                Log.e("data3...", data.getString(2));
+                Log.e("data4...", data.getString(4));
+                attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Attendance Data",Toast.LENGTH_SHORT).show();
+        }
         getDataValues();
+
     }
 
     private void getDataValues()
@@ -130,12 +138,12 @@ public class Attendance_student extends Fragment {
           AttendanceData allAttendance = attendance.get(i);
               if(allAttendance.getAttendance().contains("A")) {
 
-                  e = new Event(Color.RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else if(allAttendance.getAttendance().contains("L"))
               {
-                  e = new Event(Color.YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bgContent"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <!-- LEFT TITLE PART -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:paddingBottom="15dp">
+
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/circlecell"
+                android:layout_alignParentStart="true" />
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/subject_home"
+                android:layout_marginLeft="70dp"
+                 />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_home"
+                android:layout_marginLeft="70dp"
+                android:layout_below="@+id/subject_home"
+                android:layout_marginTop="20dp"
+                />
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_delete"-->
+            <!--android:id="@+id/homework_delete_title"-->
+            <!--android:background="@color/cardview_shadow_end_color"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--/>-->
+
+
+
+    </RelativeLayout>
+</LinearLayout>
