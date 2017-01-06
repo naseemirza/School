@@ -33,7 +33,9 @@ import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
 import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.ShareButton.MyConfig;
 import com.lead.infosystems.schooldiary.Suggestion.Suggestion_Complain;
+import com.sromku.simple.fb.SimpleFacebook;
 
 
 public class MainActivity extends AppCompatActivity
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     FragmentTransaction frag;
     UserDataSP userDataSP;
+    static SimpleFacebook fb;
     public static String BACK_STACK_TAG = "tag";
 
     @Override
@@ -60,6 +63,9 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack("main");
         transaction.commit();
 
+        SimpleFacebook.setConfiguration(new MyConfig().getMyConfigs());
+        fb=SimpleFacebook.getInstance(this);
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -71,6 +77,18 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fb=SimpleFacebook.getInstance(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fb.onActivityResult(requestCode,resultCode,data);
     }
 
     private void navViewSet(){
@@ -228,7 +246,8 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_settings) {
 
-        }else if (id == R.id.nav_log_out) {
+        }
+        else if (id == R.id.nav_log_out) {
             String cloudID = userDataSP.getUserData(UserDataSP.CLOUD_ID);
             userDataSP.clearUserData();
             userDataSP.storeCloudId(cloudID);
