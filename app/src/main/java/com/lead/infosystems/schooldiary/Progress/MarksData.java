@@ -6,11 +6,11 @@ package com.lead.infosystems.schooldiary.Progress;
 
 public class MarksData {
 
-    String date;
-    String exam_name;
-    String total_max;
-    String obtained_max;
-    String percentage;
+    private String date;
+    private String exam_name;
+    private String total_max;
+    private String obtained_max;
+    private String percentage;
 
     public MarksData(String date, String exam_name, String total_max, String obtained_max, String percentage) {
         this.date = date;

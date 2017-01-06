@@ -27,13 +27,10 @@ import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
 import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
-import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
-import com.lead.infosystems.schooldiary.StudentDiery;
+import com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -184,7 +181,7 @@ public class FragTabNotifications extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (items.get(position).getType()){
                     case NotificationData.HOME_WORK:
-                        StudentDiery frag1 = new StudentDiery();
+                        StudentDiary_student frag1 = new StudentDiary_student();
                         FragmentTransaction transaction1 = getActivity().getSupportFragmentManager().beginTransaction();
                         transaction1.replace(R.id.main_con,frag1);
                         transaction1.addToBackStack(BACK_STACK_TAG);

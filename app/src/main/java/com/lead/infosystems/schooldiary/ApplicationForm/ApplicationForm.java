@@ -2,6 +2,7 @@ package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -112,7 +113,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new ApplicationFormData(jsonobj.getString("form_name"),jsonobj.getString("form_link")));
+            items.add(new ApplicationFormData(jsonobj.getString("form_name"),jsonobj.getString("form_link"),jsonobj.getString(UserDataSP.NUMBER_USER)));
         }
         myAdaptor.notifyDataSetChanged();
         list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -142,14 +143,13 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
         @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
                 ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
             }
 
-            ApplicationFormData currentItem = items.get(position);
-            final Application_form currentItem = items.get(position);
+            final ApplicationFormData currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
             ImageButton delete = (ImageButton) ItemView.findViewById(R.id.paper_delete);
             name.setText(currentItem.getName());
@@ -174,7 +174,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
                         public void onClick(DialogInterface dialog, int which) {
                             myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
                                 @Override
-                                public void volleyResponce(String result) {
+                                public void volleyResponse(String result) {
                                     Log.e("after delete", result);
 
 

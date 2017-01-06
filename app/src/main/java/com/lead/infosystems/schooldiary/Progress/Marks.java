@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
+import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
@@ -29,7 +30,7 @@ public class Marks extends AppCompatActivity {
 
     public Button btn;
     private MyDataBase myDataBase;
-    SPData spdata;
+    UserDataSP userDataSP;
     ListView marks;
     String subName;
     public static List<MarksData> items = new ArrayList<MarksData>();
@@ -55,8 +56,8 @@ public class Marks extends AppCompatActivity {
         Intent intent = getIntent();
 
         subName = intent.getStringExtra("sub_name");
-        spdata = new SPData(getApplicationContext());
-        getJsonExam(spdata.getData(SPData.SUB));
+        userDataSP = new UserDataSP(getApplicationContext());
+        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
         getSupportActionBar().setTitle(subName);
         marks =(ListView)findViewById(R.id.marks);
         marks.setAdapter(new MyAdaptor());

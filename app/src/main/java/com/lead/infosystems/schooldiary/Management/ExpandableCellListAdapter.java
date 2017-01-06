@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.ramotion.foldingcell.FoldingCell;
 import com.squareup.picasso.Picasso;
 

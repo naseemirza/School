@@ -15,10 +15,11 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,13 +28,9 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import static android.graphics.Color.RED;
-import static android.graphics.Color.YELLOW;
 
 
 public class Attendance_student extends Fragment implements IVolleyResponse{
@@ -41,14 +38,13 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     private MyVolley myVolley;
     private UserDataSP userDataSP;
     private MyDataBase myDatabase;
-    TextView presentView, absentView, leavesView;
     CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
     TextView presentView, absentView, leavesView;
      public final int RED= Color.RED;
     public final int YELLOW = Color.YELLOW;
-    public final int TRANSPARENT = Color.TRANSPARENT;
+
 
     public Attendance_student() {
         // Required empty public constructor
@@ -84,7 +80,7 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     }
 
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
 
         try {
 
@@ -206,8 +202,4 @@ private void getMonthData(List<Event> li)
     leavesView.setText("Total Leaves:"+" "+leaves+"");
 
 }
-
-
-
-
 }

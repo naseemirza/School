@@ -11,7 +11,7 @@ public class SPData {
 
     SharedPreferences.Editor editor;
     SharedPreferences sp;
-    public static final String SUB = "subj";
+
     // public static final String MAK = "marks";
 
 
@@ -20,13 +20,7 @@ public class SPData {
         editor = sp.edit();
     }
 
-    public  void storeData(String data){
-        String[] res = data.split("@@@");
-        editor.putString(SUB,res[0]);
-        // editor.putString(MAK,res[0]);
 
-        editor.commit();
-    }
     public String getData(String key){
         return sp.getString(key,"");
     }

@@ -9,10 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 public class Suggestion_Post extends DialogFragment {
     private MyVolley myVolley;
@@ -46,7 +46,7 @@ public class Suggestion_Post extends DialogFragment {
     private void InsertData() {
         myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void volleyResponce(String result) {
+            public void volleyResponse(String result) {
                 if (result.contains("Done")){
                     Toast.makeText(getActivity().getApplicationContext(),""+result, Toast.LENGTH_SHORT).show();
                 }

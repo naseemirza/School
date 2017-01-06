@@ -59,12 +59,6 @@ import static com.lead.infosystems.schooldiary.Events.EventDailog.SUBMIT_DATE;
 
 public class EventAll extends Fragment {
 
-    private UserDataSP userDataSP;
-    private CompactCalendarView calendarView;
-    private ListView listview;
-    private List<EventsData> eventList = new ArrayList<>();
-    private MyAdapter adapter;
-    private Boolean dateDoubleClick = false;
     private Date selectedDate;
     private MyDataBase myDataBase;
     private UserDataSP userDataSP;
@@ -90,7 +84,7 @@ public class EventAll extends Fragment {
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         adapter = new MyAdapter();
         listview.setAdapter(adapter);
-        getEventData();
+        getData();
         return rootView;
     }
 

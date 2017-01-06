@@ -57,7 +57,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
     public ModelQuestionPapers(String classNumber) {
         this.classNumber = classNumber;
-
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -139,7 +139,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
         @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View ItemView = convertView;
             if (ItemView == null) {
                 ItemView = getActivity().getLayoutInflater().inflate(R.layout.pdf_names, parent, false);
@@ -171,7 +171,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
                             public void onClick(DialogInterface dialog, int which) {
                                 myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
                                     @Override
-                                    public void volleyResponce(String result) {
+                                    public void volleyResponse(String result) {
                                         Log.e("after delete", result);
 
 
@@ -179,7 +179,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
                                         {
                                             items.remove(position);
                                             adaptor.notifyDataSetChanged();
-                                            Toast.makeText(getActivity().getApplicationContext(), ""+result, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity().getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
                                         }
 
                                     }

@@ -165,7 +165,7 @@ public class MyDataBase extends SQLiteOpenHelper {
         onUpgrade(db,0,0);
     }
 /////////// working with chat contacts
-    public void insertIntoCOntact(String userId,String firstName,String lastName){
+    public void insertIntoCOntact(String userId,String firstName,String lastName,String profilePic_link){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CONTACT_USERID,userId);
         contentValues.put(CONTACT_FIRST_NAME,firstName);

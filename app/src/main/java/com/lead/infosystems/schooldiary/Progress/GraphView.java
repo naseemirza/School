@@ -9,6 +9,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
@@ -22,19 +23,21 @@ import java.util.HashSet;
 public class GraphView extends AppCompatActivity {
     BarChart barChart;
     BarData barData;
-    SPData spdata;
+    UserDataSP userDataSP;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph_view);
 
 
-        spdata = new SPData(getApplicationContext());
+        userDataSP = new UserDataSP(getApplicationContext());
         barChart = (BarChart) findViewById(R.id.chart);
         barChart.animateY(2000);
         barChart.invalidate();
-        if ((getJsonExam(spdata.getData(SPData.SUB))!=null) && (getJsonDataSet(spdata.getData(SPData.SUB))!=null)){
-            barData = new BarData(getJsonExam(spdata.getData(SPData.SUB)), getJsonDataSet(spdata.getData(SPData.SUB)));
+        if ((getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS))!=null) &&
+                (getJsonDataSet(userDataSP.getUserData(UserDataSP.SUBJECTS))!=null)){
+            barData = new BarData(getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS)),
+                    getJsonDataSet(userDataSP.getUserData(UserDataSP.SUBJECTS)));
             barChart.setData(barData);
         }
     }

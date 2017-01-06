@@ -15,10 +15,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.ramotion.foldingcell.FoldingCell;
 
 import org.json.JSONArray;
@@ -114,7 +114,7 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
 
     }
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
         try {
             notAvailable.setVisibility(View.GONE);
             Log.e("res....", result);

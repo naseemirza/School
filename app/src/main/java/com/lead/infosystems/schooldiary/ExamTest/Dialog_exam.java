@@ -15,9 +15,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.Model_Paper.FilePath;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;

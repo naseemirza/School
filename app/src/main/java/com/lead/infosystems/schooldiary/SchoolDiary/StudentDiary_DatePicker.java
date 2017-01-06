@@ -13,10 +13,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,7 +131,7 @@ public void submitHomeWork()
 }
 }
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
         Log.e("response", result);
 
         if(result != null){

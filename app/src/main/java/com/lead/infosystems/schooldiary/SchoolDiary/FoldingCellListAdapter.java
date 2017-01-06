@@ -15,10 +15,10 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.text.ParseException;
@@ -133,7 +133,7 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
                      public void onClick(DialogInterface dialog, int which) {
                          myVolley = new MyVolley(getContext(), new IVolleyResponse() {
                              @Override
-                             public void volleyResponce(String result) {
+                             public void volleyResponse(String result) {
                                  Log.e("after delete", result);
 
 
@@ -150,7 +150,6 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
                          myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER) );
                          myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
                          myVolley.setParams("homework_number", item.getHomework_number());
-                         Log.e("item subject", item.getSubject());
                          myVolley.connect();
 
                          dialog.dismiss();

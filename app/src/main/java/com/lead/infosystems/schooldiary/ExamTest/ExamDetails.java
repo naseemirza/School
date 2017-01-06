@@ -19,10 +19,10 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +77,7 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         myVolley.connect();
     }
     @Override
-    public void volleyResponce(String result)
+    public void volleyResponse(String result)
     {
         try {
 
@@ -94,7 +94,8 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         for(int i =0; i<jsonArray.length(); i++)
         {
             JSONObject jobj = jsonArray.getJSONObject(i);
-            exam_detail.add(new ExamData(jobj.getString("exam_name"), jobj.getString("exam_date"), jobj.getString("exam_description"), jobj.getString("exam_pdf_link")));
+            exam_detail.add(new ExamData(jobj.getString("exam_name"), jobj.getString("exam_date")
+                    , jobj.getString("exam_description"), jobj.getString("exam_pdf_link")));
         }
 
         adaptor.notifyDataSetChanged();

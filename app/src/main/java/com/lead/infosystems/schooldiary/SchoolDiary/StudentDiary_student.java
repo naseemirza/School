@@ -15,10 +15,10 @@ import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
-import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.ramotion.foldingcell.FoldingCell;
 
 import org.json.JSONArray;
@@ -67,7 +67,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     }
 
     @Override
-    public void volleyResponce(String result) {
+    public void volleyResponse(String result) {
 
         try {
             notAvailable.setVisibility(View.GONE);

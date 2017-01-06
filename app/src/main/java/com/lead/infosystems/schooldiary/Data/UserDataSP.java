@@ -30,7 +30,7 @@ public class UserDataSP {
     public static final String SCHOOL_FEES = "school_fees";
     public static final String SCHOOL_WEBSITE_LINK = "school_websitelink";
     public static final String IDENTIFICATION = "identification";
-
+    public static final String SUBJECTS = "subjects";
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -140,6 +140,12 @@ public class UserDataSP {
         d = d.replace("][",",");
         editor.putString(QA_DATA,"");
         editor.putString(QA_DATA,d);
+        editor.commit();
+    }
+
+    public  void storeData(String data){
+        String[] res = data.split("@@@");
+        editor.putString(SUBJECTS,res[0]);
         editor.commit();
     }
 
