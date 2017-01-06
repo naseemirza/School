@@ -128,6 +128,7 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
  public void deleteHomework(final int position, final Item item)
  {               android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getContext());
                  alert.setTitle("Alert");
+
                  alert.setMessage("Are you sure to delete record");
                  alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                      @Override
@@ -168,10 +169,6 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
                  });
                  alert.show();
              }
-
-
-
-
 
     // View lookup cache
     public static class ViewHolder {

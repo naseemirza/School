@@ -16,6 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="Facebook SDK"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
             android:name=".Splash"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
@@ -97,7 +102,13 @@
         <activity android:name=".SchoolDiary.StudentDivision" />
         <activity android:name=".SchoolDiary.StudentSubject_list" />
         <activity android:name=".SchoolDiary.StudentDiary_DatePicker" />
-        <activity android:name=".SchoolDiary.HomeworkList_teacher"></activity>
+        <activity android:name=".SchoolDiary.HomeworkList_teacher" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity android:name=".ShareButton.MainPage"></activity>
     </application>
 
 </manifest>
