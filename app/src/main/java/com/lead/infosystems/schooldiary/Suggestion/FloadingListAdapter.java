@@ -3,7 +3,6 @@ package com.lead.infosystems.schooldiary.Suggestion;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.SchoolDiary.FoldingCellListAdapter;
-import com.lead.infosystems.schooldiary.SchoolDiary.Item;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import com.ramotion.foldingcell.FoldingCell;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +24,6 @@ import java.util.List;
 
 public class FloadingListAdapter extends ArrayAdapter<sc_items>{
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
-    private View.OnClickListener defaultRequestBtnClickListener;
 
     public FloadingListAdapter(Context context, List<sc_items> objects) {
         super(context,0, objects);
@@ -45,7 +39,7 @@ public class FloadingListAdapter extends ArrayAdapter<sc_items>{
             viewHolder = new ViewHolder();
             LayoutInflater vi = LayoutInflater.from(getContext());
             cell = (FoldingCell) vi.inflate(R.layout.cell_suggestion, parent, false);
-            cell.initialize(1000, Color.DKGRAY, 2);
+            cell.initialize(1000, Color.DKGRAY, 3);
 
             viewHolder.name_title = (TextView) cell.findViewById(R.id.sugg_name);
             viewHolder.name_content = (TextView)cell.findViewById(R.id.sugg_name_content);
@@ -102,14 +96,6 @@ public class FloadingListAdapter extends ArrayAdapter<sc_items>{
 
     public void registerUnfold(int position) {
         unfoldedIndexes.add(position);
-    }
-
-    public View.OnClickListener getDefaultRequestBtnClickListener() {
-        return defaultRequestBtnClickListener;
-    }
-
-    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
-        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
     }
 
     public static class ViewHolder {

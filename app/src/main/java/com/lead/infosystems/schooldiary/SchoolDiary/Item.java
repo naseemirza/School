@@ -1,20 +1,21 @@
 package com.lead.infosystems.schooldiary.SchoolDiary;
 
-import android.view.View;
-
 public class Item {
-    private String homework_title, homework_contents, lastDate_submission, subject,homeworkDate;
+    private String homework_title, homework_contents, lastDate_submission, subject,homeworkDate, homework_number;
     int userUpload;
 
-    private View.OnClickListener requestBtnClickListener;
-
-    public Item(String homework_title, String homework_contents, String lastDate_submission, String subject, String homeworkDate, String userUpload) {
+    public Item(String homework_title, String homework_contents, String lastDate_submission, String subject, String homeworkDate, String userUpload, String homework_number) {
         this.homework_title = homework_title;
         this.homework_contents = homework_contents;
         this.lastDate_submission = lastDate_submission;
         this.subject=subject;
         this.homeworkDate = homeworkDate;
         this.userUpload = Integer.parseInt(userUpload);
+        this.homework_number = homework_number;
+    }
+
+    public String getHomework_number() {
+        return homework_number;
     }
 
     public int getUserUpload() {
@@ -40,14 +41,5 @@ public class Item {
     public String getHomeworkDate() {
         return homeworkDate;
     }
-
-    public View.OnClickListener getRequestBtnClickListener() {
-        return requestBtnClickListener;
-    }
-
-    public void setRequestBtnClickListener(View.OnClickListener requestBtnClickListener) {
-        this.requestBtnClickListener = requestBtnClickListener;
-    }
-
 
 }

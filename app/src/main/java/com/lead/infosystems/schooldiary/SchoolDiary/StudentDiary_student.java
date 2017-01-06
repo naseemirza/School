@@ -1,5 +1,6 @@
 package com.lead.infosystems.schooldiary.SchoolDiary;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -30,7 +32,8 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     ListView list;
     private ArrayList<Item> items;
     private MyVolley myVolley;
-    UserDataSP userDataSp;
+    private UserDataSP userDataSp;
+    private MyDataBase myDataBase;
     private ProgressBar progressBar;
     private TextView notAvailable;
     public StudentDiary_student() {
@@ -45,6 +48,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
         progressBar = (ProgressBar)view.findViewById(R.id.homework_progress);
         notAvailable = (TextView) view.findViewById(R.id.homeworknot_available);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
+        myDataBase = new MyDataBase(getActivity().getApplicationContext());
         getActivity().setTitle("HOME WORK");
         list = (ListView) view.findViewById(R.id.list_detail);
         getHomeWorkData();
@@ -79,31 +83,41 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
-        items = new ArrayList<>();
-
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER)));
+            myDataBase.insertHomeWorkData(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER), jsonobj.getString("homework_number"));
+            //items.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER), jsonobj.getString("homework_number")));
+        }
+         putHomeWorkDataintoList();
+
+
+    }
+    public void putHomeWorkDataintoList()
+    {
+        Cursor data = myDataBase.getHomeWorkData();
+        Log.e("cursor data", data.toString()+" ..");
+        if(data.getCount()>0)
+        {
+            items = new ArrayList<>();
+            while (data.moveToNext())
+            {
+                Log.e("data 1", data.getString(1));
+                Log.e("data 2", data.getString(2));
+                Log.e("data 3", data.getString(3));
+                Log.e("data 4", data.getString(4));
+                Log.e("data 5", data.getString(5));
+                Log.e("data 6", data.getString(6));
+                Log.e("data 7", data.getString(7));
+
+                items.add(new Item(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), data.getString(6), data.getString(7)));
+            }
 
         }
-        items.get(0).setRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Home Work Data",Toast.LENGTH_SHORT).show();
+        }
         final FoldingCellListAdapter adapter = new FoldingCellListAdapter(getActivity(), items);
-
-        adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "DEFAULT HANDLER FOR ALL BUTTONS", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        adapter.sortData();
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -114,7 +128,6 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
                 adapter.registerToggle(pos);
             }
         });
-
 
     }
 

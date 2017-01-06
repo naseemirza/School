@@ -1,6 +1,9 @@
 package com.lead.infosystems.schooldiary.SchoolDiary;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
@@ -25,12 +27,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.HOMEWORKDATE;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.HOMEWORK_CONTENTS;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.HOMEWORK_NUMBER;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.HOMEWORK_TITLE;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.INTENTFILTER;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.LASTDATE_SUBMISSION;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.NUMBER_USER;
+import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePicker.SUBJECT;
+
 
 public class HomeworkList_teacher extends AppCompatActivity implements IVolleyResponse{
     private FloatingActionButton button;
-    String class_list;
-    String division_list;
-    String subject_list;
+    FoldingCellListAdapter adapter;
+     String className;
+    String divisionName;
+    String subjectName;
     ListView list;
     private ArrayList<Item> items_homework;
     private MyVolley myVolley;
@@ -49,9 +61,9 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
         notAvailable = (TextView)findViewById(R.id.homeworkNotAvailable);
         myVolley = new MyVolley(getApplicationContext(),this);
         Intent intent = getIntent();
-        class_list = intent.getStringExtra(UserDataSP.CLASS);
-        division_list = intent.getStringExtra(UserDataSP.DIVISION);
-        subject_list = intent.getStringExtra("subject");
+        className = intent.getStringExtra(UserDataSP.CLASS);
+        divisionName = intent.getStringExtra(UserDataSP.DIVISION);
+        subjectName = intent.getStringExtra("subject");
         setTitle("HOME WORK");
         list = (ListView)findViewById(R.id.homeworkList);
         button = (FloatingActionButton)findViewById(R.id.addHomeWork);
@@ -59,14 +71,35 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), StudentDiary_DatePicker.class);
-                intent.putExtra("class", class_list);
-                intent.putExtra("division", division_list);
-                intent.putExtra("subject", subject_list);
+                intent.putExtra("class", className);
+                intent.putExtra("division", divisionName);
+                intent.putExtra("subject", subjectName);
                 startActivity(intent);
             }
         });
+
         getHomeWorkList();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        registerReceiver(receiver, new IntentFilter(INTENTFILTER));
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           adapter.addItemNew(new Item(intent.getStringExtra(HOMEWORK_TITLE),intent.getStringExtra(HOMEWORK_CONTENTS),intent.getStringExtra(LASTDATE_SUBMISSION),intent.getStringExtra(SUBJECT), intent.getStringExtra(HOMEWORKDATE), intent.getStringExtra(NUMBER_USER), intent.getStringExtra(HOMEWORK_NUMBER)));
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
 
 
     public void getHomeWorkList()
@@ -74,9 +107,9 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
         progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.HOMEWORK_FETCH);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
-        myVolley.setParams(UserDataSP.CLASS, class_list);
-        myVolley.setParams(UserDataSP.DIVISION, division_list);
-        myVolley.setParams("subject_name", subject_list);
+        myVolley.setParams(UserDataSP.CLASS, className);
+        myVolley.setParams(UserDataSP.DIVISION, divisionName);
+        myVolley.setParams("subject_name", subjectName);
         myVolley.connect();
 
     }
@@ -99,27 +132,12 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
           items_homework = new ArrayList<>();
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items_homework.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER)));
+            items_homework.add(new Item(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER), jsonobj.getString("homework_number")));
 
         }
-        items_homework.get(0).setRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(HomeworkList_teacher.this, "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
 
-            }
-        });
-
-
-        final FoldingCellListAdapter adapter = new FoldingCellListAdapter(HomeworkList_teacher.this, items_homework);
-
-        adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(HomeworkList_teacher.this, "DEFAULT HANDLER FOR ALL BUTTONS", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        adapter = new FoldingCellListAdapter(HomeworkList_teacher.this, items_homework);
+        adapter.sortData();
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -131,10 +149,5 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
             }
         });
 
-
     }
-
-
-
-
 }

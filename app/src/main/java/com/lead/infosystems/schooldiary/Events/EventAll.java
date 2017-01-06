@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -28,6 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
@@ -51,8 +54,8 @@ import static com.lead.infosystems.schooldiary.Events.EventDailog.INTENT_FILTER;
 import static com.lead.infosystems.schooldiary.Events.EventDailog.SUBMIT_DATE;
 
 public class EventAll extends Fragment {
-
-    UserDataSP userDataSP;
+    private MyDataBase myDataBase;
+    private UserDataSP userDataSP;
     CompactCalendarView calendarView;
     ListView listview;
     List<EventsData> eventList = new ArrayList<>();
@@ -70,6 +73,7 @@ public class EventAll extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event_all, container, false);
         userDataSP=new UserDataSP(getActivity());
+        myDataBase = new MyDataBase(getActivity().getApplicationContext());
         listview = (ListView)rootView.findViewById(R.id.list_event);
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
@@ -142,10 +146,29 @@ public class EventAll extends Fragment {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            eventList.add(new EventsData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number")));
+            myDataBase.insertEventData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number"));
+           // eventList.add(new EventsData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number")));
 
         }
+        putEventDataList();
+
+    }
+
+    public void putEventDataList()
+    {
+        Cursor data = myDataBase.getEventData();
+        if(data.getCount()>0)
+        {
+            while(data.moveToNext())
+            {
+                eventList.add(new EventsData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Event Data",Toast.LENGTH_SHORT).show();
+        }
         getDataValues();
+
     }
 
     private void getDataValues()

@@ -36,20 +36,21 @@
             android:layout_marginTop="20dp"
             />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_delete"
-            android:id="@+id/homework_delete_content"
-            android:background="@color/cardview_shadow_end_color"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
-            />
+        <!--<ImageButton-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_delete"-->
+            <!--android:id="@+id/homework_delete_content"-->
+            <!--android:background="@color/cardview_shadow_end_color"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--/>-->
+
 
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="290dp"
         android:background="@color/bgContent"
         android:orientation="vertical">
 
@@ -75,7 +76,20 @@
                 android:layout_below="@+id/lastSubmission_date"
 
                  />
+        <TextView
+            android:id="@+id/content_request_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/btnRequest"
+            android:padding="10dp"
+            android:text="Delete"
+            android:textAlignment="center"
+            android:textColor="@color/mainTextColor"
+            android:visibility="gone"
+            android:textSize="20sp" />
 
-        </LinearLayout>
+
+    </LinearLayout>
     </LinearLayout>
 

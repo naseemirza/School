@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Management;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -31,8 +33,9 @@ import java.util.ArrayList;
 public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
     private MyVolley myVolley;
-    UserDataSP userDataSp;
-     private ExpandableHeightListView list;
+    private UserDataSP userDataSp;
+    private MyDataBase myDataBase;
+    private ExpandableHeightListView list;
     private ProgressBar progressBar;
     private TextView notAvailable;
     FoldingCell firstCell, secondCell;
@@ -54,6 +57,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         // Inflate the layout for this fragment
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
+        myDataBase = new MyDataBase(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
 
         notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
@@ -140,7 +144,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     public void getJsonData(String res) throws JSONException
     {
         JSONArray jsonArray = new JSONArray(res);
-        items = new ArrayList<>();
+
         for(int j = 0 ; j<jsonArray.length(); j++) {
             JSONObject job_data = jsonArray.getJSONObject(j);
                 String firstName = job_data.getString(UserDataSP.FIRST_NAME);
@@ -182,29 +186,35 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                          interests_fieldD.setText(jsonObjDetail.getString("interests_field"));
                          contact_detailD.setText(jsonObjDetail.getString("contact_detail"));
 
-                        } else {
-                            items.add(new ItemDetail(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")));
+                        }
+                     else {
+                         myDataBase.insertManagementData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail"));
+
+                          //  items.add(new ItemDetail(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")));
                         }
                     }
                 }
+        putMdataIntoList();
 
-        items.get(0).setRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
+    }
 
+    public void putMdataIntoList()
+    {
+        Cursor data = myDataBase.getManagementData();
+        items = new ArrayList<>();
+        if(data.getCount()>0)
+        {
+            while (data.moveToNext())
+            {
+               items.add(new ItemDetail(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), data.getString(6), data.getString(7), data.getString(8), data.getString(9)));
             }
-        });
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Management Data",Toast.LENGTH_SHORT).show();
+        }
 
 
         final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(getActivity(), items);
-        adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "DEFAULT HANDLER FOR ALL BUTTONS", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         list.setAdapter(adapter);
         list.setExpanded(true);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

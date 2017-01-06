@@ -1,14 +1,11 @@
 package com.lead.infosystems.schooldiary.Management;
 
-import android.view.View;
-
 /**
  * Created by MADHU on 12/30/2016.
  */
 
 public class ItemDetail {
     String firstName, lastName, mobile_no, gmail_id, profil_pic, designation, qualifications, interests_field, contact_detail;
-    private View.OnClickListener requestBtnClickListener;
     public ItemDetail(String firstName, String lastName, String mobile_no, String gmail_id, String profil_pic, String qualifications, String designation, String interests_field, String contact_detail) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -57,11 +54,4 @@ public class ItemDetail {
         return contact_detail;
     }
 
-    public View.OnClickListener getRequestBtnClickListener() {
-        return requestBtnClickListener;
-    }
-
-    public void setRequestBtnClickListener(View.OnClickListener requestBtnClickListener) {
-        this.requestBtnClickListener = requestBtnClickListener;
-    }
 }

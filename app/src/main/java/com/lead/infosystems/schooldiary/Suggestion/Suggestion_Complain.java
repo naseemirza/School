@@ -9,13 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
-import com.lead.infosystems.schooldiary.Model_Paper.Dialog_model;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
@@ -96,22 +93,8 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
             scItem.add(new sc_items(jsonobj.getString(UserDataSP.FIRST_NAME),jsonobj.getString(UserDataSP.LAST_NAME),jsonobj.getString(UserDataSP.CLASS),jsonobj.getString(UserDataSP.DIVISION),jsonobj.getString("profilePic_link"),jsonobj.getString("subject"),jsonobj.getString("content"),jsonobj.getString("date")));
 
         }
-        scItem.get(0).setRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         final FloadingListAdapter adapter = new FloadingListAdapter(getActivity(), scItem);
-        adapter.setDefaultRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "DEFAULT HANDLER FOR ALL BUTTONS", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

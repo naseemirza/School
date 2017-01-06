@@ -5,7 +5,7 @@
     xmlns:folding-cell="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    folding-cell:additionalFlipsCount="1"
+    folding-cell:additionalFlipsCount="6"
     folding-cell:animationDuration="800"
     folding-cell:backSideColor="@color/cardview_light_background">
 

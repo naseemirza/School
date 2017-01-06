@@ -1,5 +1,6 @@
 package com.lead.infosystems.schooldiary.Attendance;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -35,9 +37,10 @@ import static android.graphics.Color.YELLOW;
 public class Attendance_student extends Fragment implements IVolleyResponse{
 
     private MyVolley myVolley;
+    private UserDataSP userDataSP;
+    private MyDataBase myDatabase;
     TextView presentView, absentView, leavesView;
-    UserDataSP userDataSP;
-     CompactCalendarView calendarView;
+    CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
 
@@ -59,6 +62,7 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         absentView = (TextView)rootView.findViewById(R.id.total_absent);
         leavesView= (TextView)rootView.findViewById(R.id.total_leaves);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
+        myDatabase = new MyDataBase(getActivity().getApplicationContext());
         getAttendanceData();
         return rootView;
     }
@@ -85,14 +89,38 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
-
-
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            attendance.add(new AttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance")));
+            Log.e("year", jsonobj.getString("year"));
+            Log.e("day", jsonobj.getString("day"));
+            Log.e("month", jsonobj.getString("month"));
+
+            myDatabase.insertAttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance"));
 
         }
+        putAttendanceIntoList();
+    }
+
+    public void putAttendanceIntoList()
+    {
+        Cursor data = myDatabase.getAttendanceData();
+        if(data.getCount()>0)
+        {
+            attendance = new ArrayList<>();
+            while (data.moveToNext())
+            {
+                Log.e("data1...", data.getString(1));
+                Log.e("data2...", data.getString(2));
+                Log.e("data3...", data.getString(2));
+                Log.e("data4...", data.getString(4));
+                attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
+            }
+        }
+        else{
+            Toast.makeText(getActivity().getApplicationContext(),"No Attendance Data",Toast.LENGTH_SHORT).show();
+        }
         getDataValues();
+
     }
 
     private void getDataValues()

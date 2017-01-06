@@ -35,7 +35,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class ExamDetails extends Fragment implements IVolleyResponse{
-     UserDataSP userDataSp;
+    private UserDataSP userDataSp;
     private MyVolley myVolley;
     ListView examList;
     private MyAdaptor adaptor;

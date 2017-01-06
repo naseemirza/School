@@ -18,12 +18,26 @@ import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.MyVolley;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 
 public class StudentDiary_DatePicker extends AppCompatActivity implements IVolleyResponse{
-    String class_list;
-    String division_list;
-    String subject_list;
+    public static final String INTENTFILTER ="intent_filter";
+    public static final String HOMEWORK_NUMBER ="homework_number";
+    public static final String HOMEWORK_TITLE= "homework_title";
+    public static final String HOMEWORK_CONTENTS = "homework_contents";
+    public static final String LASTDATE_SUBMISSION= "lastDate_submission";
+    public static final String SUBJECT = "subject";
+    public static final String HOMEWORKDATE = "homeworkDate";
+    public static final String NUMBER_USER = "number_user";
+
+    String className;
+    String divisionName;
+    String subjectName;
+    String lastDate_submission;
     UserDataSP userDataSp;
     int year_h, month_h, day_h;
     static final int DIALOG_ID = 0;
@@ -37,9 +51,9 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
         setContentView(R.layout.activity_student_diary__date_picker);
         userDataSp = new UserDataSP(this);
         Intent intent = getIntent();
-        class_list = intent.getStringExtra("class");
-        division_list = intent.getStringExtra("division");
-        subject_list = intent.getStringExtra("subject");
+        className = intent.getStringExtra("class");
+        divisionName = intent.getStringExtra("division");
+        subjectName = intent.getStringExtra("subject");
         editTitle = (EditText)findViewById(R.id.title_home);
         editContent = (EditText)findViewById(R.id.content_home);
         submitB = (Button)findViewById(R.id.submit_home);
@@ -102,12 +116,13 @@ public void submitHomeWork()
     Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
 }
     else {
+    lastDate_submission = year_h + "-" + month_h + "-" + day_h + " " + 00 + ":" + 00 + ":" + 00;
     myVolley.setUrl(Utils.HOMEWORK_INSERT);
     myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
-    myVolley.setParams("class", class_list);
-    myVolley.setParams("division", division_list);
-    myVolley.setParams("subject_name", subject_list);
-    myVolley.setParams("lastDate_submission", year_h + "-" + month_h + "-" + day_h + " " + 00 + ":" + 00 + ":" + 00);
+    myVolley.setParams("class", className);
+    myVolley.setParams("division", divisionName);
+    myVolley.setParams("subject_name", subjectName);
+    myVolley.setParams("lastDate_submission", lastDate_submission);
     myVolley.setParams("homework_title", editTitle.getText().toString());
     myVolley.setParams("homework_content", editContent.getText().toString());
 
@@ -117,17 +132,46 @@ public void submitHomeWork()
 }
     @Override
     public void volleyResponce(String result) {
+        Log.e("response", result);
 
-            Log.e("response", result);
-        if(result.equals("null")) {
+        if(result != null){
+            if(!result.contains("ERROR")){
+                Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
+                try {
 
-            Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+                    parseData(result, editTitle.getText().toString(), editContent.getText().toString(), subjectName, lastDate_submission );
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                finish();
+            }
         }
-        else
-        {
-            Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
+
+
+    }
+    private void parseData(String re,  String homeTitle, String homeContent,  String subject, String lastDate ) throws JSONException {
+        JSONArray json = new JSONArray(re);
+        String homeNumber = null;
+        String homeDate = null;
+
+        for (int i = 0; i <= json.length() - 1; i++) {
+            JSONObject jsonobj = json.getJSONObject(i);
+            homeNumber = jsonobj.getString(HOMEWORK_NUMBER);
+            homeDate = jsonobj.getString(HOMEWORKDATE);
+
 
         }
+        Intent intent = new Intent(INTENTFILTER);
+        intent.putExtra(HOMEWORK_TITLE, homeTitle);
+        intent.putExtra(HOMEWORK_CONTENTS,homeContent );
+        intent.putExtra(LASTDATE_SUBMISSION, lastDate);
+        intent.putExtra(HOMEWORK_NUMBER, homeNumber );
+        intent.putExtra(HOMEWORKDATE, homeDate);
+        intent.putExtra(SUBJECT, subject);
+        intent.putExtra(NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
+        sendBroadcast(intent);
+
+
     }
 
 

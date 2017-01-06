@@ -29,7 +29,7 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
     UserDataSP userDataSP;
     private MyVolley myVolley;
     ListView list_div;
-    String class_list;
+    String className;
     ArrayList<String> division = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
 
 
         Intent intent = getIntent();
-        class_list = intent.getStringExtra("class");
+        className = intent.getStringExtra("class");
 
         list_div=(ListView)findViewById(R.id.list_div);
 
@@ -52,7 +52,7 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
     public void getDivisionData(){
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-        myVolley.setParams("class", class_list);
+        myVolley.setParams("class", className);
         myVolley.connect();
 
     }
@@ -89,7 +89,7 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
 
                 Intent intent = new Intent(view.getContext(), StudentSubject_list.class);
                 intent.putExtra("division", division.get(position));
-                intent.putExtra("class", class_list);
+                intent.putExtra("class", className);
                 startActivity(intent);
 
             }

@@ -21,6 +21,7 @@ import com.lead.infosystems.schooldiary.ServerConnection.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class StudentSubject_list extends AppCompatActivity implements IVolleyResponse{
@@ -28,8 +29,8 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
 
     private MyVolley myVolley;
     ListView list_subject;
-    String class_list;
-    String division_list;
+    String className;
+    String divisionName;
     ArrayList<String> subjects = new ArrayList<>();
 
     @Override
@@ -38,8 +39,8 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
         setContentView(R.layout.activity_student_subject_list);
 
         Intent intent = getIntent();
-        class_list = intent.getStringExtra("class");
-        division_list = intent.getStringExtra("division");
+        className = intent.getStringExtra("class");
+        divisionName = intent.getStringExtra("division");
         list_subject=(ListView)findViewById(R.id.list_subject);
         userDataSP=new UserDataSP(this);
         myVolley = new MyVolley(getApplicationContext(), this);
@@ -54,8 +55,8 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
     public void getSubjectData(){
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-        myVolley.setParams("class", class_list);
-        myVolley.setParams("division", division_list);
+        myVolley.setParams("class", className);
+        myVolley.setParams("division", divisionName);
         myVolley.connect();
 
     }
@@ -88,8 +89,8 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
                 Intent intent = new Intent(view.getContext(), HomeworkList_teacher.class);
-                intent.putExtra("class", class_list);
-                intent.putExtra("division", division_list);
+                intent.putExtra("class", className);
+                intent.putExtra("division", divisionName);
                 intent.putExtra("subject", subjects.get(position));
                 startActivity(intent);
                 Log.e("res", subjects.get(position).toString());

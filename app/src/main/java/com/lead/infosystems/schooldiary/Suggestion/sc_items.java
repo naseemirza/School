@@ -1,7 +1,5 @@
 package com.lead.infosystems.schooldiary.Suggestion;
 
-import android.view.View;
-
 /**
  * Created by Naseem on 02-01-2017.
  */
@@ -9,10 +7,6 @@ import android.view.View;
 public class sc_items {
 
     private String first_name,last_name,class_t,division_t,profilePic_link,subject,content,date;
-
-
-    private View.OnClickListener requestBtnClickListener;
-
 
     public sc_items(String first_name, String last_name, String class_t, String division_t, String profilePic_link, String subject, String content, String date) {
         this.first_name = first_name;
@@ -56,10 +50,5 @@ public class sc_items {
     public String getDate() {
         return date;
     }
-    public View.OnClickListener getRequestBtnClickListener() {
-        return requestBtnClickListener;
-    }
-    public void setRequestBtnClickListener(View.OnClickListener requestBtnClickListener) {
-        this.requestBtnClickListener = requestBtnClickListener;
-    }
+
 }
