@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -47,7 +48,7 @@ public class MainTabAdapter extends Fragment {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.fragment_main_frag, container, false);
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
-        adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         setupViewPager(viewPager);
         fab = (FloatingActionButton) rootview.findViewById(R.id.post_new_fab);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabs);

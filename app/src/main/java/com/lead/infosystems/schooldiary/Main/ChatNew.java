@@ -1,5 +1,6 @@
 package com.lead.infosystems.schooldiary.Main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -23,10 +24,13 @@ import android.widget.TextView;
 import com.lead.infosystems.schooldiary.Data.ChatContact;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +50,7 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
     private ProgressBar progressBar;
     private ListView list;
     private MyVolley myVolley;
+    private Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +61,9 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
         userDataSP = new UserDataSP(getApplicationContext());
         dataBase = new MyDataBase(getApplicationContext());
         myVolley = new MyVolley(getApplicationContext(),this);
+        activity = this;
         populateListAdaptor();
-        getDataToList();
+        getDataToList(true);
     }
 
     private void connect(){
@@ -73,34 +79,35 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
 
     @Override
     public void volleyResponse(String result) {
-        try {
-            JSONArray jsonArray = new JSONArray(result);
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            try {
+                JSONArray jsonArray = new JSONArray(result);
+                for(int i=0;i<jsonArray.length();i++){
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                dataBase.insertIntoCOntact(jsonObject.getString("number_user")
-                        ,jsonObject.getString("first_name")
-                        ,jsonObject.getString("last_name"));
+                    dataBase.insertIntoCOntact(jsonObject.getString(UserDataSP.NUMBER_USER)
+                            ,jsonObject.getString(UserDataSP.FIRST_NAME)
+                            ,jsonObject.getString(UserDataSP.LAST_NAME)
+                            ,jsonObject.getString(UserDataSP.PROPIC_URL));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        getDataToList();
-        progressBar.setVisibility(View.GONE);
+            getDataToList(false);
+            progressBar.setVisibility(View.GONE);
     }
 
 
-    private void getDataToList(){
-        items.clear();
+    private void getDataToList(boolean reload){
         if(dataBase.getContacts().getCount()>0){
+            items.clear();
             Cursor data= dataBase.getContacts();
             while (data.moveToNext()){
                 items.add(new ChatContact(data.getString(1)
-                        ,data.getString(2),data.getString(3)));
+                        ,data.getString(2),data.getString(3), data.getString(4)));
             }
             myAdaptor.notifyDataSetChanged();
         }else{
-            connect();
+            if(reload){connect();}
         }
     }
     private void populateListAdaptor() {
@@ -116,6 +123,7 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
                 Intent intent = new Intent(getApplicationContext(),Chat.class);
                 intent.putExtra(Chat.USER_ID,displayedList.get(position).getUserID());
                 intent.putExtra(Chat.FIRST_NAME,displayedList.get(position).getFirstName());
+                intent.putExtra(Chat.PROPIC_LINK,displayedList.get(position).getProfilePic_link());
                 startActivity(intent);
             }
         });
@@ -147,7 +155,11 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
 
             TextView name = (TextView) itemView.findViewById(R.id.title);
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
-
+            Picasso.with(getApplicationContext())
+                    .load(Utils.SERVER_URL+currentItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                    .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
+                            NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                    .into(propic);
             name.setText(currentItem.getName());
 
             return itemView;
@@ -174,7 +186,8 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
                             String data = orignalList.get(i).getName();
                             if (data.toLowerCase().startsWith(constraint.toString())) {
                                 filteredList.add(new ChatContact(orignalList.get(i).getUserID()
-                                        ,orignalList.get(i).getFirstName(),orignalList.get(i).getLastName()));
+                                        ,orignalList.get(i).getFirstName(),orignalList.get(i).getLastName()
+                                        , orignalList.get(i).getProfilePic_link()));
                             }
                         }
                         results.count = filteredList.size();

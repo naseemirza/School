@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <de.hdodenhof.circleimageview.CircleImageView
-                android:src="@drawable/school_boy"
+                android:src="@drawable/defaultpropic"
                 card_view:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="8dp"
                 card_view:layout_constraintLeft_toLeftOf="parent"

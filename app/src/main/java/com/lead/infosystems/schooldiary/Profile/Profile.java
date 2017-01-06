@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -18,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,18 +38,17 @@ import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Main.PostAdaptor;
 import com.lead.infosystems.schooldiary.Main.PostAnimData;
 import com.lead.infosystems.schooldiary.Main.PostComments;
-import com.lead.infosystems.schooldiary.Main.PostDialog;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
-import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
 import org.json.JSONArray;
@@ -55,8 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -72,14 +72,14 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
     private boolean noMorePost = false;
     private MyVolley myVolley;
     private UserDataSP userDataSP;
-    Toolbar toolbar;
-    ImageView proPic;
-    ImageButton proPicChange;
+    private Toolbar toolbar;
+    private ImageView proPic;
+    private ImageButton proPicChange;
     private Activity activity;
     private Bitmap newProPic;
     private CompressImage compressImage;
     private ProgressBar proPicProgressBar;
-
+    private Target target;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,31 +141,62 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
         switch(requestCode) {
             case 0:
                 if(resultCode == activity.RESULT_OK){
-                    newProPic = Utils.getCameraImage();
-                    compressImage.setImg(newProPic);
-                    compressImage.execute();
+                    File f = new File(Environment.getExternalStorageDirectory()
+                            .toString());
+                    for (File temp : f.listFiles()) {
+                        if (temp.getName().equals(Utils.TEMP_IMG)) {
+                            f = temp;
+                            break;
+                        }
+                    }
+                   crop(Uri.fromFile(f));
                 }
                 break;
             case 1:
                 if(resultCode == activity.RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
-                    InputStream img = null;
-                    try {
+                    crop(selectedImage);
+                }
+                break;
 
-                        img  = activity.getContentResolver().openInputStream(selectedImage);
-                    } catch (FileNotFoundException e) {
+            case 99:
+                if(resultCode == activity.RESULT_OK){
+                    try {
+                        newProPic = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData());
+                        if(newProPic != null){
+                            compressImage.setImg(newProPic);
+                            compressImage.execute();
+                        }
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(img != null){
-                        newProPic = BitmapFactory.decodeStream(img);
-                        compressImage.setImg(newProPic);
-                        compressImage.execute();
-                    }
-                }
 
+                }
                 break;
 
         }}
+
+    private void crop(Uri uri){
+        String appPackageName = "com.android.camera.action.CROP";
+
+        try {
+            File file = new File(android.os.Environment
+                    .getExternalStorageDirectory(), Utils.TEMP_IMG);
+            Intent cropIntent = new Intent(appPackageName);
+            cropIntent.setDataAndType(uri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 480);
+            cropIntent.putExtra("outputY", 480);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+            startActivityForResult(cropIntent, 99);
+        }catch (Exception e){
+        Toast.makeText(getApplicationContext(),"You Dont have any image cropping app installed..",Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.plus")));
+        }
+    }
     @Override
     public void compressedImageFile(File imageFile) {
         if(imageFile != null){
@@ -206,8 +237,9 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
                         proPic.setBackgroundDrawable(Drawable.createFromPath(path));
                         Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_SHORT).show();
                         proPic.setAlpha(1f);
-                        Picasso.with(getApplicationContext()).invalidate(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL));
-                        loadProPic();
+
+
+                        loadProPic(true);
                     }
 
                     @Override
@@ -228,7 +260,7 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         proPic = (ImageView) findViewById(R.id.pro_pic_toolbar);
         if(userDataSP.getUserData(UserDataSP.PROPIC_URL).contains("jpeg")){
-           loadProPic();
+           loadProPic(false);
         }
         proPicProgressBar = (ProgressBar) findViewById(R.id.propic_progress);
         proPicProgressBar.setVisibility(View.GONE);
@@ -262,32 +294,52 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
         });
     }
 
-    private void loadProPic(){
-        Picasso.with(getApplicationContext())
-                .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        proPic.setBackgroundDrawable(new BitmapDrawable(bitmap));
-                    }
+    private void loadProPic(boolean refresh){
+        proPic.setMinimumWidth(getWindowManager().getDefaultDisplay().getHeight());
+        target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                proPic.setBackgroundDrawable(new BitmapDrawable(bitmap));
+            }
 
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                Log.e("picasso","fail");
+                proPic.setBackgroundDrawable(getResources().getDrawable(R.drawable.defaultpropic));
+            }
 
-                    }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                proPic.setBackgroundDrawable(placeHolderDrawable);
+            }
+        };
 
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
+        if(refresh){
+            Picasso.with(getApplicationContext())
+                    .invalidate(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL));
+            Picasso.with(getApplicationContext())
+                    .invalidate(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb"));
+            Picasso.with(getApplicationContext())
+                    .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
+                    .placeholder(R.drawable.defaultpropic)
+                    .networkPolicy(
+                            ServerConnect.checkInternetConenction(this) ?
+                                    NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                    .into(target);
+            recyclerView.setAdapter(postAdaptor);
+        }else{
+            Picasso.with(getApplicationContext())
+                    .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
+                    .placeholder(R.drawable.defaultpropic)
+                    .into(target);
+        }
     }
 
     @Override
     public void onStart() {
         itemlist.clear();
         noMorePost = false;
-        if(ServerConnect.checkInternetConenction(this)&& !backPressed){
+        if(ServerConnect.checkInternetConenction(this) && !backPressed){
             refresh();
         }else{
             if(userDataSP.getPostData()!=""){
@@ -360,7 +412,8 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
                     }
                 }
 
-                itemlist.add(new Post_Data(jsonPostObj.getString("number_user"),jsonPostObj.getString("first_name"), jsonPostObj.getString("last_name"),
+                itemlist.add(new Post_Data(jsonPostObj.getString(UserDataSP.NUMBER_USER),jsonPostObj.getString(UserDataSP.PROPIC_URL),
+                        jsonPostObj.getString(UserDataSP.FIRST_NAME), jsonPostObj.getString(UserDataSP.LAST_NAME),
                         jsonPostObj.getString("post_id"), jsonPostObj.getString("text_message"),
                         jsonPostObj.getString("src_link"), jsonPostObj.getString("date"),isLiked,likedStudents,
                         jsonPostObj.getString("num_comment")));

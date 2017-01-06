@@ -11,53 +11,49 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseMessagingService;
 import com.lead.infosystems.schooldiary.Data.ChatItemData;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Chat extends AppCompatActivity {
 
     public static String USER_ID = "user_id";
     public static String CHAT_ID = "chat_id";
     public static String FIRST_NAME = "first_name";
+    public static String PROPIC_LINK = "profilePic_link";
     public static String TO = "to_user";
     public static String FROM = "from_user";
     public static String TIME = "time";
     public static String MESSAGE = "message";
 
-    private String myName,myId,userID,firstName,chatId;
+    public static boolean ACTIVITY_ACTIVE = false;
+
+    private String myName,myId,userID,firstName,chatId,propicLink;
 
 
     private List<ChatItemData> items = new ArrayList<>();
@@ -67,6 +63,7 @@ public class Chat extends AppCompatActivity {
     private MyDataBase myDataBase;
     private EditText chatText;
     private FloatingActionButton sendBtn;
+    private ImageView propic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +71,8 @@ public class Chat extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         TextView title = (TextView) toolbar.findViewById(R.id.title);
+        propic = (ImageView) toolbar.findViewById(R.id.propic);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -104,6 +103,18 @@ public class Chat extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ACTIVITY_ACTIVE = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ACTIVITY_ACTIVE = false;//got to check
+    }
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -120,9 +131,16 @@ public class Chat extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         userID = extras.getString(USER_ID);
         firstName = extras.getString(FIRST_NAME);
+        propicLink = extras.getString(PROPIC_LINK);
+        Picasso.with(getApplicationContext())
+                .load(Utils.SERVER_URL+propicLink.replace("profilepic","propic_thumb"))
+                .networkPolicy(ServerConnect.checkInternetConenction(this) ?
+                        NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                .into(propic);
 
         myId = userDataSP.getUserData(userDataSP.NUMBER_USER);
         myName = userDataSP.getUserData(userDataSP.FIRST_NAME)+" "+userDataSP.getUserData(userDataSP.LAST_NAME);
+
 
         if(extras.getString(CHAT_ID) != null && userID == null){
             chatId = extras.getString(CHAT_ID);
@@ -142,7 +160,7 @@ public class Chat extends AppCompatActivity {
                     if(jsonObject.getBoolean("success")){
                         chatText.setText("");
                         myDataBase.newChat(jsonObject.getString(CHAT_ID),myName,myId,firstName
-                                ,userID,jsonObject.getString(TIME),msg);
+                                ,userID,jsonObject.getString(TIME),msg, jsonObject.getString("profilePic_link"));
                         myDataBase.chatMessage(jsonObject.getString(CHAT_ID),myId,msg,jsonObject.getString(TIME));
 
                         getDataIntoList(jsonObject.getString(CHAT_ID));

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,6 +151,7 @@ public class FragTabNotifications extends Fragment {
             TextView title = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
             TextView text = (TextView) itemView.findViewById(R.id.text);
+            ((ImageView) itemView.findViewById(R.id.profile_image)).setVisibility(View.GONE);
             String title_text = current.getType().replace("_"," ");
             title.setText(title_text);
             date.setText(Utils.getTimeString(current.getDate()));

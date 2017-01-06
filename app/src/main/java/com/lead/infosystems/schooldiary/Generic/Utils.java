@@ -1,10 +1,19 @@
 package com.lead.infosystems.schooldiary.Generic;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
+import android.util.Log;
 
 import java.io.File;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -89,7 +98,6 @@ public class Utils {
     }
 
     public static Bitmap getCameraImage(){
-        Bitmap img = null;
         File f = new File(Environment.getExternalStorageDirectory()
                 .toString());
         for (File temp : f.listFiles()) {
@@ -98,13 +106,41 @@ public class Utils {
                 break;
             }
         }
+        return  orientation(f.getAbsolutePath());
+    }
+    public static String getRealPathFromURI(Context context,Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
+    public static Bitmap orientation(String path){
+        Bitmap img;
         try {
             BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-            img = BitmapFactory.decodeFile(f.getAbsolutePath(),
+            img = BitmapFactory.decodeFile(path,
                     btmapOptions);
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,1);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            img = Bitmap.createBitmap(img,0,0,img.getWidth(),img.getHeight(),matrix,true);
+            return img;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return img;
     }
 }

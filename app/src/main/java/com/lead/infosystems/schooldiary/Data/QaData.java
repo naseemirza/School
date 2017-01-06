@@ -5,15 +5,20 @@ package com.lead.infosystems.schooldiary.Data;
  */
 
 public class QaData {
-    private String student_number, name, questionText, qNum, numAnswers,time;
+    private String student_number, name, questionText, qNum, numAnswers,time,profilePic_link;
 
-    public QaData(String student_number, String name, String questionText, String qNum, String numAnswers, String time) {
+    public QaData(String student_number, String profilePic_link, String name, String questionText, String qNum, String numAnswers, String time) {
         this.student_number = student_number;
+        this.profilePic_link = profilePic_link;
         this.name = name;
         this.questionText = questionText;
         this.qNum = qNum;
         this.numAnswers = numAnswers;
         this.time = time;
+    }
+
+    public String getProfilePic_link() {
+        return profilePic_link;
     }
 
     public String getUserNumber() {

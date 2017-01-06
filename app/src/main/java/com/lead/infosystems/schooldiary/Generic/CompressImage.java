@@ -56,12 +56,13 @@ public class CompressImage extends AsyncTask<Void,Void,Boolean>{
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             img.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
             int size = byteArrayOutputStream.toByteArray().length/1024;
+            Log.e("initial",(byteArrayOutputStream.toByteArray().length / 1024)+"");
             if(size>MAX_IMAGE_SIZE) {
                 Bitmap b = img;
                 img = null;
                 int wr = 16;
                 int hr = 9;
-                int res = 55;
+                int res = 70;
                 int quality = 100;
                 img = resize(b, wr*res, hr*res);
                 do {
@@ -72,9 +73,10 @@ public class CompressImage extends AsyncTask<Void,Void,Boolean>{
                     img = BitmapFactory.decodeByteArray(byteArrayOutputStream.toByteArray(),0,
                             byteArrayOutputStream.toByteArray().length);
                     size = byteArrayOutputStream.toByteArray().length / 1024;
+                    Log.e("imageSize",(byteArrayOutputStream.toByteArray().length / 1024)+"");
                     quality = quality - 10;
                     if(quality < 70){
-                        res = res -10;
+                        res = res -3;
                         img = resize(img,wr *res, hr*res );
                         quality = 100;}
                 }while (size > MAX_IMAGE_SIZE);
@@ -83,6 +85,7 @@ public class CompressImage extends AsyncTask<Void,Void,Boolean>{
                 imagefile = new File(Environment.getExternalStorageDirectory(),Utils.TEMP_IMG);
                 FileOutputStream fileOutputStream = new FileOutputStream(imagefile.getPath());
                 fileOutputStream.write(byteArrayOutputStream.toByteArray());
+                Log.e("final size",(byteArrayOutputStream.toByteArray().length/1024)+"");
                 fileOutputStream.flush();
                 fileOutputStream.close();
             } catch (FileNotFoundException e) {

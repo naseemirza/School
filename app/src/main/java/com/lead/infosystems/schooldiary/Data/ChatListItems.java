@@ -8,10 +8,10 @@ import android.util.Log;
 
 public class ChatListItems {
 
-    private String chat_id, user1Name,user1ID, user2Name,user2ID, date, last_message;
+    private String chat_id, user1Name,user1ID, user2Name,user2ID, date, last_message, profilePic_link;
 
     public ChatListItems(String chat_id, String user1Name, String user1ID, String user2Name
-            , String user2ID, String last_message, String date) {
+            , String user2ID, String last_message, String date, String profilePic_link) {
         this.chat_id = chat_id;
         this.user1Name = user1Name;
         this.user1ID = user1ID;
@@ -19,6 +19,11 @@ public class ChatListItems {
         this.user2ID = user2ID;
         this.date = date;
         this.last_message = last_message;
+        this.profilePic_link = profilePic_link;
+    }
+
+    public String getProfilePic_link() {
+        return profilePic_link;
     }
 
     public String getChat_id() {

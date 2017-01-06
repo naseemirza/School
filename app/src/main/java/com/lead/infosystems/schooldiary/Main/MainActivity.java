@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Events.EventAll;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Login;
 import com.lead.infosystems.schooldiary.MainSearch;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
@@ -36,6 +38,8 @@ import com.lead.infosystems.schooldiary.Progress.Progress_Report;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.StudentDiery;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String BACK_STACK_TAG = "tag";
     public static String BACK_STACK_TMQP = "tag_tmqp";
     public static String BACK_TAG ;
+    private ImageView propic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +101,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     private void navViewSet(String s){
         View holder = navigationView.getHeaderView(0);
+        propic = (ImageView) holder.findViewById(R.id.propic);
+        Picasso.with(getApplicationContext())
+                .load(Utils.SERVER_URL+(userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb")))
+                .networkPolicy(ServerConnect.checkInternetConenction(this)?
+                        NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                .into(propic);
         TextView name = (TextView) holder.findViewById(R.id.title);
         TextView rollnum = (TextView) holder.findViewById(R.id.rollnum);
         name.setText(userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME));
         rollnum.setText(s);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Picasso.with(getApplicationContext())
+                .load(Utils.SERVER_URL+(userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb")))
+                .networkPolicy(ServerConnect.checkInternetConenction(this)?
+                        NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                .into(propic);
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();

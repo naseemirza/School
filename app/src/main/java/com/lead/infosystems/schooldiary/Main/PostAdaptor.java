@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.lead.infosystems.schooldiary.IPostInterface;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -45,7 +47,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private UserDataSP userDataSP;
     private boolean canClickLike = true;
     private boolean isMoreLoading = false;
-    private int visibleThreshold = 3;
+    private int visibleThreshold = 1;
     int firstVisibleItem, visibleItemCount, totalItemCount;
     public static PostAnimData postAnimData;
 
@@ -123,6 +125,16 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             final Bitmap[] postImageBitmap = new Bitmap[1];
             final boolean[] isImageAvailable = new boolean[1];
             final Post_Data singleItem = (Post_Data) itemList.get(position);
+            final ImageView propic = (ImageView) ((StudentViewHolder) holder).v.findViewById(R.id.propic);
+            if(singleItem.getPropicLink() != null && singleItem.getPropicLink().contains("jpeg")){
+                Picasso.with(context).load(Utils.SERVER_URL+singleItem.getPropicLink().replace("profilepic","propic_thumb"))
+                        .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
+                                NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                        .placeholder(R.drawable.defaultpropic)
+                        .into(propic);
+            }else{
+                propic.setImageDrawable(activity.getResources().getDrawable(R.drawable.defaultpropic));
+            }
             ((StudentViewHolder) holder).name.setText(singleItem.getFirst_name() + " " + singleItem.getLast_name());
             ((StudentViewHolder) holder).time.setText(Utils.getTimeString(singleItem.gettimeString()));
             ((StudentViewHolder) holder).text.setText(singleItem.getText_message());
@@ -259,9 +271,11 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public LinearLayout like,comment;
         public CardView postCardView;
         public ImageButton deleteBtn;
+        public View v;
 
         public StudentViewHolder(View v) {
             super(v);
+            this.v = v;
             propic = (ImageView) v.findViewById(R.id.propic);
             postCardView = (CardView) v.findViewById(R.id.post_card_view);
             name = (TextView) v.findViewById(R.id.title);

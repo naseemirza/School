@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:src="@drawable/school_boy"
+        android:src="@drawable/defaultpropic"
         android:adjustViewBounds="false"
         android:id="@+id/propic"
         android:layout_marginTop="8dp"

@@ -18,7 +18,7 @@
         android:layout_marginTop="20dp"
         android:id="@+id/propic"
         android:layout_weight="0.56"
-        android:src="@drawable/school_boy"
+        android:src="@drawable/defaultpropic"
         />
 
     <TextView

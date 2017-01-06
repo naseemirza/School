@@ -31,6 +31,8 @@ import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +122,16 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof StudentViewHolder) {
             final QaData singleItem = itemList.get(position);
+            final ImageView propic = (ImageView) ((StudentViewHolder) holder).v.findViewById(R.id.profile_image);
+            if(singleItem.getProfilePic_link() != null && singleItem.getProfilePic_link().contains("jpeg")){
+                Picasso.with(activity.getApplicationContext())
+                        .load(Utils.SERVER_URL+singleItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                        .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
+                                NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                        .into(propic);
+            }else{
+                propic.setImageDrawable(activity.getResources().getDrawable(R.drawable.defaultpropic));
+            }
             ((StudentViewHolder) holder).name.setText(singleItem.getName());
             ((StudentViewHolder) holder).time.setText(singleItem.getTime());
             ((StudentViewHolder) holder).question_text.setText(singleItem.getQuestionText());
@@ -129,7 +141,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                     onLoadMoreListener.onAnswerClick(new QaAnimData(((StudentViewHolder) holder).name
                             ,((StudentViewHolder) holder).time
                             ,((StudentViewHolder) holder).question_text
-                            ,((StudentViewHolder) holder).propic
+                            ,propic
                             ,singleItem.getqNum()));
                 }
             });
@@ -213,25 +225,27 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                 }
             });
         } else {
-            itemList.remove(itemList.size() - 1);
-            notifyItemRemoved(itemList.size());
+            if(itemList.size()>0){
+                itemList.remove(itemList.size() - 1);
+                notifyItemRemoved(itemList.size());
+            }
         }
     }
 
     static class StudentViewHolder extends RecyclerView.ViewHolder {
         TextView name, time, question_text;
         Button answerBtn;
-        ImageView propic;
         ImageButton answerDelete;
+        View v;
 
         public StudentViewHolder(View v) {
             super(v);
             name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
             question_text = (TextView) v.findViewById(R.id.text);
-            propic = (ImageView) v.findViewById(R.id.profile_image);
             answerBtn = (Button) v.findViewById(R.id.answer_btn);
             answerDelete = (ImageButton) v.findViewById(R.id.delete_answer);
+            this.v = v;
         }
     }
 

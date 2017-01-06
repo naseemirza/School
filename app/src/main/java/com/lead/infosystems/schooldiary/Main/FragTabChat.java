@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Config;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,14 +38,22 @@ import com.lead.infosystems.schooldiary.CloudMessaging.MyFirebaseMessagingServic
 import com.lead.infosystems.schooldiary.Data.ChatListItems;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,6 +127,7 @@ public class FragTabChat extends Fragment {
                 Intent intent = new Intent(getActivity(),Chat.class);
                 intent.putExtra(Chat.USER_ID,items.get(position).getOtherUserId(userDataSP.getUserData(UserDataSP.NUMBER_USER)));
                 intent.putExtra(Chat.FIRST_NAME,items.get(position).getChatUserName(myName));
+                intent.putExtra(Chat.PROPIC_LINK,items.get(position).getProfilePic_link());
                 startActivity(intent);
             }
         });
@@ -133,13 +146,23 @@ public class FragTabChat extends Fragment {
             if(itemView == null){
                 itemView = getActivity().getLayoutInflater().inflate(R.layout.messageview_item,parent,false);
             }
-            ChatListItems currentItem = items.get(position);
+            final ChatListItems currentItem = items.get(position);
 
             TextView name = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
             TextView message = (TextView) itemView.findViewById(R.id.text);
-            ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
+            final ImageView propic = (ImageView) itemView.findViewById(R.id.profile_image);
 
+            if(currentItem.getProfilePic_link() != null && currentItem.getProfilePic_link().contains("jpeg")){
+                Picasso.with(getActivity().getApplicationContext())
+                        .load(Utils.SERVER_URL+currentItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                        .placeholder(R.drawable.defaultpropic)
+                        .networkPolicy(ServerConnect.checkInternetConenction(getActivity()) ?
+                                NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                        .into(propic);
+            }else{
+                propic.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.defaultpropic));
+            }
 
             name.setText(currentItem.getChatUserName(myName));
             date.setText(Utils.getTimeString(currentItem.getDate()));
@@ -156,50 +179,33 @@ public class FragTabChat extends Fragment {
     }
 
     private void connect(){
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.CHAT_LIST,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        items.clear();
-                        if(response != null && !response.contains("ERROR")) {
-                            noChats.setVisibility(View.GONE);
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                for(int i = 0; i< jsonArray.length();i++){
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    dataBase.newChat(jsonObject.getString("chat_id"),jsonObject.getString("user1")
-                                            ,jsonObject.getString("user1_id"),jsonObject.getString("user2")
-                                            ,jsonObject.getString("user2_id"),jsonObject.getString("date")
-                                            ,jsonObject.getString("last_message"));
-                                }
-                                getDataIntoList();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }else{
-                            noChats.setVisibility(View.VISIBLE);
+        MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+                items.clear();
+                if(result != MyVolley.RESPONSE_ERROR) {
+                    noChats.setVisibility(View.GONE);
+                    try {
+                        JSONArray jsonArray = new JSONArray(result);
+                        for(int i = 0; i< jsonArray.length();i++){
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            dataBase.newChat(jsonObject.getString("chat_id"),jsonObject.getString("user1")
+                                    ,jsonObject.getString("user1_id"),jsonObject.getString("user2")
+                                    ,jsonObject.getString("user2_id"),jsonObject.getString("date")
+                                    ,jsonObject.getString("last_message"),jsonObject.getString("profilePic_link"));
                         }
+                        getDataIntoList();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getStackTrace();
-                Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
+                }else{
+                    noChats.setVisibility(View.VISIBLE);
+                }
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map =  new HashMap<>();
-                map.put("user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
-                return map;
-            }
-        };
-        int socketTimeout = 20000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
-
+        });
+        volley.setUrl(Utils.CHAT_LIST);
+        volley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        volley.connect();
     }
 
     private void getDataIntoList() {
@@ -210,7 +216,8 @@ public class FragTabChat extends Fragment {
                 items.add(new ChatListItems(data.getString(1)
                         ,data.getString(2),data.getString(3)
                         ,data.getString(4),data.getString(5)
-                        ,data.getString(6),data.getString(7)));
+                        ,data.getString(6),data.getString(7)
+                        ,data.getString(8)));
             }
             Collections.sort(items,new MyComparator());
             myListAdapter.notifyDataSetChanged();

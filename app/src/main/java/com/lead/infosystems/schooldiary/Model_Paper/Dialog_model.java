@@ -77,6 +77,7 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
                             .addFileToUpload(path, "pdf")
                             .addParameter("name", name)
                             .addParameter(UserDataSP.CLASS,this.classNumber)
+                            .addParameter(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();

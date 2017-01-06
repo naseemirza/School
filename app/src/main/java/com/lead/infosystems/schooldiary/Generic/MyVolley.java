@@ -69,6 +69,7 @@ public class MyVolley {
             @Override
             public void onErrorResponse(VolleyError error) {
                 clear();
+                iVolleyResponse.volleyResponse(RESPONSE_ERROR);
                 if(toastShow){
                     toastShow = false;
                     Toast.makeText(context,ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();

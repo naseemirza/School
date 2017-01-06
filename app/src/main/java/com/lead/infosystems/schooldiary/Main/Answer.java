@@ -32,9 +32,13 @@ import com.android.volley.toolbox.Volley;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.AnswerData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -128,63 +132,46 @@ public class Answer extends AppCompatActivity {
         connect(Utils.QA_FETCH,null, null, null, null, 0);
     }
     private void connect(final String url, final String answerText, final String studentNumber, final String answerNumber, final String questionNum, final int position){
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+        MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-                Log.e("res", response);
-                if(response != "" && !response.contentEquals("ERROR")){
-                    if(url == Utils.QA_FETCH){//working
-                        parseJson(response);
-                        adaptor = new MyAdaptor();
-                        list.setAdapter(adaptor);
-                        list.setExpanded(true);
-                    }else if(url == Utils.ANSWER_SUBMIT){
-                      //  Log.e("res", response);
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            addItem(jsonObject.getString("answer_number"),Utils.getTimeString(jsonObject.getString("date")),answerText);
-                            Snackbar.make(findViewById(android.R.id.content),"Long press to delete",Snackbar.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }else if(url == Utils.QA_DELETE){
-                        if(response.contains("DONE")){
-                            deleteItem(position);
-                        }
+            public void volleyResponse(String result) {
+                if(url == Utils.QA_FETCH){//working
+                    parseJson(result);
+                    adaptor = new MyAdaptor();
+                    list.setAdapter(adaptor);
+                    list.setExpanded(true);
+                }else if(url == Utils.ANSWER_SUBMIT){
+                    try {
+                        JSONArray jsonArray = new JSONArray(result);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        addItem(jsonObject.getString("answer_number"),Utils.getTimeString(jsonObject.getString("date")),answerText);
+                        Snackbar.make(findViewById(android.R.id.content),"Long press to delete",Snackbar.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else if(url == Utils.QA_DELETE){
+                    if(result.contains("DONE")){
+                        deleteItem(position);
                     }
                 }
                 doneLoading();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
-                doneLoading();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> params = new HashMap<>();
-
-                if(answerText == null && answerNumber == null){
-                    params.put("question_number",qaAnimData.getQuestionNum().trim());//working
-                }else if(answerNumber == null){
-                    params.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
-                    params.put("question_number",qaAnimData.getQuestionNum());
-                    params.put("answer",answerText);
-                }else if(answerNumber != null && studentNumber != null){
-                    params.put("question_number",questionNum);
-                    params.put("number_user",studentNumber);
-                    params.put("answer_number",answerNumber);
-                }
-                return params;
-            }
-        };
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(retryPolicy);
-        requestQueue.add(request);
+        });
+        volley.setUrl(url);
+        if(answerText == null && answerNumber == null){
+            volley.setParams("question_number",qaAnimData.getQuestionNum().trim());//working
+        }else if(answerNumber == null){
+            volley.setParams(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
+            volley.setParams("question_number",qaAnimData.getQuestionNum());
+            volley.setParams("answer",answerText);
+        }else if(answerNumber != null && studentNumber != null){
+            volley.setParams("question_number",questionNum);
+            volley.setParams("number_user",studentNumber);
+            volley.setParams("answer_number",answerNumber);
+        }
+        volley.connect();
+        doneLoading();
     }
 
     private void deleteItem(int position) {
@@ -194,8 +181,9 @@ public class Answer extends AppCompatActivity {
     }
 
     private void addItem(String answer_number, String time, String answerText) {
-        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.NUMBER_USER),answer_number
-                ,userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
+        items.add(new AnswerData(userDataSP.getUserData(UserDataSP.PROPIC_URL),
+                userDataSP.getUserData(UserDataSP.NUMBER_USER),answer_number,
+                userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
                 userDataSP.getUserData(UserDataSP.LAST_NAME),time,answerText,null));
         adaptor.notifyDataSetChanged();
     }
@@ -218,7 +206,6 @@ public class Answer extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView name,time,text;
-            ImageView propic;
             View v = convertView;
             if(v == null){
                 v = getLayoutInflater().inflate(R.layout.answer_item,parent,false);
@@ -226,9 +213,18 @@ public class Answer extends AppCompatActivity {
             name = (TextView) v.findViewById(R.id.title);
             time = (TextView) v.findViewById(R.id.time_rcv);
             text = (TextView) v.findViewById(R.id.text);
-            propic = (ImageView) v.findViewById(R.id.profile_image);
+            final ImageView aPropic = (ImageView) v.findViewById(R.id.profile_image);
 
             AnswerData currentItem = items.get(position);
+
+            if(currentItem.getProfilePic_link() != null && currentItem.getProfilePic_link().contains("jpeg")){
+                Picasso.with(activity.getApplicationContext()).load(Utils.SERVER_URL+currentItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                        .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
+                                NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                        .into(aPropic);
+            }else{
+                propic.setImageDrawable(activity.getResources().getDrawable(R.drawable.defaultpropic));
+            }
             name.setText(currentItem.getName().toString());
             text.setText(currentItem.getText().toString());
             time.setText(currentItem.getTime());
@@ -242,7 +238,8 @@ public class Answer extends AppCompatActivity {
             JSONArray jsonArray = new JSONArray(data);
             for(int i = 0 ; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                items.add(new AnswerData(jsonObject.getString("number_user"),jsonObject.getString("answer_number")
+                items.add(new AnswerData(jsonObject.getString(UserDataSP.PROPIC_URL),jsonObject.getString("number_user"),
+                        jsonObject.getString("answer_number")
                         ,jsonObject.getString("student_name")
                         ,Utils.getTimeString(jsonObject.getString("date"))
                         ,jsonObject.getString("answer_text"),null));

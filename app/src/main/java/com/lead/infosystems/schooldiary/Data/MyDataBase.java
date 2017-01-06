@@ -21,10 +21,10 @@ public class MyDataBase extends SQLiteOpenHelper {
     private static final String CONTACT_USERID = "chat_userid";
     private static final String CONTACT_FIRST_NAME = "contact_first_name";
     private static final String CONTACT_LAST_NAME = "contact_last_name";
+    private static final String PROPIC_LINK = "profilePic_link";
 
     String CREATE_CHAT_CONTACT = "create table "+CHAT_CONTACT_TABLE+" ("+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            CONTACT_USERID+" TEXT, "+CONTACT_FIRST_NAME+" TEXT, "+CONTACT_LAST_NAME+" TEXT)";
-
+            CONTACT_USERID+" TEXT, "+CONTACT_FIRST_NAME+" TEXT, "+CONTACT_LAST_NAME+" TEXT, "+PROPIC_LINK+" TEXT)";
     //active chats
     private static final String ACTIVE_CHAT_LIST_TABLE = "active_chat_table";
     private static final String CHAT_ID = "chat_id";
@@ -35,7 +35,8 @@ public class MyDataBase extends SQLiteOpenHelper {
     private static final String LAST_MESSAGE = "message";
     private static final String DATE = "date";
     String CREATE_ACTIVE_CHATS = "create table "+ACTIVE_CHAT_LIST_TABLE+" ( "+ID+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            CHAT_ID+" TEXT, "+USER1_NAME+" TEXT, "+USER1_ID+" TEXT, "+USER2_NAME+" TEXT, "+USER2_ID+" TEXT, "+LAST_MESSAGE+" TEXT, "+DATE+" TEXT)";
+            CHAT_ID+" TEXT, "+USER1_NAME+" TEXT, "+USER1_ID+" TEXT, "+USER2_NAME+" TEXT, "+USER2_ID+" TEXT, "
+            +LAST_MESSAGE+" TEXT, "+DATE+" TEXT, "+PROPIC_LINK+" TEXT)";
 
     //chat messages
     private static final String CHAT_MESSAFGE_TABLE = "chat_message_table";
@@ -82,11 +83,12 @@ public class MyDataBase extends SQLiteOpenHelper {
         onUpgrade(db,0,0);
     }
 /////////// working with chat contacts
-    public void insertIntoCOntact(String userId,String firstName,String lastName){
+    public void insertIntoCOntact(String userId, String firstName, String lastName, String profilePic_link){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CONTACT_USERID,userId);
         contentValues.put(CONTACT_FIRST_NAME,firstName);
         contentValues.put(CONTACT_LAST_NAME,lastName);
+        contentValues.put(PROPIC_LINK,profilePic_link);
         db.insert(CHAT_CONTACT_TABLE,null,contentValues);
     }
     public void clearContacts(){
@@ -98,8 +100,8 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
 
     ///////working with active chats
-    public void newChat(String chatId,String user1Name,String user1ID,String user2Name
-            ,String user2ID,String date,String lastMessage){
+    public void newChat(String chatId, String user1Name, String user1ID, String user2Name
+            , String user2ID, String date, String lastMessage, String profilePic_link){
         ContentValues contentValues = new ContentValues();
         contentValues.put(CHAT_ID,chatId);
         contentValues.put(USER1_NAME,user1Name);
@@ -108,13 +110,13 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(USER2_ID,user2ID);
         contentValues.put(LAST_MESSAGE,lastMessage);
         contentValues.put(DATE,date);
+        contentValues.put(PROPIC_LINK,profilePic_link);
         int a = db.update(ACTIVE_CHAT_LIST_TABLE,contentValues,CHAT_ID+" = "+chatId,null);
         if(a==0){
            db.insert(ACTIVE_CHAT_LIST_TABLE,null,contentValues);
         }
     }
     public Cursor getActiveChats(){
-
         return db.rawQuery("select * from "+ACTIVE_CHAT_LIST_TABLE,null);
     }
 

@@ -14,17 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.QaData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
@@ -34,9 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -70,6 +61,12 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
                 qaAdaptor.addAll(parseJson(userDataSP.getQaData()));
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        backPressed = true;
     }
 
     @Override
@@ -135,7 +132,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         String name = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+
                 userDataSP.getUserData(UserDataSP.LAST_NAME);
         items.add(new QaData(userDataSP.getUserData(UserDataSP.NUMBER_USER)
-                            ,name,questionText,questionNum,"0",Utils.getTimeString(date)));
+                            , userDataSP.getUserData(UserDataSP.PROPIC_URL), name,questionText,questionNum,"0",Utils.getTimeString(date)));
         qaAdaptor.addItemAtTop(items);
         prifixItemData(questionText,name,questionNum,date);
 
@@ -144,7 +141,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
     private static void prifixItemData(String questionText, String name, String questionNum, String date) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("number_user",userDataSP.getUserData(UserDataSP.NUMBER_USER));
+            jsonObject.put(UserDataSP.NUMBER_USER,userDataSP.getUserData(UserDataSP.NUMBER_USER));
             jsonObject.put("name",name);
             jsonObject.put("question_number",questionNum);
             jsonObject.put("question_text",questionText);
@@ -160,52 +157,34 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         }
     }
 
-    public void loadData(String min){
-        final String MIN = min;
-        final RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-        StringRequest request = new StringRequest(Request.Method.POST, Utils.QA_FETCH,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if(response.contains(UserDataSP.NUMBER_USER)){
+    public void loadData(final String min){
+        MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+                if(result.contains(UserDataSP.NUMBER_USER)){
 
-                            if(MIN == "0"){
-                                swipeRefreshLayout.setRefreshing(false);
-                                qaAdaptor.addAll(parseJson(response));
-                                userDataSP.storeQaData(response);
-                            }else {
-                                qaAdaptor.setProgressMore(false);
-                                qaAdaptor.addItemMore(parseJson(response));
-                                qaAdaptor.setMoreLoading(false);
-                                userDataSP.appendQaData(response);
-                            }
-
-                        }else{
-                            Toast.makeText(getActivity().getApplicationContext(),"No more Questions..",Toast.LENGTH_SHORT).show();
-                            qaAdaptor.setProgressMore(false);
-                            qaAdaptor.setMoreLoading(false);
-                            noMoreItems = true;
-                        }
+                    if(min == "0"){
+                        swipeRefreshLayout.setRefreshing(false);
+                        qaAdaptor.addAll(parseJson(result));
+                        userDataSP.storeQaData(result);
+                    }else {
+                        qaAdaptor.setProgressMore(false);
+                        qaAdaptor.addItemMore(parseJson(result));
+                        qaAdaptor.setMoreLoading(false);
+                        userDataSP.appendQaData(result);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getStackTrace();
-                Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                HashMap<String,String> map =  new HashMap<>();
-                map.put("min",MIN);
-                return map;
-            }
-        };
-        int socketTimeout = 20000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
 
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(),"No more Questions..",Toast.LENGTH_SHORT).show();
+                    qaAdaptor.setProgressMore(false);
+                    qaAdaptor.setMoreLoading(false);
+                    noMoreItems = true;
+                }
+            }
+        });
+        volley.setUrl(Utils.QA_FETCH);
+        volley.setParams("min",min);
+        volley.connect();
     }
 
     private List<QaData> parseJson(String data){
@@ -214,7 +193,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
             JSONArray jsonArray = new JSONArray(data);
             for(int i = 0 ; i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                items.add(new QaData(jsonObject.getString("number_user"),jsonObject.getString("name"),
+                items.add(new QaData(jsonObject.getString(UserDataSP.NUMBER_USER),jsonObject.getString(UserDataSP.PROPIC_URL),jsonObject.getString("name"),
                         jsonObject.getString("question_text"),jsonObject.getString("question_number"),
                         jsonObject.getString("answer"),Utils.getTimeString(jsonObject.getString("date"))));
                 if(i == jsonArray.length()-1){

@@ -7,16 +7,21 @@ import android.widget.ImageView;
  */
 
 public class AnswerData {
-    private String name, time, text,studentNumber,answerNumber;
+    private String profilePic_link,name, time, text,studentNumber,answerNumber;
     private ImageView propic;
 
-    public AnswerData(String studentNumber,String answerNumber ,String name, String time, String text, ImageView propic) {
+    public AnswerData(String profilePic_link,String studentNumber,String answerNumber ,String name, String time, String text, ImageView propic) {
+        this.profilePic_link = profilePic_link;
         this.name = name;
         this.time = time;
         this.text = text;
         this.propic = propic;
         this.studentNumber = studentNumber;
         this.answerNumber = answerNumber;
+    }
+
+    public String getProfilePic_link() {
+        return profilePic_link;
     }
 
     public String getAnswerNumber() {

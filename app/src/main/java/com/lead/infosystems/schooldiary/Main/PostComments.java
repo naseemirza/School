@@ -32,9 +32,13 @@ import com.android.volley.toolbox.Volley;
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.PostCommentData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -181,41 +185,41 @@ public class PostComments extends AppCompatActivity {
     }
 
     private void connect(final String url, final int position){
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+        MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
             @Override
-            public void onResponse(String response) {
-                if(response != ""){
+            public void volleyResponse(String result) {
+                if(result != MyVolley.RESPONSE_ERROR){
                     if(url == Utils.COMMENTS){
-                        if(response != "NULL"){
-                            items.clear();
-                            try {
-                                JSONArray jsonArray = new JSONArray(response);
-                                for(int i = 0 ;i<jsonArray.length();i++){
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    items.add(new PostCommentData(jsonObject.getString("student_name"),
-                                            Utils.getTimeString(jsonObject.getString("date")),
-                                            jsonObject.getString("comment_text"),jsonObject.getString("like"),
-                                            jsonObject.getString("comment_id"),jsonObject.getString("user_liked")));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                commentNoComment.setText("No comments");
+                        items.clear();
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            for(int i = 0 ;i<jsonArray.length();i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                items.add(new PostCommentData(jsonObject.getString("student_name"),
+                                        jsonObject.getString(UserDataSP.PROPIC_URL),
+                                        Utils.getTimeString(jsonObject.getString("date")),
+                                        jsonObject.getString("comment_text"),jsonObject.getString("like"),
+                                        jsonObject.getString("comment_id"),jsonObject.getString("user_liked")));
                             }
-                            adaptor = new MyAdaptor();
-                            commentsList.setAdapter(adaptor);
-                            commentsList.setExpanded(true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            commentNoComment.setText("No comments");
                         }
+                        adaptor = new MyAdaptor();
+                        commentsList.setAdapter(adaptor);
+                        commentsList.setExpanded(true);
                     }else if(url == Utils.DELETE){
-                        if(response.contains("DONE")){
+                        if(result.contains("DONE")){
                             items.remove(position);
                             adaptor.notifyDataSetChanged();
 
+                        }
                     }
-                }
                 }else{
                     commentNoComment.setText("No comments");
                 }
+
                 if(items.size()>0){
                     commentNoComment.setText("Comments");
                 }else{
@@ -223,28 +227,15 @@ public class PostComments extends AppCompatActivity {
                 }
                 progressBar.setVisibility(View.GONE);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-               Toast.makeText(getApplicationContext(),ServerConnect.connectionError(error),Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                UserDataSP userDataSP = new UserDataSP(getApplicationContext());
-                HashMap<String,String> map = new HashMap<>();
-                if(url == Utils.COMMENTS){
-                    map.put("post_id", postAnimData.getPostID());
-                    map.put("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
-                } else if(url == Utils.DELETE){
-                    map.put("comment_id", items.get(position).getComment_id());
-                }
-                return map;
-            }
-        };
-        RetryPolicy policy = new DefaultRetryPolicy(2000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        request.setRetryPolicy(policy);
-        requestQueue.add(request);
+        });
+        volley.setUrl(url);
+        if(url == Utils.COMMENTS){
+            volley.setParams("post_id", postAnimData.getPostID());
+            volley.setParams("number_user", userDataSP.getUserData(UserDataSP.NUMBER_USER));
+        } else if(url == Utils.DELETE){
+            volley.setParams("comment_id", items.get(position).getComment_id());
+        }
+        volley.connect();
     }
 
     class MyAdaptor extends ArrayAdapter<PostCommentData>{
@@ -259,7 +250,7 @@ public class PostComments extends AppCompatActivity {
             if(itemView==null){
                 itemView = getLayoutInflater().inflate(R.layout.post_comment_item,parent,false);
             }
-
+            ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
             TextView comment_name = (TextView) itemView.findViewById(R.id.title);
             TextView time = (TextView) itemView.findViewById(R.id.time_rcv);
             TextView text = (TextView) itemView.findViewById(R.id.text);
@@ -268,6 +259,15 @@ public class PostComments extends AppCompatActivity {
             final TextView Like_btn = (TextView) itemView.findViewById(R.id.like);
 
             final PostCommentData currentItem = items.get(position);
+
+            if(currentItem.getProfilePic_link() != null && currentItem.getProfilePic_link().contains("jpeg")){
+                Picasso.with(activity.getApplicationContext()).load(Utils.SERVER_URL+currentItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                        .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
+                                NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
+                        .into(propic);
+            }else{
+                propic.setImageDrawable(activity.getResources().getDrawable(R.drawable.defaultpropic));
+            }
             comment_name.setText(currentItem.getName());
             time.setText(currentItem.getTime());
             text.setText(currentItem.getText());

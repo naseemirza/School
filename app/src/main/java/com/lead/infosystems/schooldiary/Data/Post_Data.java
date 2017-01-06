@@ -13,14 +13,15 @@ import java.util.ArrayList;
  */
 
 public class Post_Data {
-    private String first_name,last_name,id,text_message,src_link,timeString;
+    private String first_name,last_name,id,text_message,src_link,timeString,propicLink;
     boolean isLiked;
     private int commentsNum,studentNum;
     ArrayList<String> likedStudents = new ArrayList<>();
 
-    public Post_Data(String studentNum, String first_name, String last_name, String id, String text_message, String src_link,
+    public Post_Data(String studentNum,String propicLink, String first_name, String last_name, String id, String text_message, String src_link,
                      String timeString, boolean isLiked, ArrayList<String> likedStudents,String commentNum) {
         this.studentNum = Integer.parseInt(studentNum);
+        this.propicLink = propicLink;
         this.first_name = first_name;
         this.last_name = last_name;
         this.id = id;
@@ -30,6 +31,10 @@ public class Post_Data {
         this.isLiked = isLiked;
         this.likedStudents = likedStudents;
         this.commentsNum = Integer.parseInt(commentNum);
+    }
+
+    public String getPropicLink() {
+        return propicLink;
     }
 
     public String getFirst_name() {

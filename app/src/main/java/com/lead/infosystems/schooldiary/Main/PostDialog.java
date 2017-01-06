@@ -155,8 +155,12 @@ public class PostDialog extends DialogFragment implements ICompressedImage{
             case 0:
                 if(resultCode == getActivity().RESULT_OK){
                     postImageBitmap = Utils.getCameraImage();
-                    compressImage.setImg(postImageBitmap);
-                    compressImage.execute();
+                    if(postImageBitmap != null){
+                        compressImage.setImg(postImageBitmap);
+                        compressImage.execute();
+                    }else{
+                        Toast.makeText(getActivity().getApplicationContext(),"Error Loading Image",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case 1:

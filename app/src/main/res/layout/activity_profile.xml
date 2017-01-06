@@ -22,13 +22,13 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             >
             <ImageView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/pro_pic_toolbar"
-                android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
-                android:background="@drawable/school_boy"/>
+                android:background="@drawable/defaultpropic"
+                android:layout_gravity="center_horizontal"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
