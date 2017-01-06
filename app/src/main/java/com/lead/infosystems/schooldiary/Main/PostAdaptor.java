@@ -26,6 +26,7 @@ import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.ServerConnection.ServerConnect;
 import com.lead.infosystems.schooldiary.ServerConnection.Utils;
+import com.lead.infosystems.schooldiary.ShareButton.Login_fb;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -178,6 +179,17 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 }
                 }
             });
+            ((StudentViewHolder) holder).share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(postImageBitmap[0] != null){
+                        new Login_fb(context,MainActivity.fb,postImageBitmap[0]
+                                ,((StudentViewHolder) holder).text.getText().toString()).login();
+                    }else{
+                        Toast.makeText(context,"No Image to Share",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             ((StudentViewHolder) holder).comment_num.setText(singleItem.getCommentsNum()+"");
             ((StudentViewHolder) holder).comment.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -256,7 +268,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class StudentViewHolder extends RecyclerView.ViewHolder {
         public TextView name, time, text, like_text, like_num, comment_num;
         public ImageView postImage, like_icon , propic;
-        public LinearLayout like,comment;
+        public LinearLayout like,comment,share;
         public CardView postCardView;
         public ImageButton deleteBtn;
 
@@ -276,6 +288,8 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
             comment = (LinearLayout) v.findViewById(R.id.comment);
             comment_num = (TextView) v.findViewById(R.id.comment_num);
+
+            share = (LinearLayout) v.findViewById(R.id.share);
 
             postCardView = (CardView) v.findViewById(R.id.post_card_view);
 

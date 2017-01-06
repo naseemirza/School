@@ -19,20 +19,26 @@ public class PhotoPublish {
 
     Context c;
     SimpleFacebook fb;
+    Bitmap bm;
+    String text;
     static final String ALBUM_ID="567810640042973";
 
-    public PhotoPublish(Context c, SimpleFacebook fb) {
+    public PhotoPublish(Context c, SimpleFacebook fb, Bitmap bm, String text) {
         this.c = c;
         this.fb = fb;
+        this.text = text;
+        this.bm = bm;
     }
 
     public void publishPhoto(){
-        Bitmap bm= BitmapFactory.decodeResource(c.getResources(), R.drawable.a1);
-        Photo photo=new Photo.Builder()
-                .setImage(resize(bm,256,256))
-                .setName("Naseem Mirza")
-                .build();
-        fb.publish(photo,ALBUM_ID,onPublishListener);
+           Photo photo;
+        if(bm != null){
+            photo=new Photo.Builder()
+                    .setImage(resize(bm,720,720))
+                    .setName(text)
+                    .build();
+            fb.publish(photo,ALBUM_ID,onPublishListener);
+        }
 
     }
     public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {

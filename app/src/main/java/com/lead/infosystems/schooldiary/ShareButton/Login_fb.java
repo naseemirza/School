@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.ShareButton;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,10 +20,14 @@ public class Login_fb {
 
     Context c;
     SimpleFacebook fb;
+    Bitmap bm;
+    String text;
 
-    public Login_fb(Context c, SimpleFacebook fb) {
+    public Login_fb(Context c, SimpleFacebook fb, Bitmap bm ,String text) {
         this.c = c;
         this.fb = fb;
+        this.bm = bm;
+        this.text = text;
     }
 
     public void login(){
@@ -33,7 +38,7 @@ public class Login_fb {
         @Override
         public void onLogin(String accessToken, List<Permission> acceptedPermissions, List<Permission> declinedPermissions) {
             Toast.makeText(c,"Login Successfull..",Toast.LENGTH_SHORT).show();
-            new PhotoPublish(c,fb).publishPhoto();
+            new PhotoPublish(c,fb,bm,text).publishPhoto();
         }
 
         @Override
