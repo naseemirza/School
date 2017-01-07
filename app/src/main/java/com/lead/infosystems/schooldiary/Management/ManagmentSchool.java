@@ -189,9 +189,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                         }
                      else {
                          myDataBase.insertManagementData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail"));
-
-                          //  items.add(new ItemDetail(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")));
-                        }
+                      }
                     }
                 }
         putMdataIntoList();
@@ -206,14 +204,15 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         {
             while (data.moveToNext())
             {
-               items.add(new ItemDetail(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), data.getString(6), data.getString(7), data.getString(8), data.getString(9)));
+               items.add(new ItemDetail(data.getString(1), data.getString(2)
+                       , data.getString(3), data.getString(4), data.getString(5)
+                       , data.getString(6), data.getString(7), data.getString(8)
+                       , data.getString(9)));
             }
         }
         else{
             Toast.makeText(getActivity().getApplicationContext(),"No Management Data",Toast.LENGTH_SHORT).show();
         }
-
-
         final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(getActivity(), items);
         list.setAdapter(adapter);
         list.setExpanded(true);
