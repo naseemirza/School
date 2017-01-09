@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
@@ -57,15 +56,16 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.managment_school, container, false);
         // Inflate the layout for this fragment
+        getActivity().setTitle("Management");
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
         noInternet = (TextView) rootView.findViewById(R.id.managementNoInternet);
-        notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
+        notAvailable = (TextView) rootView.findViewById(R.id.mdetailNotAvailable);
         list = (ExpandableHeightListView) rootView.findViewById(R.id.listF);
-       firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
-       secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
+        firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
+        secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
         principalNameTitle = (TextView)firstCell.findViewById(R.id.principal_name_title);
         principalImageTitle = (ImageView)firstCell.findViewById(R.id.principal_profile_title);
 
@@ -131,7 +131,9 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         }
         else
         {
-            noInternet.setVisibility(View.VISIBLE);
+            principalData();
+            directorData();
+            putMdataIntoList();
         }
     }
 
@@ -174,34 +176,15 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                 JSONArray jsonDetailArray = new JSONArray(completeDetail);
 
                 for (int k = 0; k < jsonDetailArray.length(); k++) {
-
                     JSONObject jsonObjDetail = jsonDetailArray.getJSONObject(k);
                      if (jsonObjDetail.getString("designation").contains("Principal")) {
-                         principalNameTitle.setText(firstName+lastName+"");
-                         principalNameContent.setText(firstName+lastName+"");
-                         mobileNP.setText(mobile);
-                         gmailIdP.setText(gmail);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(principalImageTitle);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(principalImageContent);
-                         designationP.setText(jsonObjDetail.getString("designation"));
-                         qualificationsP.setText(jsonObjDetail.getString("qualifications"));
-                         interests_fieldP.setText(jsonObjDetail.getString("interests_field"));
-                         contact_detailP.setText(jsonObjDetail.getString("contact_detail"));
+                         userDataSp.storePrincipalData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")  );
+                         principalData();
                          // for existing cell set valid valid state(without animation)
-
-                     } else if (jsonObjDetail.getString("designation").contains("Director")) {
-
-                         directorNameTitle.setText(firstName+lastName+"");
-                         directorNameContent.setText(firstName+lastName+"");
-                         mobileND.setText(mobile);
-                         gmailIdD.setText(gmail);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(directorImageTitle);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(directorImageContent);
-                         designationD.setText(jsonObjDetail.getString("designation"));
-                         qualificationsD.setText(jsonObjDetail.getString("qualifications"));
-                         interests_fieldD.setText(jsonObjDetail.getString("interests_field"));
-                         contact_detailD.setText(jsonObjDetail.getString("contact_detail"));
-
+                     }
+                     else if (jsonObjDetail.getString("designation").contains("Director")) {
+                         userDataSp.storeDirectorData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")  );
+                         directorData();
                         }
                      else {
                          myDataBase.insertManagementData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail"));
@@ -209,7 +192,6 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                     }
                 }
         putMdataIntoList();
-
     }
 
     public void putMdataIntoList()
@@ -227,7 +209,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
             }
         }
         else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Management Data",Toast.LENGTH_SHORT).show();
+            notAvailable.setVisibility(View.VISIBLE);
         }
         final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(getActivity(), items);
         list.setAdapter(adapter);
@@ -243,5 +225,32 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         });
 
     }
+    public void principalData()
+    {
+        principalNameTitle.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
+        principalNameContent.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
+        mobileNP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_MOBILE)+"");
+        gmailIdP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_GMAIL)+"");
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageTitle);
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageContent);
+        designationP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_DESIGNATION));
+        qualificationsP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_QUALIFICATION));
+        interests_fieldP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_INTERESTS_FIELD));
+        contact_detailP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_CONTACT_DETAIL));
+    }
 
+    public void directorData()
+    {
+        directorNameTitle.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
+        directorNameContent.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
+        mobileND.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_MOBILE));
+        gmailIdD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_GMAIL));
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageTitle);
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageContent);
+        designationD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_DESIGNATION));
+        qualificationsD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_QUALIFICATION));
+        interests_fieldD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_INTERESTS_FIELD));
+        contact_detailD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_CONTACT_DETAIL));
+
+    }
 }

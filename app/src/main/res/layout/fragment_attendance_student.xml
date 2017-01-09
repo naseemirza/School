@@ -1,10 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Attendance.Attendance_student"
-    android:orientation="vertical">
+    android:orientation="horizontal" >
     <ProgressBar
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
@@ -49,10 +49,10 @@
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
          android:id="@+id/total_present"
+         android:layout_below="@+id/compactcalendar_view"
          android:textSize="18sp"
          android:textColor="@color/colorGreen"
          android:textStyle="normal|bold"
-         android:layout_margin="8dp"
          android:textAlignment="center" />
     <TextView
         android:layout_width="match_parent"
@@ -75,7 +75,7 @@
         android:textStyle="normal|bold"
         android:textAlignment="center" />
 
-</LinearLayout>
+</RelativeLayout>
 
 
 

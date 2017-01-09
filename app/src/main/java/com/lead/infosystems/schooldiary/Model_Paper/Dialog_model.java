@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +14,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.lead.infosystems.schooldiary.R;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
-import net.gotev.uploadservice.ServerResponse;
-import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
-import net.gotev.uploadservice.UploadServiceBroadcastReceiver;
-import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.util.UUID;
 
@@ -33,6 +27,11 @@ import java.util.UUID;
  */
 
 public class Dialog_model extends DialogFragment implements View.OnClickListener {
+
+    public static final String INTENTFILTER_M ="intent_filter_m";
+    public static final String PAPER_NAME = "paper_name";
+    public static final String PAPER_LINK = "paper_link";
+    public static final String USER_UPLOAD = "user_upload";
     private static final int RESULT_OK =-1 ;
     public Button btn_upload;
     private ImageView btn_choose;
@@ -63,6 +62,8 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
     }
 
     public void uploadMultipart(String path) {
+
+
         String name = file_name.getText().toString().trim();
 
         if (path == null) {
@@ -78,15 +79,19 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
                             .addFileToUpload(path, "pdf")
                             .addParameter("name", name)
                             .addParameter(UserDataSP.CLASS,this.classNumber)
+                            .addParameter(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER))
                             .addParameter(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();
+                            parseDataModel(name, path, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
+                    Toast.makeText(getActivity().getApplicationContext(), "Uploading ....", Toast.LENGTH_LONG).show();
 
                 } catch (Exception exc) {
                     Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 getDialog().dismiss();
+                Toast.makeText(getActivity().getApplicationContext(), "Successfully Uploaded", Toast.LENGTH_LONG).show();
             }else {
                 Toast.makeText(getActivity().getApplicationContext(),"File Name Length Should Be Atleast 4",Toast.LENGTH_SHORT).show();
             }
@@ -106,9 +111,16 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         if (requestCode == PDF_REQ && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             path = FilePath.getPath(getActivity().getApplicationContext(), filePath);
-            String[] s = path.split("/");
-            String fileName = s[s.length - 1].replace(".pdf", "");
-            file_name.setText(fileName);
+            if(path.contentEquals(".pdf")) {
+                String[] s = path.split("/");
+                String fileName = s[s.length - 1].replace(".pdf", "");
+                file_name.setText(fileName);
+            }
+            else{
+                path = "null";
+                Toast.makeText(getActivity().getApplicationContext(), "This File is not pdf file", Toast.LENGTH_LONG).show();
+                getDialog().dismiss();
+            }
         }
     }
 
@@ -121,4 +133,15 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
             uploadMultipart(path);
         }
     }
+
+
+    private void parseDataModel(String paper_name, String paper_link, String number_user) {
+        Intent intent = new Intent(INTENTFILTER_M);
+        intent.putExtra(PAPER_NAME, paper_name);
+        intent.putExtra(PAPER_LINK, paper_link);
+        intent.putExtra(USER_UPLOAD, number_user);
+        getActivity().sendBroadcast(intent);
+    }
+
+
 }

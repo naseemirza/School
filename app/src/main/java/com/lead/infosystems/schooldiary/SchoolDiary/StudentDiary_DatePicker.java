@@ -138,7 +138,6 @@ public void submitHomeWork()
             if(!result.contains("ERROR")){
                 Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
                 try {
-
                     parseData(result, editTitle.getText().toString(), editContent.getText().toString(), subjectName, lastDate_submission );
                 } catch (JSONException e) {
                     e.printStackTrace();

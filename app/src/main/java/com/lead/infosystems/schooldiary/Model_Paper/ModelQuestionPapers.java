@@ -1,8 +1,11 @@
 package com.lead.infosystems.schooldiary.Model_Paper;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,11 +27,11 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.MyVolley;
-import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +39,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.lead.infosystems.schooldiary.Model_Paper.Dialog_model.INTENTFILTER_M;
+import static com.lead.infosystems.schooldiary.Model_Paper.Dialog_model.PAPER_LINK;
+import static com.lead.infosystems.schooldiary.Model_Paper.Dialog_model.PAPER_NAME;
+import static com.lead.infosystems.schooldiary.Model_Paper.Dialog_model.USER_UPLOAD;
 
 
 public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
@@ -99,6 +107,24 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().registerReceiver(receiver, new IntentFilter(INTENTFILTER_M));
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+             adaptor.add(new Model_paper(intent.getStringExtra(PAPER_NAME), intent.getStringExtra(PAPER_LINK), intent.getStringExtra(USER_UPLOAD)));
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(receiver);
+    }
 
     private void getDataFromServer(){
         if(userdatasp.isStudent()){

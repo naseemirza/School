@@ -31,7 +31,25 @@ public class UserDataSP {
     public static final String SCHOOL_WEBSITE_LINK = "school_websitelink";
     public static final String IDENTIFICATION = "identification";
     public static final String SUBJECTS = "subjects";
+    public static final String PRINCIPAL_FIRST_NAME = "principal_first_name";
+    public static final String PRINCIPAL_LAST_NAME = "principal_last_name";
+    public static final String PRINCIPAL_MOBILE = "principal_mobile";
+    public static final String PRINCIPAL_GMAIL = "principal_gmail_id";
+    public static final String PRINCIPAL_PIC = "principal_profilePic_link";
+    public static final String PRINCIPAL_DESIGNATION = "principal_designation";
+    public static final String PRINCIPAL_QUALIFICATION = "principal_qualifiaction";
+    public static final String PRINCIPAL_INTERESTS_FIELD = "principal_interests_field";
+    public static final String PRINCIPAL_CONTACT_DETAIL= "principal_contact_detail";
 
+    public static final String DIRECTOR_FIRST_NAME = "director_first_name";
+    public static final String DIRECTOR_LAST_NAME = "director_last_name";
+    public static final String DIRECTOR_MOBILE = "director_mobile";
+    public static final String DIRECTOR_GMAIL = "director_gmail_id";
+    public static final String DIRECTOR_PIC = "director_profilePic_link";
+    public static final String DIRECTOR_DESIGNATION = "director_designation";
+    public static final String DIRECTOR_QUALIFICATION = "director_qualifiaction";
+    public static final String DIRECTOR_INTERESTS_FIELD = "director_interests_field";
+    public static final String DIRECTOR_CONTACT_DETAIL= "director_contact_detail";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -147,6 +165,43 @@ public class UserDataSP {
         String[] res = data.split("@@@");
         editor.putString(SUBJECTS,res[0]);
         editor.commit();
+    }
+
+
+    public void storePrincipalData(String firstName, String lastName, String mobile, String gmail, String pic, String designation, String qualifiaction, String interests_field, String contact_detail)
+    {
+        editor.putString(PRINCIPAL_FIRST_NAME, firstName);
+        editor.putString(PRINCIPAL_LAST_NAME, lastName);
+        editor.putString(PRINCIPAL_MOBILE, mobile);
+        editor.putString(PRINCIPAL_GMAIL, gmail);
+        editor.putString(PRINCIPAL_PIC, pic);
+        editor.putString(PRINCIPAL_DESIGNATION, designation);
+        editor.putString(PRINCIPAL_QUALIFICATION, qualifiaction);
+        editor.putString(PRINCIPAL_INTERESTS_FIELD, interests_field);
+        editor.putString(PRINCIPAL_CONTACT_DETAIL, contact_detail);
+        editor.commit();
+    }
+    public String getPrincipalData(String key)
+    {
+        return sharedPreferences.getString(key, "");
+    }
+
+    public void storeDirectorData(String firstName, String lastName, String mobile, String gmail, String pic, String designation, String qualifiaction, String interests_field, String contact_detail)
+    {
+        editor.putString(DIRECTOR_FIRST_NAME, firstName);
+        editor.putString(DIRECTOR_LAST_NAME, lastName);
+        editor.putString(DIRECTOR_MOBILE, mobile);
+        editor.putString(DIRECTOR_GMAIL, gmail);
+        editor.putString(DIRECTOR_PIC, pic);
+        editor.putString(DIRECTOR_DESIGNATION, designation);
+        editor.putString(DIRECTOR_QUALIFICATION, qualifiaction);
+        editor.putString(DIRECTOR_INTERESTS_FIELD, interests_field);
+        editor.putString(DIRECTOR_CONTACT_DETAIL, contact_detail);
+        editor.commit();
+    }
+    public String getDirectorData(String key)
+    {
+        return sharedPreferences.getString(key, "");
     }
 
 }

@@ -1,9 +1,7 @@
 package com.lead.infosystems.schooldiary.Progress;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +24,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Marks extends AppCompatActivity {
 
@@ -71,7 +68,6 @@ public class Marks extends AppCompatActivity {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
 
     private void getJsonExam(String data) {
         try {
@@ -81,7 +77,7 @@ public class Marks extends AppCompatActivity {
 
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                if(Objects.equals(subName, sub_name)) {
+                if(subName.contentEquals(sub_name)) {
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
 
@@ -103,10 +99,10 @@ public class Marks extends AppCompatActivity {
                             myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
                            // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
+                        putMarksDataList();
                     }
                 }
 
-                putMarksDataList();
             }
 
         } catch (JSONException e) {

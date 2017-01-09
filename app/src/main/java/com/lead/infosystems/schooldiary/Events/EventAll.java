@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,7 @@ public class EventAll extends Fragment {
 
     private Date selectedDate;
     private MyDataBase myDataBase;
+    View rootView;
     private UserDataSP userDataSP;
     private ProgressBar progressBar;
     private TextView notAvailable;
@@ -64,7 +66,7 @@ public class EventAll extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_event_all, container, false);
+        rootView = inflater.inflate(R.layout.fragment_event_all, container, false);
         getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
         userDataSP=new UserDataSP(getActivity());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
@@ -185,9 +187,15 @@ public class EventAll extends Fragment {
             public void onDayClick(final Date dateClicked) {
                 if(dateDoubleClick && !userDataSP.isStudent()){
                     if(selectedDate.getTime() == dateClicked.getTime()){
-                        SimpleDateFormat dateFormater = new SimpleDateFormat(Utils.DATE_FORMAT);
-                        String formatted = dateFormater.format(dateClicked);
-                        loadEventFragDialog(formatted);
+                        if(ServerConnect.checkInternetConenction(getActivity())) {
+                            SimpleDateFormat dateFormater = new SimpleDateFormat(Utils.DATE_FORMAT);
+                            String formatted = dateFormater.format(dateClicked);
+                            loadEventFragDialog(formatted);
+                        }
+                        else
+                        {
+                            Snackbar.make(rootView, "No Internet Connection", Snackbar.LENGTH_LONG).show();
+                        }
                     }
                 }else {
                     selectedDate = dateClicked;
