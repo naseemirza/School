@@ -193,7 +193,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 @Override
                 public void onClick(View view) {
                     if(postImageBitmap[0] != null){
-                        new Login_fb(context,MainActivity.fb,postImageBitmap[0]
+                        new Login_fb(context,MainActivity.fb,postImageBitmap[0],singleItem.getSrc_link()
                                 ,((StudentViewHolder) holder).text.getText().toString()).login();
                     }else{
                         Toast.makeText(context,"No Image to Share",Toast.LENGTH_SHORT).show();

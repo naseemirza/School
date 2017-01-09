@@ -55,9 +55,6 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
         button_upload =(Button)rootView.findViewById(R.id.button_upload_exam);
         btn_pdf.setOnClickListener(this);
         button_upload.setOnClickListener(this);
-
-
-
         return rootView;
     }
 
@@ -103,13 +100,8 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PDF_REQ && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
-            Log.e("data :::::", String.valueOf(data.getData()));
-            Log.e("path_file", String.valueOf(filePath));
-
             path = FilePath.getPath(getActivity().getApplicationContext(), filePath);
-            Log.e("path_file::::", path);
             String[] s = path.split("/");
-            Log.e("string:::::", String.valueOf(s));
             String fileName = s[s.length - 1].replace(".txt", "");
             exam_pdf_name.setText(fileName);
         }

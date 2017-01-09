@@ -58,6 +58,7 @@ public class FragTabNotifications extends Fragment {
     private ArrayAdapter adapter;
     private UserDataSP userDataSP;
     private MyDataBase myDataBase;
+    private static boolean loaded = false;
     public FragTabNotifications() {
         // Required empty public constructor
     }
@@ -74,7 +75,7 @@ public class FragTabNotifications extends Fragment {
         list.setAdapter(adapter);
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
-        if(ServerConnect.checkInternetConenction(getActivity())){
+        if(ServerConnect.checkInternetConenction(getActivity())&& !loaded){
             getDataFromServer();
         }else{
             putDataIntoList();
@@ -98,9 +99,10 @@ public class FragTabNotifications extends Fragment {
                                 ,jsonObject.getString("date")
                                 ,jsonObject.getString("class")
                                 ,jsonObject.getString("division")
-                                ,jsonObject.getString("notification_text")
+                                ,jsonObject.getString("notification_text").replace("+"," ")
                                 ,jsonObject.getString("type"));
                     }
+                    loaded = true;
                     putDataIntoList();
                 } catch (JSONException e) {
                     e.printStackTrace();

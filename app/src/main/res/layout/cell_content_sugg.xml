@@ -1,92 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:visibility="gone">
 
-
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:paddingBottom="15dp">
+        android:layout_height="wrap_content"
+        >
 
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/circlecell_sugC"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp" />
         <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sugg_name_content"
-            android:layout_marginLeft="70dp"
-            />
-
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toRightOf="@+id/circlecell_sugC"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:textStyle="normal|bold"
+            android:textSize="14sp" />
         <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sugg_class_content"
-            android:layout_below="@+id/sugg_name_content"
-            android:layout_marginLeft="70dp"
-            />
+            android:layout_below="@+id/sugg_name"
+            android:textStyle="normal|bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/sugg_name_content"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toRightOf="@+id/circlecell_sugC" />
         <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sugg_division_content"
-            android:layout_toRightOf="@+id/sugg_class_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            />
+            android:layout_toRightOf="@+id/sugg_class"
+            android:textStyle="normal|bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/sugg_name_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintLeft_toRightOf="@+id/sugg_class_content"
+            app:layout_constraintHorizontal_bias="0.0" />
 
         <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sugg_title_content"
-            android:layout_marginLeft="70dp"
-            android:layout_below="@+id/sugg_class_content"
-            android:layout_marginTop="05dp"
-            />
-
-    </RelativeLayout>
+            android:layout_below="@+id/sugg_name"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:textStyle="normal|bold"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toRightOf="@+id/circlecell_sugC"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/sugg_class_content"
+            android:layout_marginBottom="8dp" />
+    </android.support.constraint.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="@color/bgContent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="9dp">
+        android:layout_marginTop="10dp">
 
         <!-- avatar and name part -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:id="@+id/suggestion_content"
-                android:text="content"
-                />
+                android:layout_height="wrap_content"
+                android:text="content:"
+                android:textStyle="normal|bold"
+                android:layout_marginTop="1dp"
+                android:layout_margin="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textSize="18sp" />
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/suggestion_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="content"
+                android:textStyle="normal|italic" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="suggestion date:"
+            android:textStyle="normal|bold"
+            android:layout_marginTop="1dp"
+            android:layout_margin="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/sugg_date"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="suggestion_date"
                 android:layout_below="@+id/suggestion_content"
+                android:textStyle="normal|italic"
 
                 />
 
 
-
-        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

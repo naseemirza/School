@@ -21,13 +21,14 @@ public class Login_fb {
     Context c;
     SimpleFacebook fb;
     Bitmap bm;
-    String text;
+    String text,img;
 
-    public Login_fb(Context c, SimpleFacebook fb, Bitmap bm ,String text) {
+    public Login_fb(Context c, SimpleFacebook fb, Bitmap bm,String imgurl ,String text) {
         this.c = c;
         this.fb = fb;
         this.bm = bm;
         this.text = text;
+        this.img = imgurl;
     }
 
     public void login(){
@@ -38,7 +39,7 @@ public class Login_fb {
         @Override
         public void onLogin(String accessToken, List<Permission> acceptedPermissions, List<Permission> declinedPermissions) {
             Toast.makeText(c,"Login Successfull..",Toast.LENGTH_SHORT).show();
-            new PhotoPublish(c,fb,bm,text).publishPhoto();
+            new PhotoPublish(c,fb,bm,img,text).publishPhoto();
         }
 
         @Override

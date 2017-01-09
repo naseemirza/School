@@ -111,6 +111,6 @@
     <string name="transition_name_post_image">post_image</string>
     <string name="transition_name_login">login_tran</string>
     <string name="Home_Work_Title">Home Work Title </string>
-    <string name="Home_Work_contents">Home Work Contents</string>
+    <string name="Home_Work_contents">Home Work Contents:</string>
 
 </resources>

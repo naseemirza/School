@@ -47,7 +47,7 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
 
         userDataSp = new UserDataSP(getActivity());
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
-        getActivity().setTitle("Suggestion_Complain");
+        getActivity().setTitle("Suggestion/Complaints");
         list = (ListView) rootView.findViewById(R.id.list_detail);
         getSuggestionData();
         button = (FloatingActionButton) rootView.findViewById(R.id.add);

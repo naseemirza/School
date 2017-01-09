@@ -101,15 +101,8 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
             items = new ArrayList<>();
             while (data.moveToNext())
             {
-                Log.e("data 1", data.getString(1));
-                Log.e("data 2", data.getString(2));
-                Log.e("data 3", data.getString(3));
-                Log.e("data 4", data.getString(4));
-                Log.e("data 5", data.getString(5));
-                Log.e("data 6", data.getString(6));
-                Log.e("data 7", data.getString(7));
-
-                items.add(new Item(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5), data.getString(6), data.getString(7)));
+                items.add(new Item(data.getString(1), data.getString(2), data.getString(3),
+                        data.getString(4), data.getString(5), data.getString(6), data.getString(7)));
             }
 
         }

@@ -1,5 +1,6 @@
 package com.lead.infosystems.schooldiary.Management;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.R;
 import com.ramotion.foldingcell.FoldingCell;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashSet;
@@ -20,10 +23,11 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
 
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
     private View.OnClickListener defaultRequestBtnClickListener;
+    private Activity activity;
 
-
-    public ExpandableCellListAdapter(Context context, List<ItemDetail> objects) {
-        super(context, 0, objects);
+    public ExpandableCellListAdapter(Activity activity, List<ItemDetail> objects) {
+        super(activity, 0, objects);
+        this.activity = activity;
     }
 
     @Override
@@ -36,11 +40,9 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
             viewHolder = new ViewHolder();
             LayoutInflater vi = LayoutInflater.from(getContext());
             cell = (FoldingCell) vi.inflate(R.layout.management_layout_item, parent, false);
-            viewHolder.nameTitle = (TextView) cell.findViewById(R.id.teacher_name_title);
             viewHolder.nameContent = (TextView) cell.findViewById(R.id.teacher_name_content);
             viewHolder.mobileN = (TextView) cell.findViewById(R.id.mobile_no);
             viewHolder.gmailId = (TextView) cell.findViewById(R.id.gmail);
-            viewHolder.designation= (TextView) cell.findViewById(R.id.designation_t);
             viewHolder.profilImageTitle= (ImageView)cell.findViewById(R.id.profile_title);
             viewHolder.qualifications = (TextView)cell.findViewById(R.id.qualification_t);
             viewHolder.interests_field= (TextView)cell.findViewById(R.id.field);
@@ -59,16 +61,24 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
 
         // bind data from selected element to view through view holder
 
-        viewHolder.nameTitle.setText(item.getFirstName()+item.getLastName()+"");
         viewHolder.nameContent.setText(item.getFirstName()+item.getLastName()+"");
         viewHolder.mobileN.setText(item.getMobile_no()+"");
-        viewHolder.designation.setText(item.getDesignation()+"");
         viewHolder.gmailId.setText(item.getGmail_id()+"");
         viewHolder.qualifications.setText(item.getQualifications()+"");
         viewHolder.interests_field.setText(item.getInterests_field()+"");
         viewHolder.contact_detail.setText(item.getContact_detail()+"");
-        Picasso.with(getContext()).load(Utils.SERVER_URL+item.getProfil_pic()).into(viewHolder.profilImageTitle);
-        Picasso.with(getContext()).load(Utils.SERVER_URL+item.getProfil_pic()).into(viewHolder.profileImageContent);
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+item.getProfil_pic())
+                .placeholder(R.drawable.defaultpropic)
+                .networkPolicy(ServerConnect.checkInternetConenction(activity)?
+                        NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                .into(viewHolder.profilImageTitle);
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+item.getProfil_pic())
+                .placeholder(R.drawable.defaultpropic)
+                .networkPolicy(ServerConnect.checkInternetConenction(activity)?
+                        NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                .into(viewHolder.profileImageContent);
         return cell;
     }
 
@@ -98,10 +108,8 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
 
     // View lookup cache
     private static class ViewHolder {
-        TextView nameTitle;
         TextView mobileN;
         TextView gmailId;
-        TextView designation;
         TextView qualifications;
         ImageView profilImageTitle;
         TextView interests_field;

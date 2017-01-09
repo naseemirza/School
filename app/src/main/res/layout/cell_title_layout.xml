@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/bgContent"
@@ -8,47 +10,58 @@
     android:orientation="horizontal">
 
     <!-- LEFT TITLE PART -->
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:paddingBottom="15dp">
+        android:layout_height="wrap_content">
 
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:id="@+id/circlecell"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_margin="5dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintVertical_bias="0.37" />
             <TextView
                 android:text="TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/subject_home"
-                android:layout_marginLeft="70dp"
-                 />
+                android:layout_marginEnd="16dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="16dp"
+                app:layout_constraintLeft_toRightOf="@+id/circlecell"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                android:textColor="@color/mainTextColor" />
 
             <TextView
                 android:text="TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/title_home"
-                android:layout_marginLeft="70dp"
                 android:layout_below="@+id/subject_home"
-                android:layout_marginTop="20dp"
-                />
-        <!--<ImageButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/ic_delete"-->
-            <!--android:id="@+id/homework_delete_title"-->
-            <!--android:background="@color/cardview_shadow_end_color"-->
-            <!--android:layout_marginTop="5dp"-->
-            <!--android:layout_marginEnd="5dp"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--/>-->
+                android:layout_marginEnd="16dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/subject_home"
+                android:layout_marginStart="16dp"
+                app:layout_constraintLeft_toRightOf="@+id/circlecell"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="16dp"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                android:textColor="@color/mainTextColor" />
 
-
-
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 </LinearLayout>

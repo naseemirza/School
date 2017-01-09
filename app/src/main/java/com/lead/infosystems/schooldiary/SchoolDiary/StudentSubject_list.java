@@ -37,20 +37,15 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_subject_list);
-
         Intent intent = getIntent();
         className = intent.getStringExtra("class");
         divisionName = intent.getStringExtra("division");
         list_subject=(ListView)findViewById(R.id.list_subject);
         userDataSP=new UserDataSP(this);
         myVolley = new MyVolley(getApplicationContext(), this);
-
         getSubjectData();
 
     }
-
-
-
 
     public void getSubjectData(){
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
@@ -62,13 +57,10 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
     }
     @Override
     public void volleyResponse(String result) {
-
         try {
-
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
     }
 
@@ -87,18 +79,14 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
         list_subject.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
                 Intent intent = new Intent(view.getContext(), HomeworkList_teacher.class);
                 intent.putExtra("class", className);
                 intent.putExtra("division", divisionName);
                 intent.putExtra("subject", subjects.get(position));
                 startActivity(intent);
-                Log.e("res", subjects.get(position).toString());
 
             }
         });
-
-
     }
     class MyAdaptor extends ArrayAdapter<String> {
 

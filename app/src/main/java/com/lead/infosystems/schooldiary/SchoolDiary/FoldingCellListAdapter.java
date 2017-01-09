@@ -95,8 +95,8 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
         viewHolder.homework_title.setText(item.getHomework_title() + "");
         viewHolder.homework_contents.setText(item.getHomework_contents() + "");
         viewHolder.subject.setText(item.getSubject() + "");
-        viewHolder.lastDate_submission.setText(item.getLastDate_submission() + "");
-        viewHolder.homeworkDate.setText(item.getHomeworkDate() + "");
+        viewHolder.lastDate_submission.setText(item.getLastDate_submission().split(" ")[0] + "");
+        viewHolder.homeworkDate.setText(item.getHomeworkDate().split(" ")[0] + "");
         String firstletter = String.valueOf(item.getHomework_title().charAt(0));
         ColorGenerator generator = ColorGenerator.MATERIAL;
         int color = generator.getColor(getItem(position));

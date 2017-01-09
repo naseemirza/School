@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.Utils;
@@ -47,12 +50,8 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
         getActivity().setTitle("HOME WORK");
         userDataSP=new UserDataSP(getActivity());
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
-
         list_class=(ListView)rootView.findViewById(R.id.class_list_home);
         getClassData();
-
-
-
         return rootView;
 
     }
@@ -89,12 +88,10 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
         list_class.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
                 Log.e("class", classes.get(position));
                 Intent intent = new Intent(view.getContext(), StudentDivision.class);
                 intent.putExtra("class", classes.get(position));
                 startActivity(intent);
-
             }
         });
 
@@ -115,12 +112,13 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
             }
 
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
-            class_text.setText("class"+"  "+classes.get(position));
+            class_text.setText("class");
 
-
-
-
-
+            String firstletter = String.valueOf(classes.get(position).charAt(0));
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+            int color = generator.getColor(getItem(position));
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            ((ImageView) ItemView.findViewById(R.id.class_image)).setImageDrawable(drawable);
             return ItemView;
 
         }

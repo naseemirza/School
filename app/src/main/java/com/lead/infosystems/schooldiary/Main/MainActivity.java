@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,8 +69,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userDataSP = new UserDataSP(getApplicationContext());
         toolbar  = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        openFrag();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                openFrag();
+            }
+        }).start();
 
         SimpleFacebook.setConfiguration(new MyConfig().getMyConfigs());
         fb=SimpleFacebook.getInstance(this);
@@ -138,29 +143,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        final FragmentManager fn = getSupportFragmentManager();
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-        }else if(BACK_TAG == BACK_STACK_TMQP){
-            fn.popBackStack(BACK_STACK_TMQP,FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        } else if(fn.getBackStackEntryCount() > 1){
-            fn.popBackStack(BACK_STACK_TAG,FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }else{
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        final FragmentManager fn = getSupportFragmentManager();
+        if(fn.getBackStackEntryCount()<= 1){
             if(backExit){
-                finish();
+                moveTaskToBack(true);
             }else{
                 backExit = true;
                 Toast.makeText(getApplicationContext(),"Press back button one more time to exit",Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                      backExit = false;
+                        backExit = false;
                     }
                 },1000);
             }
+        }else {
+            super.onBackPressed();
+            if (BACK_TAG == BACK_STACK_TMQP) {
+                fn.popBackStack(BACK_STACK_TMQP, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if (fn.getBackStackEntryCount() > 1) {
+                fn.popBackStack(BACK_STACK_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
         }
+
     }
 
     @Override
@@ -195,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_profile) {
             startActivity(new Intent(this,Profile.class));
         } else if (id == R.id.nav_diery) {
-            if(userDataSP.getUserData(UserDataSP.IDENTIFICATION).contains("student")){
+            if(userDataSP.isStudent()){
                 StudentDiary_student blankFragment = new StudentDiary_student();
                 frag = getSupportFragmentManager().beginTransaction();
                 frag.replace(R.id.main_con,blankFragment);
@@ -295,9 +304,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
 
         }
-        else if (id == R.id.nav_settings) {
-
-        }
+//        else if (id == R.id.nav_settings) {
+//
+//        }
         else if (id == R.id.nav_log_out) {
             String cloudID = userDataSP.getUserData(UserDataSP.CLOUD_ID);
             userDataSP.clearUserData();

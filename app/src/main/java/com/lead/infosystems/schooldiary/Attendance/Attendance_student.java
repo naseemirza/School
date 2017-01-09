@@ -43,7 +43,7 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     List<AttendanceData> attendance = new ArrayList<>();
     TextView presentView, absentView, leavesView;
      public final int RED= Color.RED;
-    public final int YELLOW = Color.YELLOW;
+    public final int ORANGE = 0xFFFF8800;
 
 
     public Attendance_student() {
@@ -67,8 +67,6 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         myDatabase = new MyDataBase(getActivity().getApplicationContext());
         getAttendanceData();
         return rootView;
-
-
     }
 
 
@@ -139,7 +137,7 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
               }
               else if(allAttendance.getAttendance().contains("L"))
               {
-                  e = new Event(YELLOW, allAttendance.getTimeInMili(), allAttendance.getAttendance());
+                  e = new Event(ORANGE, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
               else
@@ -178,8 +176,7 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     }
 
 
-private void getMonthData(List<Event> li)
-{
+private void getMonthData(List<Event> li) {
     int present=0, absent=0, leaves=0;
     for(int j=0; j<li.size(); j++)
     {
@@ -187,7 +184,7 @@ private void getMonthData(List<Event> li)
         {
             absent++;
         }
-        else if(li.get(j).getColor()==YELLOW)
+        else if(li.get(j).getColor()==ORANGE)
         {
             leaves++;
         }
@@ -200,6 +197,5 @@ private void getMonthData(List<Event> li)
     presentView.setText("Total Present:"+" "+present+"");
     absentView.setText("Total Absent:"+" "+absent+"");
     leavesView.setText("Total Leaves:"+" "+leaves+"");
-
-}
+    }
 }

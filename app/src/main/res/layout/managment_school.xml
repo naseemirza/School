@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No question papers Available"
+        android:text="No Data Available"
         android:layout_centerInParent="true"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
@@ -31,7 +31,7 @@
         android:layout_height="match_parent"
         android:id="@+id/scrollView_layout">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/firstCellView"
-        folding-cell:additionalFlipsCount="3"
+        folding-cell:additionalFlipsCount="7"
         folding-cell:animationDuration="800"
         folding-cell:backSideColor="@color/cardview_light_background">
         <!-- CONTENT (UNFOLDED) LAYOUT (MUST BE AT LEAST 2x times BIGGER than content layout bellow)-->
@@ -55,14 +55,14 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginTop="9dp"
+        android:layout_margin="5dp"
         android:src="@color/contentDividerLine" />
 
     <com.ramotion.foldingcell.FoldingCell
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        folding-cell:additionalFlipsCount="3"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/firstCellView"
+        folding-cell:additionalFlipsCount="7"
         folding-cell:animationDuration="800"
         android:id="@+id/secondCellView"
         folding-cell:backSideColor="@color/cardview_light_background">
@@ -73,18 +73,20 @@
     </com.ramotion.foldingcell.FoldingCell>
 
     <!-- divider line -->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginTop="9dp"
-        android:src="@color/contentDividerLine" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/secondCellView"
+                android:layout_margin="5dp"
+                android:id="@+id/margin"
+                android:src="@color/contentDividerLine" />
 
         <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/margin"
             android:id="@+id/listF"/>
 
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

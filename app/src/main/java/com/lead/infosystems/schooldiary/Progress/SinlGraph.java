@@ -39,12 +39,12 @@ public class SinlGraph extends AppCompatActivity {
             dataset.disableDashedLine();
             dataset.setValueTextSize(12);
             dataset.setValueTextColor(Color.RED);
-            dataset.setCircleSize(8);
+            dataset.setCircleSize(4);
             dataset.setCircleColorHole(Color.BLUE);
             dataset.getValueTypeface();
             dataset.setColor(Color.BLACK);
             dataset.setDrawFilled(true);
-            dataset.setLineWidth(2f);
+            dataset.setLineWidth(1f);
             dataset.setDrawCircleHole(true);
             dataset.setFillColor(Color.GREEN);
             dataset.setFillAlpha(70);

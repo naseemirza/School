@@ -4,17 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/cardview_light_background">
+
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/examName"
             android:hint="Exam Name"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="8dp"
             app:layout_constraintRight_toRightOf="parent"
@@ -40,7 +41,7 @@
             android:layout_marginLeft="8dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintTop_toBottomOf="@+id/examName"
-            android:layout_marginTop="48dp" />
+            android:layout_marginTop="16dp" />
 
         <EditText
             android:layout_width="0dp"
@@ -59,7 +60,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             app:layout_constraintTop_toBottomOf="@+id/examDate"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintHorizontal_bias="0.0" />
 
 
@@ -74,22 +75,21 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             app:layout_constraintTop_toBottomOf="@+id/examDescription"
-            android:layout_marginTop="88dp"
-            tools:layout_editor_absoluteX="16dp" />
+            android:layout_marginTop="32dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/uploadexam_pdf"
+            android:layout_marginEnd="24dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/upload_pdf"
             android:layout_centerHorizontal="true"
             android:id="@+id/uploadexam_pdf"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="24dp"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/examDescription"
-            android:layout_marginStart="8dp"
-            app:layout_constraintLeft_toRightOf="@+id/examPDFName"
-            app:layout_constraintBottom_toTopOf="@+id/button_upload_exam"
-            android:layout_marginBottom="8dp"
             app:layout_constraintHorizontal_bias="0.47"
             app:layout_constraintVertical_bias="0.25" />
 
@@ -112,7 +112,7 @@
             android:layout_marginLeft="8dp"
             android:backgroundTint="@color/colorMaroon"
             app:layout_constraintHorizontal_bias="1.0"
-            android:layout_marginTop="56dp"
-            app:layout_constraintTop_toBottomOf="@+id/examPDFName" />
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/uploadexam_pdf" />
     </android.support.constraint.ConstraintLayout>
 </RelativeLayout>

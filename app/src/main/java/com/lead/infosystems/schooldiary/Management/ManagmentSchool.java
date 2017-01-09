@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -18,10 +19,12 @@ import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.ramotion.foldingcell.FoldingCell;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -38,12 +41,14 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     private ExpandableHeightListView list;
     private ProgressBar progressBar;
     private TextView notAvailable;
-    FoldingCell firstCell, secondCell;
+    private FoldingCell firstCell, secondCell;
     private ArrayList<ItemDetail> items;
-    TextView principalNameTitle, directorNameTitle, principalNameContent, directorNameContent,  mobileNP,  gmailIdP, designationP, qualificationsP, interests_fieldP, contact_detailP,  mobileND,  gmailIdD, designationD, qualificationsD, interests_fieldD, contact_detailD;
-    ImageView principalImageTitle, directorImageTitle, principalImageContent, directorImageContent;
+    private TextView principalNameContent, directorNameContent,  mobileNP,  gmailIdP, qualificationsP,
+            interests_fieldP, contact_detailP,  mobileND,  gmailIdD, qualificationsD, interests_fieldD, contact_detailD;
+    private ImageView principalImageTitle, directorImageTitle, principalImageContent, directorImageContent;
     private boolean firstfold = true;
     private boolean secondfold = true;
+
 
     public ManagmentSchool() {
         // Required empty public constructor
@@ -62,27 +67,24 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
         notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
         list = (ExpandableHeightListView) rootView.findViewById(R.id.listF);
-       firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
-       secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
-        principalNameTitle = (TextView)firstCell.findViewById(R.id.principal_name_title);
+        firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
+        secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
         principalImageTitle = (ImageView)firstCell.findViewById(R.id.principal_profile_title);
+        principalImageContent = (ImageView)firstCell.findViewById(R.id.principal_profile_content);
 
         principalNameContent = (TextView)firstCell.findViewById(R.id.principal_name_content);
-        principalImageContent = (ImageView)firstCell.findViewById(R.id.principal_profile_content);
+
         mobileNP = (TextView) firstCell.findViewById(R.id.Pmobile_no);
         gmailIdP = (TextView) firstCell.findViewById(R.id.Pgmail);
-        designationP= (TextView) firstCell.findViewById(R.id.Pdesignation_t);
         qualificationsP = (TextView)firstCell.findViewById(R.id.Pqualification_t);
         interests_fieldP= (TextView)firstCell.findViewById(R.id.Pfield);
         contact_detailP = (TextView)firstCell.findViewById(R.id.PcontactDetail);
-        directorNameTitle = (TextView)secondCell.findViewById(R.id.director_name_title);
         directorImageTitle = (ImageView)secondCell.findViewById(R.id.director_profile_title);
 
         directorNameContent = (TextView)secondCell.findViewById(R.id.director_name_content);
         directorImageContent = (ImageView)secondCell.findViewById(R.id.director_profile_content);
         mobileND = (TextView) secondCell.findViewById(R.id.Dmobile_no);
         gmailIdD = (TextView) secondCell.findViewById(R.id.Dgmail);
-        designationD= (TextView) secondCell.findViewById(R.id.Ddesignation_t);
         qualificationsD = (TextView)secondCell.findViewById(R.id.Dqualification_t);
         interests_fieldD= (TextView)secondCell.findViewById(R.id.Dfield);
         contact_detailD = (TextView)secondCell.findViewById(R.id.DcontactDetail);
@@ -90,31 +92,14 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         firstCell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(firstfold){
-//                    firstCell.unfold(true);
-                    firstfold = !firstfold;
                     firstCell.toggle(false);
-                }else{
-                    firstfold = !firstfold;
-//                    firstCell.fold(true);
-                    firstCell.toggle(false);
-                }
             }
         });
         secondCell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(secondfold)
-                {
-                    secondfold = !secondfold;
                     secondCell.toggle(false);
                 }
-                else
-                {
-                    secondfold = !secondfold;
-                    secondCell.toggle(false);
-                }
-            }
         });
         getTeacherDetail();
         return rootView;
@@ -143,12 +128,12 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
     public void getJsonData(String res) throws JSONException
     {
+        myDataBase.clearManagementData();
         JSONArray jsonArray = new JSONArray(res);
-
         for(int j = 0 ; j<jsonArray.length(); j++) {
             JSONObject job_data = jsonArray.getJSONObject(j);
                 String firstName = job_data.getString(UserDataSP.FIRST_NAME);
-                Log.e("firstName", firstName);
+                Log.e(UserDataSP.FIRST_NAME, firstName);
                 String lastName = job_data.getString("last_name");
                 String mobile = job_data.getString("mobile");
                 String gmail = job_data.getString("gmail_id");
@@ -161,13 +146,23 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
                     JSONObject jsonObjDetail = jsonDetailArray.getJSONObject(k);
                      if (jsonObjDetail.getString("designation").contains("Principal")) {
-                         principalNameTitle.setText(firstName+lastName+"");
+                         //principalNameTitle.setText(firstName+lastName+"");
                          principalNameContent.setText(firstName+lastName+"");
                          mobileNP.setText(mobile);
                          gmailIdP.setText(gmail);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(principalImageTitle);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(principalImageContent);
-                         designationP.setText(jsonObjDetail.getString("designation"));
+                         Picasso.with(getContext())
+                                 .load(Utils.SERVER_URL+pic)
+                                 .placeholder(R.drawable.defaultpropic)
+                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
+                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                                 .into(principalImageTitle);
+                         Picasso.with(getContext())
+                                 .load(Utils.SERVER_URL+pic)
+                                 .placeholder(R.drawable.defaultpropic)
+                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
+                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                                 .into(principalImageContent);
+                         //designationP.setText(jsonObjDetail.getString("designation"));
                          qualificationsP.setText(jsonObjDetail.getString("qualifications"));
                          interests_fieldP.setText(jsonObjDetail.getString("interests_field"));
                          contact_detailP.setText(jsonObjDetail.getString("contact_detail"));
@@ -175,13 +170,21 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
                      } else if (jsonObjDetail.getString("designation").contains("Director")) {
 
-                         directorNameTitle.setText(firstName+lastName+"");
                          directorNameContent.setText(firstName+lastName+"");
                          mobileND.setText(mobile);
                          gmailIdD.setText(gmail);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(directorImageTitle);
-                         Picasso.with(getContext()).load(Utils.SERVER_URL+pic).into(directorImageContent);
-                         designationD.setText(jsonObjDetail.getString("designation"));
+                         Picasso.with(getContext())
+                                 .load(Utils.SERVER_URL+pic)
+                                 .placeholder(R.drawable.defaultpropic)
+                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
+                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                                 .into(directorImageTitle);
+                         Picasso.with(getContext())
+                                 .load(Utils.SERVER_URL+pic)
+                                 .placeholder(R.drawable.defaultpropic)
+                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
+                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
+                                 .into(directorImageContent);
                          qualificationsD.setText(jsonObjDetail.getString("qualifications"));
                          interests_fieldD.setText(jsonObjDetail.getString("interests_field"));
                          contact_detailD.setText(jsonObjDetail.getString("contact_detail"));
@@ -204,6 +207,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         {
             while (data.moveToNext())
             {
+
                items.add(new ItemDetail(data.getString(1), data.getString(2)
                        , data.getString(3), data.getString(4), data.getString(5)
                        , data.getString(6), data.getString(7), data.getString(8)
@@ -220,7 +224,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 // toggle clicked cell state
-                ((FoldingCell) view).toggle(false);
+                ((FoldingCell) view).toggle(true);
                 // register in adapter that state for selected cell is toggled
                 adapter.registerToggle(pos);
             }

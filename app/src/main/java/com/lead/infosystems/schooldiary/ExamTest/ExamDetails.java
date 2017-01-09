@@ -53,7 +53,7 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         View rootView = inflater.inflate(R.layout.fragment_exam_details, container, false);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
-        getActivity().setTitle("EXAM DETAILS");
+        getActivity().setTitle("Exam Details");
         button = (FloatingActionButton)rootView.findViewById(R.id.add_exam);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +142,7 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
             TextDrawable drawable = TextDrawable.builder().buildRound(firstletter.toUpperCase(),color);
             image.setImageDrawable(drawable);
             exam_name.setText(currentItem.getExam_name()+"");
-            exam_date.setText(currentItem.getExam_date()+"");
+            exam_date.setText(currentItem.getExam_date().split(" ")[0]);
 
 
             return ItemView;

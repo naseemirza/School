@@ -31,8 +31,7 @@ public class Suggestion_Post extends DialogFragment {
         edit_title=(EditText)rootview.findViewById(R.id.editText_title);
         edit_content=(EditText)rootview.findViewById(R.id.editText_content);
         userdatasp=new UserDataSP(getActivity().getApplicationContext());
-
-
+        getDialog().setTitle("New Suggestion");
         sugg_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,7 +47,7 @@ public class Suggestion_Post extends DialogFragment {
             @Override
             public void volleyResponse(String result) {
                 if (result.contains("Done")){
-                    Toast.makeText(getActivity().getApplicationContext(),""+result, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"Done", Toast.LENGTH_SHORT).show();
                 }
 
             }

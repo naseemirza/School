@@ -28,8 +28,6 @@ public class GraphView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph_view);
-
-
         userDataSP = new UserDataSP(getApplicationContext());
         barChart = (BarChart) findViewById(R.id.chart);
         barChart.animateY(2000);
@@ -107,7 +105,6 @@ public class GraphView extends AppCompatActivity {
 
             return dataSets;
         } catch (JSONException e) {
-
             e.printStackTrace();
             return null;
         }

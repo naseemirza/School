@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -34,16 +36,20 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
     public static final String HOMEWORKDATE = "homeworkDate";
     public static final String NUMBER_USER = "number_user";
 
-    String className;
-    String divisionName;
-    String subjectName;
-    String lastDate_submission;
-    UserDataSP userDataSp;
-    int year_h, month_h, day_h;
-    static final int DIALOG_ID = 0;
-    Button btn, submitB;
-    EditText editTitle, editContent;
+    private String className;
+    private String divisionName;
+    private String subjectName;
+    private String lastDate_submission;
+    private UserDataSP userDataSp;
+    private int year_h;
+    private int month_h;
+    private int day_h;
+    private static final int DIALOG_ID = 0;
+    private Button submitB;
+    private ImageView btn;
+    private EditText editTitle, editContent;
     private MyVolley myVolley;
+    private TextView date_display;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,7 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
         subjectName = intent.getStringExtra("subject");
         editTitle = (EditText)findViewById(R.id.title_home);
         editContent = (EditText)findViewById(R.id.content_home);
+        date_display = (TextView) findViewById(R.id.date_display);
         submitB = (Button)findViewById(R.id.submit_home);
         submitB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,8 +72,9 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
         });
         final Calendar cal = Calendar.getInstance();
         year_h = cal.get(Calendar.YEAR);
-        month_h = cal.get(Calendar.MONTH);
+        month_h = cal.get(Calendar.MONTH)+1;
         day_h = cal.get(Calendar.DAY_OF_MONTH);
+        date_display.setText(day_h+"/"+month_h+"/"+year_h);
         myVolley = new MyVolley(getApplicationContext(), this);
         showDialoOnButtonClick();
 
@@ -74,7 +82,7 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
 
     public void showDialoOnButtonClick()
     {
-        btn = (Button)findViewById(R.id.button_date);
+        btn = (ImageView)findViewById(R.id.button_date);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,11 +96,9 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
     protected Dialog onCreateDialog(int id)
     {
         if(id==DIALOG_ID)
-        return new DatePickerDialog(this, dpickerListener, year_h, month_h, day_h);
-
+        return new DatePickerDialog(this, dpickerListener, year_h, month_h-1, day_h);
         return null;
     }
-
     private DatePickerDialog.OnDateSetListener dpickerListener = new DatePickerDialog.OnDateSetListener()
     {
 
@@ -101,34 +107,28 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
             year_h = year;
             month_h = monthOfYear+1;
             day_h = dayOfMonth;
-           // Toast.makeText(StudentDiary_DatePicker.this, year_h+"/"+month_h+"/"+day_h, Toast.LENGTH_SHORT).show();
+            date_display.setText(day_h+"/"+month_h+"/"+year_h);
         }
     };
 
 public void submitHomeWork()
-{   if(editTitle.getText().toString().isEmpty())
-   {
+{   if(editTitle.getText().toString().isEmpty()) {
     Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
-
-   }
-    else if (editContent.getText().toString().isEmpty())
-{
+} else if (editContent.getText().toString().isEmpty()) {
     Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
-}
-    else {
-    lastDate_submission = year_h + "-" + month_h + "-" + day_h + " " + 00 + ":" + 00 + ":" + 00;
-    myVolley.setUrl(Utils.HOMEWORK_INSERT);
-    myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
-    myVolley.setParams("class", className);
-    myVolley.setParams("division", divisionName);
-    myVolley.setParams("subject_name", subjectName);
-    myVolley.setParams("lastDate_submission", lastDate_submission);
-    myVolley.setParams("homework_title", editTitle.getText().toString());
-    myVolley.setParams("homework_content", editContent.getText().toString());
-
-    myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
-    myVolley.connect();
-}
+} else {
+        lastDate_submission = year_h + "-" + month_h + "-" + day_h + " " + 00 + ":" + 00 + ":" + 00;
+        myVolley.setUrl(Utils.HOMEWORK_INSERT);
+        myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
+        myVolley.setParams("class", className);
+        myVolley.setParams("division", divisionName);
+        myVolley.setParams("subject_name", subjectName);
+        myVolley.setParams("lastDate_submission", lastDate_submission);
+        myVolley.setParams("homework_title", editTitle.getText().toString());
+        myVolley.setParams("homework_content", editContent.getText().toString());
+        myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
+        myVolley.connect();
+    }
 }
     @Override
     public void volleyResponse(String result) {
@@ -158,8 +158,6 @@ public void submitHomeWork()
             JSONObject jsonobj = json.getJSONObject(i);
             homeNumber = jsonobj.getString(HOMEWORK_NUMBER);
             homeDate = jsonobj.getString(HOMEWORKDATE);
-
-
         }
         Intent intent = new Intent(INTENTFILTER);
         intent.putExtra(HOMEWORK_TITLE, homeTitle);
@@ -170,12 +168,5 @@ public void submitHomeWork()
         intent.putExtra(SUBJECT, subject);
         intent.putExtra(NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
         sendBroadcast(intent);
-
-
     }
-
-
-
-
-
 }

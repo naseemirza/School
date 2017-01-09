@@ -8,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.Utils;
@@ -113,11 +116,13 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
 
            // ClassPage currentItem=division.get(position);
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
-            class_text.setText("Division"+"  "+division.get(position));
+            class_text.setText("Division");
 
-
-
-
+            String firstletter = String.valueOf(division.get(position).charAt(0));
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+            int color = generator.getColor(getItem(position));
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            ((ImageView) ItemView.findViewById(R.id.class_image)).setImageDrawable(drawable);
 
             return ItemView;
 

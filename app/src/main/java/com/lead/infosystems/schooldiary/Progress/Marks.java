@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
@@ -28,12 +29,29 @@ import java.util.Objects;
 
 public class Marks extends AppCompatActivity {
 
-    public Button btn;
-    private MyDataBase myDataBase;
-    UserDataSP userDataSP;
-    ListView marks;
-    String subName;
+    private Button btn;
+    private UserDataSP userDataSP;
+    private ListView marks;
+    private String subName;
+    private MyAdaptor adaptor;
     public static List<MarksData> items = new ArrayList<MarksData>();
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_marks);
+        Intent intent = getIntent();
+        subName = intent.getStringExtra("sub_name");
+        userDataSP = new UserDataSP(getApplicationContext());
+        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
+        getSupportActionBar().setTitle(subName);
+        marks =(ListView)findViewById(R.id.marks);
+        adaptor = new MyAdaptor();
+        marks.setAdapter(adaptor);
+        init();
+    }
+
     public void init(){
         btn=(Button)findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -42,37 +60,20 @@ public class Marks extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), SinlGraph.class);
                 intent.putExtra("sub_name", subName);
                 startActivity(intent);
-
-
             }
         });
 
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_marks);
-        myDataBase = new MyDataBase(this);
-        Intent intent = getIntent();
 
-        subName = intent.getStringExtra("sub_name");
-        userDataSP = new UserDataSP(getApplicationContext());
-        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
-        getSupportActionBar().setTitle(subName);
-        marks =(ListView)findViewById(R.id.marks);
-        marks.setAdapter(new MyAdaptor());
-        init();
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void getJsonExam(String data) {
         try {
+            items.clear();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
 
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                if(Objects.equals(subName, sub_name)) {
+                if(subName.contentEquals(sub_name)){
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
 
@@ -91,11 +92,8 @@ public class Marks extends AppCompatActivity {
                             int total = Integer.parseInt(total_marks);
                             String date = json_obj_marks.getString("date");
                             Float percentage = (float) ((marks * 100) / total);
-                            myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
-                           // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
+                            items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
-                        putMarksDataList();
-
                     }
                 }
 
@@ -107,20 +105,6 @@ public class Marks extends AppCompatActivity {
         }
     }
 
-
-    public  void putMarksDataList()
-    {
-        Cursor data = myDataBase.getMarksData();
-
-        items.clear();
-        if(data.getCount()>0)
-        {
-            while (data.moveToNext())
-            {
-                items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
-            }
-        }
-    }
     class MyAdaptor extends ArrayAdapter<MarksData> {
 
         public MyAdaptor() {
@@ -140,14 +124,11 @@ public class Marks extends AppCompatActivity {
                 TextView obtMarks = (TextView) ItemView.findViewById(R.id.obtained_marks);
                 TextView percentage = (TextView) ItemView.findViewById(R.id.percentage_marks);
                 TextView examDate = (TextView) ItemView.findViewById(R.id.date_exam);
-
                 examDate.setText(currentItem.getDate());
                 examName.setText(currentItem.getExam_name());
                 totalMarks.setText(currentItem.getTotal_max());
                 obtMarks.setText(currentItem.getObtained_max());
                 percentage.setText(currentItem.getPercentage());
-
-
                 return ItemView;
 
         }

@@ -7,85 +7,160 @@
     android:visibility="gone">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="15dp">
+        android:layout_height="wrap_content">
 
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/director_profile_content"
-            android:layout_alignParentStart="true" />
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:src="@drawable/defaultpropic"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/director_name_content"
-            android:layout_marginLeft="70dp"
-            />
+            android:layout_marginLeft="30dp"
+            android:text="Director"
+            android:textColor="@color/mainTextColor"
+            android:layout_gravity="center_vertical"
+            android:textStyle="normal|bold"
+            android:textSize="18sp" />
 
-    </RelativeLayout>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="@color/bgContent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="9dp">
+        >
 
         <!-- avatar and name part -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:id="@+id/Ddesignation_t"
-                />
+                android:layout_height="wrap_content"
+                android:id="@+id/director_name_content"
+                android:textSize="18sp"
+                android:text="Name"
+                android:textColor="@color/mainTextColor"
+                android:textStyle="normal|bold"
+                android:layout_margin="8dp"/>
+
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="?attr/editTextColor"
+                android:text="Qualification: "
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/Dqualification_t"
                 android:layout_below="@+id/Ddesignation_t"
-
-                />
+                android:textSize="14sp"
+                android:text="Not Available"
+                android:textColor="@color/com_facebook_likeview_text_color"
+                android:textStyle="normal|italic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="?attr/editTextColor"
+                android:text="Mobile: "
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/Dmobile_no"
                 android:layout_below="@+id/Dqualification_t"
-
-                />
+                android:textSize="14sp"
+                android:text="Not Available"
+                android:textColor="@color/com_facebook_likeview_text_color"
+                android:textStyle="normal|italic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="?attr/editTextColor"
+                android:text="Mail: "
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/Dgmail"
                 android:layout_below="@+id/Dmobile_no"
-
-                />
+                android:textSize="14sp"
+                android:text="Not Available"
+                android:textColor="@color/com_facebook_likeview_text_color"
+                android:textStyle="normal|italic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="?attr/editTextColor"
+                android:text="Field: "
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/Dfield"
                 android:layout_below="@+id/Dgmail"
-
-                />
-
+                android:textSize="14sp"
+                android:text="Not Available"
+                android:textColor="@color/com_facebook_likeview_text_color"
+                android:textStyle="normal|italic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="?attr/editTextColor"
+                android:text="Contact: "
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/DcontactDetail"
                 android:layout_below="@+id/Dfield"
+                android:textSize="14sp"
+                android:text="Not Available"
+                android:textColor="@color/com_facebook_likeview_text_color"
+                android:textStyle="normal|italic"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp" />
 
-                />
 
-
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 

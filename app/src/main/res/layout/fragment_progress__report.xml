@@ -5,6 +5,13 @@
     tools:context="com.lead.infosystems.schooldiary.Progress.Progress_Report">
 
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:id="@+id/progress_report_progressbar"/>
+
     <ListView
 
         android:layout_width="match_parent"

@@ -42,6 +42,7 @@ import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -80,6 +81,7 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
     private CompressImage compressImage;
     private ProgressBar proPicProgressBar;
     private Target target;
+    private boolean imageLoad = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -296,7 +298,7 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
 
     private void loadProPic(boolean refresh){
         proPic.setMinimumWidth(getWindowManager().getDefaultDisplay().getHeight());
-        target = new Target() {
+        final Target target2 = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 proPic.setBackgroundDrawable(new BitmapDrawable(bitmap));
@@ -304,8 +306,26 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
-                Log.e("picasso","fail");
-                proPic.setBackgroundDrawable(getResources().getDrawable(R.drawable.defaultpropic));
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+        target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                proPic.setBackgroundDrawable(new BitmapDrawable(bitmap));
+                Picasso.with(getApplicationContext())
+                        .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
+                        .noPlaceholder()
+                        .into(target2);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
             }
 
             @Override
@@ -329,8 +349,9 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
             recyclerView.setAdapter(postAdaptor);
         }else{
             Picasso.with(getApplicationContext())
-                    .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL))
+                    .load(Utils.SERVER_URL+userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb"))
                     .placeholder(R.drawable.defaultpropic)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .into(target);
         }
     }
