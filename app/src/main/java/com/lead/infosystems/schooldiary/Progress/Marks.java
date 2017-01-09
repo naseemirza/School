@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
@@ -30,7 +32,9 @@ public class Marks extends AppCompatActivity {
 
     public Button btn;
     private MyDataBase myDataBase;
-    UserDataSP userDataSP;
+    private UserDataSP userDataSP;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     ListView marks;
     String subName;
     public static List<MarksData> items = new ArrayList<MarksData>();
@@ -54,19 +58,24 @@ public class Marks extends AppCompatActivity {
         setContentView(R.layout.activity_marks);
         myDataBase = new MyDataBase(this);
         Intent intent = getIntent();
-
         subName = intent.getStringExtra("sub_name");
         userDataSP = new UserDataSP(getApplicationContext());
-        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
         getSupportActionBar().setTitle(subName);
         marks =(ListView)findViewById(R.id.marks);
+        progressBar= (ProgressBar)findViewById(R.id.marks_progress);
+        notAvailable = (TextView)findViewById(R.id.marksnot_available);
+        checkInternetConnection();
+        items.clear();
         marks.setAdapter(new MyAdaptor());
         init();
+
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
+
     private void getJsonExam(String data) {
         try {
+            myDataBase.clearMarksData();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
 
@@ -94,11 +103,10 @@ public class Marks extends AppCompatActivity {
                             myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
                            // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
-                        putMarksDataList();
-
                     }
                 }
 
+                putMarksDataList();
             }
 
         } catch (JSONException e) {
@@ -107,11 +115,21 @@ public class Marks extends AppCompatActivity {
         }
     }
 
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(this))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
+        }
+        else {
+            putMarksDataList();
+        }
 
+    }
     public  void putMarksDataList()
     {
         Cursor data = myDataBase.getMarksData();
-
         items.clear();
         if(data.getCount()>0)
         {
@@ -119,6 +137,10 @@ public class Marks extends AppCompatActivity {
             {
                 items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
             }
+        }
+        else
+        {
+            notAvailable.setVisibility(View.VISIBLE);
         }
     }
     class MyAdaptor extends ArrayAdapter<MarksData> {

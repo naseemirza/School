@@ -96,7 +96,6 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
             progressBar.setVisibility(View.GONE);
     }
 
-
     private void getDataToList(boolean reload){
         if(dataBase.getContacts().getCount()>0){
             items.clear();

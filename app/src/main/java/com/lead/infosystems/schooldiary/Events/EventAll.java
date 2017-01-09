@@ -8,35 +8,25 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,12 +34,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.lead.infosystems.schooldiary.Events.EventDailog.EVENT_DATE;
 import static com.lead.infosystems.schooldiary.Events.EventDailog.EVENT_DETAIL;
@@ -62,6 +49,8 @@ public class EventAll extends Fragment {
     private Date selectedDate;
     private MyDataBase myDataBase;
     private UserDataSP userDataSP;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     CompactCalendarView calendarView;
     ListView listview;
     List<EventsData> eventList = new ArrayList<>();
@@ -79,12 +68,22 @@ public class EventAll extends Fragment {
         getActivity().getApplicationContext().registerReceiver(receiver, new IntentFilter(INTENT_FILTER));
         userDataSP=new UserDataSP(getActivity());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
+        progressBar = (ProgressBar)rootView.findViewById(R.id.event_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.eventnot_available);
         listview = (ListView)rootView.findViewById(R.id.list_event);
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
+        eventList.clear();
         adapter = new MyAdapter();
         listview.setAdapter(adapter);
-        getData();
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getData();
+        }
+        else {
+            putEventDataList();
+        }
         return rootView;
     }
 
@@ -117,14 +116,19 @@ public class EventAll extends Fragment {
 
 
     private void getData(){
+        myDataBase.clearEventData();
+        eventList.clear();
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
                 try {
+                    notAvailable.setVisibility(View.GONE);
                     getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    notAvailable.setVisibility(View.VISIBLE);
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.EVENT_FETCH);
@@ -133,13 +137,11 @@ public class EventAll extends Fragment {
     }
 
     private void getJsonData(String re) throws JSONException {
+        myDataBase.clearEventData();
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            eventList.add(new EventsData(jsonobj.getString(EVENT_NAME), jsonobj.getString(EVENT_DETAIL),
-                    jsonobj.getString(EVENT_DATE), jsonobj.getString(SUBMIT_DATE), jsonobj.getString(UserDataSP.SCHOOL_NUMBER)));
             myDataBase.insertEventData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number"));
-           // eventList.add(new EventsData(jsonobj.getString("event_name"), jsonobj.getString("event_details"), jsonobj.getString("event_date"), jsonobj.getString("submit_date"), jsonobj.getString("school_number")));
 
         }
         putEventDataList();
@@ -148,18 +150,22 @@ public class EventAll extends Fragment {
 
     public void putEventDataList()
     {
-        Cursor data = myDataBase.getEventData();
-        if(data.getCount()>0)
+        if(myDataBase.getEventData().getCount()>0)
         {
+            eventList.clear();
+            Cursor data = myDataBase.getEventData();
             while(data.moveToNext())
             {
-                eventList.add(new EventsData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+                eventList.add(new EventsData(data.getString(1), data.getString(2), data.getString(3)
+                        , data.getString(4), data.getString(5)));
             }
+            getDataValues();
         }
-        else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Event Data",Toast.LENGTH_SHORT).show();
+        else
+        {
+            notAvailable.setVisibility(View.VISIBLE);
         }
-        getDataValues();
+
     }
 
     private void getDataValues() {
@@ -169,7 +175,7 @@ public class EventAll extends Fragment {
             e = new Event(Color.BLACK, Utils.getTimeInMili(allEvent.getEvent_date()+" 10:00:00"), allEvent);
                 calendarView.addEvent(e);
         }
-
+        eventList.clear();
         calendarView.setVisibility(View.VISIBLE);
         calendarView.showCalendar();
 

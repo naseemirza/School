@@ -26,6 +26,18 @@
         android:id="@+id/detailNotAvailable"
         android:visibility="gone"
         android:textAlignment="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Internet Connection, Please connect to internet"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/managementNoInternet"
+        android:visibility="gone"
+        android:textAlignment="center" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

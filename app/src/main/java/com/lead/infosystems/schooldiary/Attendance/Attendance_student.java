@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,10 +17,10 @@ import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,12 +33,13 @@ import java.util.List;
 import java.util.Locale;
 
 
-
 public class Attendance_student extends Fragment implements IVolleyResponse{
 
     private MyVolley myVolley;
     private UserDataSP userDataSP;
     private MyDataBase myDatabase;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     CompactCalendarView calendarView;
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
     List<AttendanceData> attendance = new ArrayList<>();
@@ -63,17 +65,31 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         presentView = (TextView)rootView.findViewById(R.id.total_present);
         absentView = (TextView)rootView.findViewById(R.id.total_absent);
         leavesView= (TextView)rootView.findViewById(R.id.total_leaves);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.attendance_loading);
+        notAvailable = (TextView)rootView.findViewById(R.id.attendanceStdNotAvailable);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         myDatabase = new MyDataBase(getActivity().getApplicationContext());
-        getAttendanceData();
+        checkInternetConnection();
         return rootView;
 
 
     }
-
+     public void checkInternetConnection()
+     {
+         if(ServerConnect.checkInternetConenction(getActivity()))
+         {
+             getAttendanceData();
+         }
+         else
+         {
+             putAttendanceIntoList();
+         }
+     }
 
     public void getAttendanceData(){
-
+        myDatabase.clearContacts();
+        attendance.clear();
+        progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.ATTENDANCE_FETCH);
         myVolley.setParams(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
         myVolley.connect();
@@ -83,47 +99,38 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     public void volleyResponse(String result) {
 
         try {
+            progressBar.setVisibility(View.GONE);
+            notAvailable.setVisibility(View.GONE);
+            JSONArray json = new JSONArray(result);
+            myDatabase.clearAttendanceData();
+            for (int i = 0; i <= json.length() - 1; i++) {
+                JSONObject jsonobj = json.getJSONObject(i);
+                myDatabase.insertAttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance"));
 
-            getJsonData(result);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
-
-        }
-    }
-
-    private void getJsonData(String re) throws JSONException {
-        JSONArray json = new JSONArray(re);
-        for (int i = 0; i <= json.length() - 1; i++) {
-            JSONObject jsonobj = json.getJSONObject(i);
-            Log.e("year", jsonobj.getString("year"));
-            Log.e("day", jsonobj.getString("day"));
-            Log.e("month", jsonobj.getString("month"));
-
-            myDatabase.insertAttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance"));
-
+            notAvailable.setVisibility(View.VISIBLE);
         }
         putAttendanceIntoList();
     }
 
     public void putAttendanceIntoList()
+    {   if(myDatabase.getAttendanceData().getCount()>0)
     {
+        attendance.clear();
         Cursor data = myDatabase.getAttendanceData();
-        if(data.getCount()>0)
+        while (data.moveToNext())
         {
-            attendance = new ArrayList<>();
-            while (data.moveToNext())
-            {
-                Log.e("data1...", data.getString(1));
-                Log.e("data2...", data.getString(2));
-                Log.e("data3...", data.getString(2));
-                Log.e("data4...", data.getString(4));
-                attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
-            }
-        }
-        else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Attendance Data",Toast.LENGTH_SHORT).show();
+            attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
         }
         getDataValues();
+    }
+        else
+    {
+        notAvailable.setVisibility(View.VISIBLE);
+    }
+
 
     }
 

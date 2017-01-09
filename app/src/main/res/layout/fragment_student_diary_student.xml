@@ -13,25 +13,27 @@
     android:clipToPadding="false"
     android:scrollbars="none"
     tools:context="com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_student">
-<ProgressBar
-    style="?android:attr/progressBarStyle"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/homework_progress"
-    android:layout_centerInParent="true"
-    android:visibility="gone"
-    />
-<TextView
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:text="No question papers Available"
-android:layout_centerInParent="true"
-android:textColor="@color/colorPrimaryDark"
-android:textSize="18sp"
-android:textStyle="normal|bold"
-android:id="@+id/homeworknot_available"
-android:visibility="gone"
-android:textAlignment="center" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/homeworkStd_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Homework Data Available"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/homeworkStdnot_available"
+        android:visibility="gone"
+        android:textAlignment="center" />
+
 
 <ListView
     android:id="@+id/list_detail"

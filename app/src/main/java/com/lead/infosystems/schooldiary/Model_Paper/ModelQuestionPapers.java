@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
@@ -45,8 +46,9 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private UserDataSP userdatasp;
     private MyAdaptor adaptor;
     private ProgressBar progressBar;
-    private MyVolley myVolley;
+    private TextView noInternet;
     private TextView notAvailable;
+    private MyVolley myVolley;
     private String classNumber;
 
     private ImageButton delete_button;
@@ -66,12 +68,13 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
         userdatasp=new UserDataSP(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.pdf_progress);
         notAvailable = (TextView) rootView.findViewById(R.id.not_available);
+        noInternet = (TextView)rootView.findViewById(R.id.noInternet);
         getActivity().setTitle("Model Question Paper");
         list_model = (ListView) rootView.findViewById(R.id.list);
         adaptor = new MyAdaptor();
         list_model.setAdapter(adaptor);
         myVolley = new MyVolley(getActivity().getApplicationContext(),this);
-        getDataFromServer();
+        checkInternetConnection();
         button = (FloatingActionButton) rootView.findViewById(R.id.add);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +86,17 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
             }
         });
         return rootView;
+    }
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            getDataFromServer();
+        }
+        else
+        {
+            noInternet.setVisibility(View.VISIBLE);
+        }
     }
 
 

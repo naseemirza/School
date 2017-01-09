@@ -18,6 +18,7 @@ import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -38,6 +39,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     private ExpandableHeightListView list;
     private ProgressBar progressBar;
     private TextView notAvailable;
+    private TextView noInternet;
     FoldingCell firstCell, secondCell;
     private ArrayList<ItemDetail> items;
     TextView principalNameTitle, directorNameTitle, principalNameContent, directorNameContent,  mobileNP,  gmailIdP, designationP, qualificationsP, interests_fieldP, contact_detailP,  mobileND,  gmailIdD, designationD, qualificationsD, interests_fieldD, contact_detailD;
@@ -59,7 +61,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
-
+        noInternet = (TextView) rootView.findViewById(R.id.managementNoInternet);
         notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
         list = (ExpandableHeightListView) rootView.findViewById(R.id.listF);
        firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
@@ -116,8 +118,21 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                 }
             }
         });
-        getTeacherDetail();
+        checkInternetConnection();
+
         return rootView;
+    }
+
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {   progressBar.setVisibility(View.VISIBLE);
+            getTeacherDetail();
+        }
+        else
+        {
+            noInternet.setVisibility(View.VISIBLE);
+        }
     }
 
     public void getTeacherDetail()
@@ -129,7 +144,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     @Override
     public void volleyResponse(String result)
     {
-        progressBar.setVisibility(View.GONE);
+
         try {
             notAvailable.setVisibility(View.GONE);
             getJsonData(result);
@@ -138,13 +153,14 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
             e.printStackTrace();
             notAvailable.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
 
     public void getJsonData(String res) throws JSONException
     {
         JSONArray jsonArray = new JSONArray(res);
-
+        myDataBase.clearManagementData();
         for(int j = 0 ; j<jsonArray.length(); j++) {
             JSONObject job_data = jsonArray.getJSONObject(j);
                 String firstName = job_data.getString(UserDataSP.FIRST_NAME);

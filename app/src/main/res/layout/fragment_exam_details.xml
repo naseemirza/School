@@ -11,10 +11,42 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.lead.infosystems.schooldiary.ExamTest.ExamDetails">
 
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testExam_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Test and Exam Data Available"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/testExamnot_available"
+        android:visibility="gone"
+        android:textAlignment="center" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Internet Connection, Please connect to internet"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/testExamnoInternet"
+        android:visibility="gone"
+        android:textAlignment="center" />
+
     <ListView
 
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:id="@+id/exam_list"/>
 
     <android.support.design.widget.FloatingActionButton
