@@ -1,8 +1,30 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Events.EventAll">
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/event_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:textAlignment="center"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Event Data Available"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/eventnot_available"
+        android:visibility="gone"
+        android:textAlignment="center" />
+
+
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,4 +56,4 @@
             />
 
     </RelativeLayout>
-</FrameLayout>
+</RelativeLayout>

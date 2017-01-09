@@ -11,40 +11,30 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Attendance_teacher extends Fragment {
-
-
-
-    UserDataSP userDataSP;
-
+    private UserDataSP userDataSP;
+    private TextView noInternet;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     SPData spData;
     ListView clist;
     public static List<String> classes = new ArrayList<>();
@@ -65,19 +55,37 @@ public class Attendance_teacher extends Fragment {
         userDataSP=new UserDataSP(getActivity());
         spData =new SPData(getActivity());
         clist=(ListView)rootView.findViewById(R.id.class_list);
-        getClassData();
-
+        noInternet = (TextView)rootView.findViewById(R.id.noInternet);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.attendance_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.attendanceNotAvailable);
+        checkInternetConnection();
         return rootView;
     }
 
+
+
+    public  void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {  progressBar.setVisibility(View.VISIBLE);
+            getClassData();
+        }
+        else
+        {
+            noInternet.setVisibility(View.VISIBLE);
+        }
+    }
     public void getClassData(){
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
                 try {
+                    progressBar.setVisibility(View.GONE);
+                    noInternet.setVisibility(View.GONE);
                     getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    notAvailable.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -104,7 +112,6 @@ public class Attendance_teacher extends Fragment {
                 startActivity(intent);
             }
         });
-
 
     }
     class MyAdaptor extends ArrayAdapter<String> {

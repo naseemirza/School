@@ -1,11 +1,8 @@
 package com.lead.infosystems.schooldiary.Progress;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,30 +14,22 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -53,8 +42,10 @@ public class Progress_Report extends Fragment {
     private ListView list;
     private View rootView;
     private String examData;
-    public Button btn1;
     private ProgressBar progressBar;
+    private TextView notAvailable;
+    public Button btn1;
+    ArrayList<String> subjects = new ArrayList<>();
 
     public Progress_Report() {
         // Required empty public constructor
@@ -67,10 +58,12 @@ public class Progress_Report extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_progress__report, container, false);
         btn1=(Button)rootView.findViewById(R.id.button_prog);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_report_progressbar);
         userDataSP=new UserDataSP(getActivity().getApplicationContext());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         getActivity().setTitle("Progress Report");
+        progressBar = (ProgressBar)rootView.findViewById(R.id.report_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.reportnot_available);
+        subjects.clear();
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,13 +76,24 @@ public class Progress_Report extends Fragment {
                 }
             }
         });
-        getDataFromServer();
-
+        checkInternetConnection();
         return rootView;
     }
 
+
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getDataFromServer();
+        }
+        else
+        {
+           putIntoList();
+        }
+    }
     private void getDataFromServer(){
-        progressBar.setVisibility(View.VISIBLE);
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
@@ -100,9 +104,10 @@ public class Progress_Report extends Fragment {
                         getJsonData(res[0]);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        notAvailable.setVisibility(View.VISIBLE);
                     }
-                    progressBar.setVisibility(View.GONE);
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.MARKS);
@@ -112,19 +117,18 @@ public class Progress_Report extends Fragment {
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
+        myDataBase.clearSubjectData();
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
             myDataBase.insertSubjectData(jsonobj.getString("sub_name"));
-            examData=jsonobj.getString("sub_data");
-            putIntoList();
-
+            examData = jsonobj.getString("sub_data");
         }
+        putIntoList();
 
     }
 
     public void putIntoList()
     {
-        final List<String> subjects = new ArrayList<String>();
         Cursor data = myDataBase.getSubjectData();
         if(data.getCount()>0)
         {
@@ -135,7 +139,7 @@ public class Progress_Report extends Fragment {
             }
         }
         else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Home Work Data",Toast.LENGTH_SHORT).show();
+            notAvailable.setVisibility(View.VISIBLE);
         }
         object = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, subjects);
         list = (ListView)rootView.findViewById(R.id.list);

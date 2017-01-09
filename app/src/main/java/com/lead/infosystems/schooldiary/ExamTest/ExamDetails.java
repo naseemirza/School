@@ -14,12 +14,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -39,6 +41,9 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
     private MyVolley myVolley;
     ListView examList;
     private MyAdaptor adaptor;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
+    private TextView noInternet;
     private FloatingActionButton button;
     List<ExamData> exam_detail = new ArrayList<>();
     public ExamDetails() {
@@ -54,6 +59,9 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getActivity().setTitle("Exam Details");
+        progressBar = (ProgressBar)rootView.findViewById(R.id.testExam_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.testExamnot_available);
+        noInternet = (TextView)rootView.findViewById(R.id.testExamnoInternet);
         button = (FloatingActionButton)rootView.findViewById(R.id.add_exam);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +74,21 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         examList = (ListView)rootView.findViewById(R.id.exam_list);
         adaptor = new MyAdaptor();
         examList.setAdapter(adaptor);
-        getExamData();
+        checkInternetConnection();
+
         return rootView;
+    }
+
+
+    public void checkInternetConnection()
+    { if(ServerConnect.checkInternetConenction(getActivity()))
+    {   progressBar.setVisibility(View.VISIBLE);
+        getExamData();
+    }
+        else {
+        noInternet.setVisibility(View.VISIBLE);
+    }
+
     }
 
     public void getExamData()
@@ -80,12 +101,13 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
     public void volleyResponse(String result)
     {
         try {
-
+             noInternet.setVisibility(View.GONE);
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
-
+           notAvailable.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     public void getJsonData(String res) throws JSONException

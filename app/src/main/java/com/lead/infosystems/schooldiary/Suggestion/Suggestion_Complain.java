@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -33,6 +36,9 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
     ListView list;
     private ArrayList<sc_items> scItem;
     private MyVolley myVolley;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
+    private TextView noInternet;
     UserDataSP userDataSp;
     public Suggestion_Complain() {
         // Required empty public constructor
@@ -49,7 +55,9 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getActivity().setTitle("Suggestion/Complaints");
         list = (ListView) rootView.findViewById(R.id.list_detail);
-        getSuggestionData();
+        progressBar = (ProgressBar)rootView.findViewById(R.id.suggestion_loading);
+        notAvailable = (TextView)rootView.findViewById(R.id.suggestionNotAvailable);
+        noInternet = (TextView)rootView.findViewById(R.id.suggestionNoInternet);
         button = (FloatingActionButton) rootView.findViewById(R.id.add);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -60,10 +68,23 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
                 suggestion_post.show(manager, "Suggestion_Post");
             }
         });
-
+        checkInternetConnection();
         return rootView;
     }
 
+
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getSuggestionData();
+        }
+        else
+        {
+            noInternet.setVisibility(View.VISIBLE);
+        }
+    }
     public void getSuggestionData() {
         myVolley.setUrl(Utils.SUGGESTION_COMPLAIN);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
@@ -75,10 +96,13 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
     public void volleyResponse(String result) {
 
         try {
+            notAvailable.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             Log.e("result",result);
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
+            notAvailable.setVisibility(View.VISIBLE);
         }
 
     }

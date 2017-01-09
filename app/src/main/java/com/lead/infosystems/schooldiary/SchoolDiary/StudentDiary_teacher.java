@@ -12,12 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -33,6 +35,9 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
     UserDataSP userDataSP;
     private MyVolley myVolley;
     ListView list_class;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
+    private TextView noInternet;
     ArrayList<String> classes = new ArrayList<String>();
 
 
@@ -51,12 +56,26 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
         userDataSP=new UserDataSP(getActivity());
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         list_class=(ListView)rootView.findViewById(R.id.class_list_home);
-        getClassData();
+        progressBar = (ProgressBar)rootView.findViewById(R.id.homework_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.homeworkNotAvailable);
+        noInternet = (TextView)rootView.findViewById(R.id.homenoInternet);
+        checkInternetConnection();
         return rootView;
 
     }
-    public void getClassData(){
 
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {  progressBar.setVisibility(View.VISIBLE);
+            getClassData();
+        }
+        else {
+            noInternet.setVisibility(View.VISIBLE);
+        }
+
+    }
+    public void getClassData(){
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.connect();
@@ -66,11 +85,12 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
     public void volleyResponse(String result) {
 
         try {
-
+            progressBar.setVisibility(View.GONE);
+            noInternet.setVisibility(View.GONE);
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
-
+            notAvailable.setVisibility(View.VISIBLE);
         }
     }
 

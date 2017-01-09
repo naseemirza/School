@@ -1,9 +1,7 @@
 package com.lead.infosystems.schooldiary.Progress;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
@@ -25,15 +24,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Marks extends AppCompatActivity {
 
-    private Button btn;
+    public Button btn;
+    private MyDataBase myDataBase;
     private UserDataSP userDataSP;
-    private ListView marks;
-    private String subName;
+    private ProgressBar progressBar;
+    private TextView notAvailable;
     private MyAdaptor adaptor;
+    ListView marks;
+    String subName;
     public static List<MarksData> items = new ArrayList<MarksData>();
 
 
@@ -41,16 +42,21 @@ public class Marks extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_marks);
+        myDataBase = new MyDataBase(this);
         Intent intent = getIntent();
         subName = intent.getStringExtra("sub_name");
         userDataSP = new UserDataSP(getApplicationContext());
-        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
         getSupportActionBar().setTitle(subName);
         marks =(ListView)findViewById(R.id.marks);
+        progressBar= (ProgressBar)findViewById(R.id.marks_progress);
+        notAvailable = (TextView)findViewById(R.id.marksnot_available);
+        checkInternetConnection();
+        items.clear();
         adaptor = new MyAdaptor();
         marks.setAdapter(adaptor);
         init();
     }
+
 
     public void init(){
         btn=(Button)findViewById(R.id.btn);
@@ -67,13 +73,13 @@ public class Marks extends AppCompatActivity {
 
     private void getJsonExam(String data) {
         try {
-            items.clear();
+            myDataBase.clearMarksData();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
 
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                if(subName.contentEquals(sub_name)){
+                if(subName.contentEquals(sub_name)) {
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
 
@@ -94,6 +100,7 @@ public class Marks extends AppCompatActivity {
                             Float percentage = (float) ((marks * 100) / total);
                             items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
+                        putMarksDataList();
                     }
                 }
 
@@ -105,6 +112,34 @@ public class Marks extends AppCompatActivity {
         }
     }
 
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(this))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
+        }
+        else {
+            putMarksDataList();
+        }
+
+    }
+    public  void putMarksDataList()
+    {
+        Cursor data = myDataBase.getMarksData();
+        items.clear();
+        if(data.getCount()>0)
+        {
+            while (data.moveToNext())
+            {
+                items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+            }
+        }
+        else
+        {
+            notAvailable.setVisibility(View.VISIBLE);
+        }
+    }
     class MyAdaptor extends ArrayAdapter<MarksData> {
 
         public MyAdaptor() {

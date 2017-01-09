@@ -12,12 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Main.MainActivity;
@@ -38,6 +40,9 @@ public class TeacherMQP extends Fragment {
     private UserDataSP userDataSP;
     private ListView clist;
     private MyAdaptor adaptor;
+    private ProgressBar progressBar;
+    private TextView noInternet;
+    private TextView notAvailable;
     public static List<String> classes = new ArrayList<>();
 
     public TeacherMQP() {
@@ -53,19 +58,42 @@ public class TeacherMQP extends Fragment {
         getActivity().setTitle("Model Question Paper");
         userDataSP=new UserDataSP(getActivity());
         clist=(ListView)rootView.findViewById(R.id.list);
+        progressBar = (ProgressBar)rootView.findViewById(R.id.teachermodel_progress);
+        notAvailable = (TextView)rootView.findViewById(R.id.modelnotavailableT);
+        noInternet = (TextView)rootView.findViewById(R.id.noInternetT);
         adaptor = new MyAdaptor();
+        checkInternetConnection();
+        classes.clear();
         clist.setAdapter(adaptor);
-        getClassData();
+
+
         return rootView;
+    }
+
+    public  void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            getClassData();
+        }
+        else
+        {
+            noInternet.setVisibility(View.VISIBLE);
+        }
+
     }
     public void getClassData(){
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
                 try {
+                    progressBar.setVisibility(View.GONE);
+                    noInternet.setVisibility(View.GONE);
                     getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    notAvailable.setVisibility(View.VISIBLE);
                 }
             }
         });

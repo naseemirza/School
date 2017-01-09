@@ -27,6 +27,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Internet Connection, Please connect to internet"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/noInternet"
+        android:visibility="gone"
+        android:textAlignment="center" />
+
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:id="@+id/add"

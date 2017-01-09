@@ -11,11 +11,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class StudentDiary_student extends Fragment implements IVolleyResponse {
     ListView list;
-    private ArrayList<Item> items;
+    private ArrayList<Item> items = new ArrayList<>();
     private MyVolley myVolley;
     private UserDataSP userDataSp;
     private MyDataBase myDataBase;
@@ -45,19 +45,34 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_diary_student, container, false);
         userDataSp = new UserDataSP(getActivity());
-        progressBar = (ProgressBar)view.findViewById(R.id.homework_progress);
-        notAvailable = (TextView) view.findViewById(R.id.homeworknot_available);
+        progressBar = (ProgressBar)view.findViewById(R.id.homeworkStd_progress);
+        notAvailable = (TextView) view.findViewById(R.id.homeworkStdnot_available);
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
-        getActivity().setTitle("HOME WORK");
+        getActivity().setTitle("Home Work");
         list = (ListView) view.findViewById(R.id.list_detail);
-        getHomeWorkData();
+       checkInternetConnection();
+
         return view;
 
     }
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {
+            getHomeWorkData();
+        }
+        else
+        {
+            putHomeWorkDataintoList();
+        }
 
+    }
     public void getHomeWorkData()
-    {   progressBar.setVisibility(View.VISIBLE);
+    {
+        myDataBase.clearHomeWorkData();
+        items.clear();
+        progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.HOMEWORK_FETCH);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams(UserDataSP.CLASS, userDataSp.getUserData(UserDataSP.CLASS));
@@ -83,6 +98,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
+        myDataBase.clearHomeWorkData();
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
             myDataBase.insertHomeWorkData(jsonobj.getString("homework_title"), jsonobj.getString("homework_contents"), jsonobj.getString("lastDate_submission"), jsonobj.getString("subject"), jsonobj.getString("homeworkDate"), jsonobj.getString(UserDataSP.NUMBER_USER), jsonobj.getString("homework_number"));
@@ -94,11 +110,9 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
     }
     public void putHomeWorkDataintoList()
     {
-        Cursor data = myDataBase.getHomeWorkData();
-        Log.e("cursor data", data.toString()+" ..");
-        if(data.getCount()>0)
-        {
-            items = new ArrayList<>();
+        if(myDataBase.getHomeWorkData().getCount()>0)
+        {    items.clear();
+            Cursor data = myDataBase.getHomeWorkData();
             while (data.moveToNext())
             {
                 items.add(new Item(data.getString(1), data.getString(2), data.getString(3),
@@ -107,7 +121,7 @@ public class StudentDiary_student extends Fragment implements IVolleyResponse {
 
         }
         else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Home Work Data",Toast.LENGTH_SHORT).show();
+            notAvailable.setVisibility(View.VISIBLE);
         }
         final FoldingCellListAdapter adapter = new FoldingCellListAdapter(getActivity(), items);
         adapter.sortData();

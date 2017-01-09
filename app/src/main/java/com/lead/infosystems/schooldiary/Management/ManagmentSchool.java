@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import com.lead.infosystems.schooldiary.Data.MyDataBase;
@@ -41,7 +40,8 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     private ExpandableHeightListView list;
     private ProgressBar progressBar;
     private TextView notAvailable;
-    private FoldingCell firstCell, secondCell;
+    private TextView noInternet;
+    FoldingCell firstCell, secondCell;
     private ArrayList<ItemDetail> items;
     private TextView principalNameContent, directorNameContent,  mobileNP,  gmailIdP, qualificationsP,
             interests_fieldP, contact_detailP,  mobileND,  gmailIdD, qualificationsD, interests_fieldD, contact_detailD;
@@ -60,12 +60,13 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.managment_school, container, false);
         // Inflate the layout for this fragment
+        getActivity().setTitle("Management");
         myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
-
-        notAvailable = (TextView) rootView.findViewById(R.id.detailNotAvailable);
+        noInternet = (TextView) rootView.findViewById(R.id.managementNoInternet);
+        notAvailable = (TextView) rootView.findViewById(R.id.mdetailNotAvailable);
         list = (ExpandableHeightListView) rootView.findViewById(R.id.listF);
         firstCell = (FoldingCell)rootView.findViewById(R.id.firstCellView);
         secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
@@ -101,8 +102,23 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                     secondCell.toggle(false);
                 }
         });
-        getTeacherDetail();
+        checkInternetConnection();
+
         return rootView;
+    }
+
+    public void checkInternetConnection()
+    {
+        if(ServerConnect.checkInternetConenction(getActivity()))
+        {   progressBar.setVisibility(View.VISIBLE);
+            getTeacherDetail();
+        }
+        else
+        {
+            principalData();
+            directorData();
+            putMdataIntoList();
+        }
     }
 
     public void getTeacherDetail()
@@ -114,7 +130,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     @Override
     public void volleyResponse(String result)
     {
-        progressBar.setVisibility(View.GONE);
+
         try {
             notAvailable.setVisibility(View.GONE);
             getJsonData(result);
@@ -123,6 +139,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
             e.printStackTrace();
             notAvailable.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
 
@@ -143,52 +160,15 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
                 JSONArray jsonDetailArray = new JSONArray(completeDetail);
 
                 for (int k = 0; k < jsonDetailArray.length(); k++) {
-
                     JSONObject jsonObjDetail = jsonDetailArray.getJSONObject(k);
                      if (jsonObjDetail.getString("designation").contains("Principal")) {
-                         //principalNameTitle.setText(firstName+lastName+"");
-                         principalNameContent.setText(firstName+lastName+"");
-                         mobileNP.setText(mobile);
-                         gmailIdP.setText(gmail);
-                         Picasso.with(getContext())
-                                 .load(Utils.SERVER_URL+pic)
-                                 .placeholder(R.drawable.defaultpropic)
-                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
-                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
-                                 .into(principalImageTitle);
-                         Picasso.with(getContext())
-                                 .load(Utils.SERVER_URL+pic)
-                                 .placeholder(R.drawable.defaultpropic)
-                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
-                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
-                                 .into(principalImageContent);
-                         //designationP.setText(jsonObjDetail.getString("designation"));
-                         qualificationsP.setText(jsonObjDetail.getString("qualifications"));
-                         interests_fieldP.setText(jsonObjDetail.getString("interests_field"));
-                         contact_detailP.setText(jsonObjDetail.getString("contact_detail"));
+                         userDataSp.storePrincipalData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")  );
+                         principalData();
                          // for existing cell set valid valid state(without animation)
-
-                     } else if (jsonObjDetail.getString("designation").contains("Director")) {
-
-                         directorNameContent.setText(firstName+lastName+"");
-                         mobileND.setText(mobile);
-                         gmailIdD.setText(gmail);
-                         Picasso.with(getContext())
-                                 .load(Utils.SERVER_URL+pic)
-                                 .placeholder(R.drawable.defaultpropic)
-                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
-                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
-                                 .into(directorImageTitle);
-                         Picasso.with(getContext())
-                                 .load(Utils.SERVER_URL+pic)
-                                 .placeholder(R.drawable.defaultpropic)
-                                 .networkPolicy(ServerConnect.checkInternetConenction(getActivity())?
-                                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
-                                 .into(directorImageContent);
-                         qualificationsD.setText(jsonObjDetail.getString("qualifications"));
-                         interests_fieldD.setText(jsonObjDetail.getString("interests_field"));
-                         contact_detailD.setText(jsonObjDetail.getString("contact_detail"));
-
+                     }
+                     else if (jsonObjDetail.getString("designation").contains("Director")) {
+                         userDataSp.storeDirectorData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail")  );
+                         directorData();
                         }
                      else {
                          myDataBase.insertManagementData(firstName, lastName, mobile, gmail, pic, jsonObjDetail.getString("designation"), jsonObjDetail.getString("qualifications"), jsonObjDetail.getString("interests_field"), jsonObjDetail.getString("contact_detail"));
@@ -207,7 +187,6 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         {
             while (data.moveToNext())
             {
-
                items.add(new ItemDetail(data.getString(1), data.getString(2)
                        , data.getString(3), data.getString(4), data.getString(5)
                        , data.getString(6), data.getString(7), data.getString(8)
@@ -215,7 +194,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
             }
         }
         else{
-            Toast.makeText(getActivity().getApplicationContext(),"No Management Data",Toast.LENGTH_SHORT).show();
+            notAvailable.setVisibility(View.VISIBLE);
         }
         final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(getActivity(), items);
         list.setAdapter(adapter);
@@ -231,5 +210,32 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         });
 
     }
+    public void principalData()
+    {
+        principalNameTitle.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
+        principalNameContent.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
+        mobileNP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_MOBILE)+"");
+        gmailIdP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_GMAIL)+"");
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageTitle);
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageContent);
+        designationP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_DESIGNATION));
+        qualificationsP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_QUALIFICATION));
+        interests_fieldP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_INTERESTS_FIELD));
+        contact_detailP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_CONTACT_DETAIL));
+    }
 
+    public void directorData()
+    {
+        directorNameTitle.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
+        directorNameContent.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
+        mobileND.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_MOBILE));
+        gmailIdD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_GMAIL));
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageTitle);
+        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageContent);
+        designationD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_DESIGNATION));
+        qualificationsD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_QUALIFICATION));
+        interests_fieldD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_INTERESTS_FIELD));
+        contact_detailD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_CONTACT_DETAIL));
+
+    }
 }

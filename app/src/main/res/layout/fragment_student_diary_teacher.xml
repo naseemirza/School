@@ -6,6 +6,38 @@
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_teacher">
 
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/homework_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Homework Data Available"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/homeworknot_available"
+        android:visibility="gone"
+        android:textAlignment="center" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Internet Connection, Please connect to internet"
+        android:layout_centerInParent="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:id="@+id/homenoInternet"
+        android:visibility="gone"
+        android:textAlignment="center" />
+
     <ListView
 
         android:layout_width="match_parent"
