@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:text="Staff"
+            android:id="@+id/designation_T"
             android:textColor="@color/mainTextColor"
             android:layout_gravity="center_vertical"
             android:textStyle="normal|bold"

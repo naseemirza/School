@@ -1,7 +1,6 @@
 package com.lead.infosystems.schooldiary.Management;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,8 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
             viewHolder = new ViewHolder();
             LayoutInflater vi = LayoutInflater.from(getContext());
             cell = (FoldingCell) vi.inflate(R.layout.management_layout_item, parent, false);
+            viewHolder.designation_titile=(TextView)cell.findViewById(R.id.designation_T);
+            viewHolder.designation_content = (TextView)cell.findViewById(R.id.designation_T_C);
             viewHolder.nameContent = (TextView) cell.findViewById(R.id.teacher_name_content);
             viewHolder.mobileN = (TextView) cell.findViewById(R.id.mobile_no);
             viewHolder.gmailId = (TextView) cell.findViewById(R.id.gmail);
@@ -62,6 +63,8 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
         // bind data from selected element to view through view holder
 
         viewHolder.nameContent.setText(item.getFirstName()+item.getLastName()+"");
+        viewHolder.designation_titile.setText(item.getDesignation()+"");
+        viewHolder.designation_content.setText(item.getDesignation()+"");
         viewHolder.mobileN.setText(item.getMobile_no()+"");
         viewHolder.gmailId.setText(item.getGmail_id()+"");
         viewHolder.qualifications.setText(item.getQualifications()+"");
@@ -116,6 +119,8 @@ public class ExpandableCellListAdapter extends ArrayAdapter<ItemDetail> {
         TextView contact_detail;
         ImageView profileImageContent;
         TextView nameContent;
+        TextView designation_titile;
+        TextView designation_content;
 
     }
 }

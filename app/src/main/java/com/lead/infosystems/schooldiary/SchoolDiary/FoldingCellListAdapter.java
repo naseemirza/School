@@ -62,7 +62,7 @@ public class FoldingCellListAdapter  extends ArrayAdapter<Item> {
             viewHolder = new ViewHolder();
             LayoutInflater vi = LayoutInflater.from(getContext());
             cell = (FoldingCell) vi.inflate(R.layout.home_work_diery_item, parent, false);
-            cell.initialize(1000, Color.DKGRAY, 6);
+            cell.initialize(1000, Color.DKGRAY, 3);
             viewHolder.homework_title = (TextView) cell.findViewById(R.id.title_home);
             viewHolder.homework_contents = (TextView) cell.findViewById(R.id.content_home);
             viewHolder.deleteHomework = (TextView)cell.findViewById(R.id.content_request_btn);

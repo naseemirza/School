@@ -44,7 +44,7 @@
         android:textSize="20dp"
         android:textColor="@color/cardview_light_background"
         android:layout_width="match_parent"
-        android:backgroundTint="@color/colorPrimary"
+        android:background="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:id="@+id/button_prog"
         android:layout_alignParentBottom="true"

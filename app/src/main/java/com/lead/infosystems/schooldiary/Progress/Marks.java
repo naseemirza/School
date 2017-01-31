@@ -2,8 +2,10 @@ package com.lead.infosystems.schooldiary.Progress;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Marks extends AppCompatActivity {
 
@@ -38,6 +41,7 @@ public class Marks extends AppCompatActivity {
     public static List<MarksData> items = new ArrayList<MarksData>();
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +55,7 @@ public class Marks extends AppCompatActivity {
         progressBar= (ProgressBar)findViewById(R.id.marks_progress);
         notAvailable = (TextView)findViewById(R.id.marksnot_available);
         checkInternetConnection();
-        items.clear();
+        //items.clear();
         adaptor = new MyAdaptor();
         marks.setAdapter(adaptor);
         init();
@@ -71,15 +75,17 @@ public class Marks extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getJsonExam(String data) {
         try {
+            progressBar.setVisibility(View.GONE);
             myDataBase.clearMarksData();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
 
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                if(subName.contentEquals(sub_name)) {
+                if(Objects.equals(subName, sub_name)) {
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
 
@@ -98,7 +104,8 @@ public class Marks extends AppCompatActivity {
                             int total = Integer.parseInt(total_marks);
                             String date = json_obj_marks.getString("date");
                             Float percentage = (float) ((marks * 100) / total);
-                            items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
+                            myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
+                           // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
                         putMarksDataList();
                     }
@@ -112,6 +119,7 @@ public class Marks extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void checkInternetConnection()
     {
         if(ServerConnect.checkInternetConenction(this))

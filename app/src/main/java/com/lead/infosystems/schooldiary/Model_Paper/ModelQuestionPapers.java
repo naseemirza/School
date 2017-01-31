@@ -84,15 +84,24 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
         myVolley = new MyVolley(getActivity().getApplicationContext(),this);
         checkInternetConnection();
         button = (FloatingActionButton) rootView.findViewById(R.id.add);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                android.app.FragmentManager manager = getActivity().getFragmentManager();
-                Dialog_model dialog_model = new Dialog_model();
-                dialog_model.setClassNumber(classNumber);
-                dialog_model.show(manager, "Dialog_model");
-            }
-        });
+        if(ServerConnect.checkInternetConenction(getActivity())) {
+            button.setVisibility(View.VISIBLE);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ServerConnect.checkInternetConenction(getActivity()))
+
+                    {
+                        android.app.FragmentManager manager = getActivity().getFragmentManager();
+                        Dialog_model dialog_model = new Dialog_model();
+                        dialog_model.setClassNumber(classNumber);
+                        dialog_model.show(manager, "Dialog_model");
+
+                    }
+                }
+            });
+        }
+
         return rootView;
     }
     public void checkInternetConnection()
@@ -116,7 +125,8 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-             adaptor.add(new Model_paper(intent.getStringExtra(PAPER_NAME), intent.getStringExtra(PAPER_LINK), intent.getStringExtra(USER_UPLOAD)));
+            items.add(0, new Model_paper(intent.getStringExtra(PAPER_NAME), intent.getStringExtra(PAPER_LINK), intent.getStringExtra(USER_UPLOAD)));
+            adaptor.notifyDataSetChanged();
         }
     };
 

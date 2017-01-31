@@ -31,6 +31,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.lead.infosystems.schooldiary.Progress.Marks.items;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +44,7 @@ public class Progress_Report extends Fragment {
     private ListView list;
     private View rootView;
     private String examData;
+
     private ProgressBar progressBar;
     private TextView notAvailable;
     public Button btn1;
@@ -67,7 +70,7 @@ public class Progress_Report extends Fragment {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (examData == null){
+                if (items.equals("null")){
                     Toast.makeText(getActivity(),"There is no data for Showing Graph..",Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -148,7 +151,7 @@ public class Progress_Report extends Fragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (examData.equals("null")){
+                if (items.equals("null")){
                     Toast.makeText(getActivity(),"There is no data in this Subject...",Toast.LENGTH_SHORT).show();
 
                 }else {

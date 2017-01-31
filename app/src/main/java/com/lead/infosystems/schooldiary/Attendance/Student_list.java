@@ -36,10 +36,7 @@ public class Student_list extends AppCompatActivity {
     Button submit;
     ListView list;
     UserDataSP userDataSP;
-
-    SPData spData;
     JSONArray jsonArray=new JSONArray();
-
     List<Datalist> items = new ArrayList<>();
 
 
@@ -47,9 +44,9 @@ public class Student_list extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_list);
+        setTitle("Attendance");
         Intent intent = getIntent();
         userDataSP=new UserDataSP(this);
-        spData =new SPData(this);
         class_list = intent.getStringExtra("class");
         division_list = intent.getStringExtra("division");
         getStudentData();
@@ -64,9 +61,6 @@ public class Student_list extends AppCompatActivity {
                                 JSONObject jsonObject=new JSONObject();
                                 jsonObject.put("number_user",CustomList.items.get(i).getStudent_number());
                                 jsonObject.put("attendance",CustomList.items.get(i).getAttendance());
-                                //jsonObject.put("school_number",userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
-                                //jsonObject.put("class",class_list);
-                                //jsonObject.put("division",division_list);
                                 jsonArray.put(jsonObject);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -145,10 +139,14 @@ public class Student_list extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-
-                Toast.makeText(Student_list.this, ""+response, Toast.LENGTH_SHORT).show();
-
-
+               if(response.contains("DONE")) {
+                   Toast.makeText(Student_list.this, "" + response, Toast.LENGTH_SHORT).show();
+                   finish();
+               }
+                else
+               {
+                   Toast.makeText(Student_list.this, "Attendance is not submitted properly", Toast.LENGTH_SHORT).show();
+               }
             }
         }, new Response.ErrorListener() {
             @Override

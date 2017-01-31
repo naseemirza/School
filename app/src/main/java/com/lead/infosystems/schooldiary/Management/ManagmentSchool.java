@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,7 +22,6 @@ import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.R;
 import com.ramotion.foldingcell.FoldingCell;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -72,16 +70,13 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         secondCell = (FoldingCell)rootView.findViewById(R.id.secondCellView);
         principalImageTitle = (ImageView)firstCell.findViewById(R.id.principal_profile_title);
         principalImageContent = (ImageView)firstCell.findViewById(R.id.principal_profile_content);
-
         principalNameContent = (TextView)firstCell.findViewById(R.id.principal_name_content);
-
         mobileNP = (TextView) firstCell.findViewById(R.id.Pmobile_no);
         gmailIdP = (TextView) firstCell.findViewById(R.id.Pgmail);
         qualificationsP = (TextView)firstCell.findViewById(R.id.Pqualification_t);
         interests_fieldP= (TextView)firstCell.findViewById(R.id.Pfield);
         contact_detailP = (TextView)firstCell.findViewById(R.id.PcontactDetail);
         directorImageTitle = (ImageView)secondCell.findViewById(R.id.director_profile_title);
-
         directorNameContent = (TextView)secondCell.findViewById(R.id.director_name_content);
         directorImageContent = (ImageView)secondCell.findViewById(R.id.director_profile_content);
         mobileND = (TextView) secondCell.findViewById(R.id.Dmobile_no);
@@ -212,13 +207,17 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     }
     public void principalData()
     {
-        principalNameTitle.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
         principalNameContent.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
         mobileNP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_MOBILE)+"");
         gmailIdP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_GMAIL)+"");
-        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageTitle);
-        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageContent);
-        designationP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_DESIGNATION));
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC))
+                .placeholder(R.drawable.defaultpropic)
+                .into(principalImageTitle);
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC))
+                .placeholder(R.drawable.defaultpropic)
+                .into(principalImageContent);
         qualificationsP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_QUALIFICATION));
         interests_fieldP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_INTERESTS_FIELD));
         contact_detailP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_CONTACT_DETAIL));
@@ -226,13 +225,17 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
     public void directorData()
     {
-        directorNameTitle.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
         directorNameContent.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
         mobileND.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_MOBILE));
         gmailIdD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_GMAIL));
-        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageTitle);
-        Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageContent);
-        designationD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_DESIGNATION));
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC))
+                .placeholder(R.drawable.defaultpropic)
+                .into(directorImageTitle);
+        Picasso.with(getContext())
+                .load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC))
+                .placeholder(R.drawable.defaultpropic)
+                .into(directorImageContent);
         qualificationsD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_QUALIFICATION));
         interests_fieldD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_INTERESTS_FIELD));
         contact_detailD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_CONTACT_DETAIL));

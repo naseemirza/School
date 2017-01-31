@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +30,9 @@ import android.widget.Toast;
 import com.lead.infosystems.schooldiary.Data.Post_Data;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Generic.CompressImage;
+import com.lead.infosystems.schooldiary.Generic.MyVolley;
+import com.lead.infosystems.schooldiary.Generic.ServerConnect;
+import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.ICompressedImage;
 import com.lead.infosystems.schooldiary.IPostInterface;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
@@ -39,10 +40,6 @@ import com.lead.infosystems.schooldiary.Main.PostAdaptor;
 import com.lead.infosystems.schooldiary.Main.PostAnimData;
 import com.lead.infosystems.schooldiary.Main.PostComments;
 import com.lead.infosystems.schooldiary.R;
-import com.lead.infosystems.schooldiary.Generic.MyVolley;
-import com.lead.infosystems.schooldiary.Generic.ServerConnect;
-import com.lead.infosystems.schooldiary.Generic.Utils;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -239,7 +236,6 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
                         proPic.setBackgroundDrawable(Drawable.createFromPath(path));
                         Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_SHORT).show();
                         proPic.setAlpha(1f);
-
 
                         loadProPic(true);
                     }

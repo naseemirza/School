@@ -84,7 +84,6 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
                 intent.putExtra("division", divisionName);
                 intent.putExtra("subject", subjects.get(position));
                 startActivity(intent);
-
             }
         });
     }
