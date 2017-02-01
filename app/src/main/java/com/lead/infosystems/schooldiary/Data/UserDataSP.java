@@ -50,6 +50,10 @@ public class UserDataSP {
     public static final String DIRECTOR_QUALIFICATION = "director_qualifiaction";
     public static final String DIRECTOR_INTERESTS_FIELD = "director_interests_field";
     public static final String DIRECTOR_CONTACT_DETAIL= "director_contact_detail";
+
+    public static final String CHAT_NOTIFICATION_NUM = "chat_notification_num";
+    public static final String NOTIFICATION_NUM = "notification_num";
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
@@ -161,9 +165,8 @@ public class UserDataSP {
         editor.commit();
     }
 
-    public  void storeData(String data){
-        String[] res = data.split("@@@");
-        editor.putString(SUBJECTS,res[0]);
+    public  void storeMarksData(String data){
+        editor.putString(SUBJECTS,data);
         editor.commit();
     }
 
@@ -204,4 +207,12 @@ public class UserDataSP {
         return sharedPreferences.getString(key, "");
     }
 
+    public void setNotificationNumber(int n,String key){
+        editor.putInt(key,n);
+        editor.commit();
+    }
+
+    public int getNotificationNumber(String key){
+        return sharedPreferences.getInt(key,0);
+    }
 }

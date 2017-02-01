@@ -258,7 +258,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(HOMEWORK_NUMMBERUSER, number_user);
         contentValues.put(HOMEWORK_NUMBER,homework_number);
        int a= (int) db.insert(HOMEWORK_TABLE,null,contentValues);
-        Log.e("a value ", String.valueOf(a));
     }
     public void clearHomeWorkData(){
         db.execSQL("DROP TABLE IF EXISTS " +HOMEWORK_TABLE);
@@ -277,7 +276,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(ATTENDANCE_MONTH,month);
         contentValues.put(ATTENDANCE_VALUE,attendance);
        int a = (int) db.insert(ATTENDANCE_TABLE,null,contentValues);
-        Log.e("a.....", String.valueOf(a));
     }
     public void clearAttendanceData(){
         db.execSQL("DROP TABLE IF EXISTS " +ATTENDANCE_TABLE);
@@ -295,7 +293,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(EVENTSUBMIT_DATE,submit_date);
         contentValues.put(EVENTSCHOOL_NUMBER,school_number);
         int a = (int) db.insert(EVENT_TABLE,null,contentValues);
-        Log.e("a.....", String.valueOf(a));
     }
     public void clearEventData(){
         db.execSQL("DROP TABLE IF EXISTS " +EVENT_TABLE);
@@ -311,7 +308,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SUBJECT_NAME, sub_name);
         int a = (int) db.insert(SUBJECT_TABLE,null,contentValues);
-        Log.e("a.....", String.valueOf(a));
     }
     public void clearSubjectData(){
         db.execSQL("DROP TABLE IF EXISTS " +SUBJECT_TABLE);
@@ -332,7 +328,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(OBTAIN_MARKS,marks);
         contentValues.put(MARKS_PERCENTAGE, percentage);
         int a = (int) db.insert(MARKS_TABLE,null,contentValues);
-        Log.e("a.....", String.valueOf(a));
     }
     public void clearMarksData(){
         db.execSQL("DROP TABLE IF EXISTS " +MARKS_TABLE);
@@ -355,7 +350,6 @@ public class MyDataBase extends SQLiteOpenHelper {
         contentValues.put(INTERESTS_FIELD, interests_field);
         contentValues.put(CONTACT_DETAIL, contact_detail);
         int a = (int) db.insert(MANAGEMENT_TABLE,null,contentValues);
-        Log.e("a.....", String.valueOf(a));
     }
     public void clearManagementData(){
         db.execSQL("DROP TABLE IF EXISTS " +MANAGEMENT_TABLE);

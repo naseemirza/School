@@ -33,8 +33,8 @@ public class Marks extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView notAvailable;
     private MyAdaptor adaptor;
-    ListView marks;
-    String subName;
+    private ListView marks;
+    private String subName;
     public static List<MarksData> items = new ArrayList<MarksData>();
 
 
@@ -50,10 +50,11 @@ public class Marks extends AppCompatActivity {
         marks =(ListView)findViewById(R.id.marks);
         progressBar= (ProgressBar)findViewById(R.id.marks_progress);
         notAvailable = (TextView)findViewById(R.id.marksnot_available);
-        checkInternetConnection();
         items.clear();
         adaptor = new MyAdaptor();
         marks.setAdapter(adaptor);
+        progressBar.setVisibility(View.VISIBLE);
+        getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
         init();
     }
 
@@ -100,46 +101,39 @@ public class Marks extends AppCompatActivity {
                             Float percentage = (float) ((marks * 100) / total);
                             items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
-                        putMarksDataList();
                     }
                 }
 
             }
 
+            progressBar.setVisibility(View.GONE);
+            notAvailable.setVisibility(View.GONE);
+            adaptor.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
-
-        }
-    }
-
-    public void checkInternetConnection()
-    {
-        if(ServerConnect.checkInternetConenction(this))
-        {
-            progressBar.setVisibility(View.VISIBLE);
-            getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
-        }
-        else {
-            putMarksDataList();
-        }
-
-    }
-    public  void putMarksDataList()
-    {
-        Cursor data = myDataBase.getMarksData();
-        items.clear();
-        if(data.getCount()>0)
-        {
-            while (data.moveToNext())
-            {
-                items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
-            }
-        }
-        else
-        {
+            progressBar.setVisibility(View.GONE);
             notAvailable.setVisibility(View.VISIBLE);
+
         }
     }
+
+//    public  void putMarksDataList()
+//    {
+//        Cursor data = myDataBase.getMarksData();
+//        items.clear();
+//        if(data.getCount()>0)
+//        {
+//            while (data.moveToNext())
+//            {
+//                items.add(new MarksData(data.getString(1), data.getString(2), data.getString(3), data.getString(4), data.getString(5)));
+//            }
+//
+//        }
+//        else
+//        {
+//
+//        }
+//    }
     class MyAdaptor extends ArrayAdapter<MarksData> {
 
         public MyAdaptor() {

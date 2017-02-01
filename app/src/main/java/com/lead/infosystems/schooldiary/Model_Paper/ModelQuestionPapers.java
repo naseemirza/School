@@ -176,7 +176,6 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
 
     class MyAdaptor extends ArrayAdapter<Model_paper> {
         public MyAdaptor() {super(getActivity().getApplicationContext(), R.layout.pdf_names, items);}
-
         @NonNull
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {

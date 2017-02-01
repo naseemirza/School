@@ -1,6 +1,10 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -81,9 +85,16 @@ public class FragTabNotifications extends Fragment {
             putDataIntoList();
         }
         setItemClick();
+        getActivity().registerReceiver(receiver,new IntentFilter(MainTabAdapter.NOTIFICATION_BC_FILTER));
         return rootview;
     }
 
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getDataFromServer();
+        }
+    };
 
     private void getDataFromServer(){
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
@@ -229,5 +240,15 @@ public class FragTabNotifications extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        try {
+            getActivity().unregisterReceiver(receiver);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }

@@ -30,6 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 
 /**
@@ -64,18 +67,6 @@ public class Progress_Report extends Fragment {
         progressBar = (ProgressBar)rootView.findViewById(R.id.report_progress);
         notAvailable = (TextView)rootView.findViewById(R.id.reportnot_available);
         subjects.clear();
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (examData == null){
-                    Toast.makeText(getActivity(),"There is no data for Showing Graph..",Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Intent it = new Intent(getActivity().getApplicationContext(), GraphView.class);
-                    startActivity(it);
-                }
-            }
-        });
         checkInternetConnection();
         return rootView;
     }
@@ -86,6 +77,7 @@ public class Progress_Report extends Fragment {
         if(ServerConnect.checkInternetConenction(getActivity()))
         {
             progressBar.setVisibility(View.VISIBLE);
+            subjects.clear();
             getDataFromServer();
         }
         else
@@ -98,10 +90,9 @@ public class Progress_Report extends Fragment {
             @Override
             public void volleyResponse(String result) {
                 if(result != MyVolley.RESPONSE_ERROR){
-                    userDataSP.storeData(result);
-                    String[] res = result.split("@@@");
+                    userDataSP.storeMarksData(result);
                     try {
-                        getJsonData(res[0]);
+                        getJsonData(result);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         notAvailable.setVisibility(View.VISIBLE);
@@ -121,12 +112,48 @@ public class Progress_Report extends Fragment {
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
             myDataBase.insertSubjectData(jsonobj.getString("sub_name"));
-            examData = jsonobj.getString("sub_data");
+          examData = jsonobj.getString("sub_data");
         }
         putIntoList();
 
     }
 
+//    private void getJsonData(String re) throws JSONException {
+//        JSONArray json = new JSONArray(re);
+//        ArrayList<String> subNames = new ArrayList<>();
+//        myDataBase.clearSubjectData();
+//        for (int i = 0; i <= json.length() - 1; i++) {
+//            JSONObject jsonobj = json.getJSONObject(i);
+//            JSONArray examNames = new JSONArray(jsonobj.getString("exam_data"));
+//            for(int j = 0; j <= examNames.length() - 1; j++){
+//                subNames.add(examNames.getJSONObject(j).getString("sub_name"));
+//            }
+//            examData = jsonobj.getString("exam_data");
+//        }
+//        HashSet<String> uniqueValues = new HashSet<>(subNames);
+//        subNames.clear();
+//        subNames = new ArrayList<>(uniqueValues);
+//        for(int k = 0; k<= subNames.size() - 1 ; k++) {
+//            myDataBase.insertSubjectData(subNames.get(k));
+//        }
+//        putIntoList();
+//
+//    }
+
+    private void activateButton(){
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (examData == null){
+                    Toast.makeText(getActivity(),"There is no data for Showing Graph..",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent it = new Intent(getActivity().getApplicationContext(), GraphView.class);
+                    startActivity(it);
+                }
+            }
+        });
+    }
     public void putIntoList()
     {
         Cursor data = myDataBase.getSubjectData();
@@ -137,8 +164,10 @@ public class Progress_Report extends Fragment {
             {
                 subjects.add(data.getString(1));
             }
+            activateButton();
         }
         else{
+            btn1.setVisibility(View.GONE);
             notAvailable.setVisibility(View.VISIBLE);
         }
         object = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, subjects);
@@ -148,7 +177,7 @@ public class Progress_Report extends Fragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (examData.equals("null")){
+                if (examData == null){
                     Toast.makeText(getActivity(),"There is no data in this Subject...",Toast.LENGTH_SHORT).show();
 
                 }else {

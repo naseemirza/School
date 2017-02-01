@@ -51,7 +51,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lead.infosystems.schooldiary.Main.MainActivity" />
         </activity>
-        <activity android:name=".Login">
+        <activity android:name=".Login"
+                  android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

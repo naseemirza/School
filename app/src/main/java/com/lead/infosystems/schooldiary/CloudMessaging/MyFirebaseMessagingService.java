@@ -17,7 +17,9 @@ import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Main.Chat;
 import com.lead.infosystems.schooldiary.Main.MainActivity;
+import com.lead.infosystems.schooldiary.Main.MainTabAdapter;
 import com.lead.infosystems.schooldiary.R;
+import com.sromku.simple.fb.entities.User;
 
 import java.util.Map;
 
@@ -58,6 +60,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void forNotificationTab(Map<String, String> data){
+        userDataSP.setNotificationNumber(userDataSP.getNotificationNumber(UserDataSP.NOTIFICATION_NUM)+1,UserDataSP.NOTIFICATION_NUM);
+        sendNotificationRecevedBrodcast();
         Intent intent = new Intent(this, MainActivity.class);
         String notificationTitle = "";
         if(data.get(NOTIFICATION_TYPE).contentEquals(NotificationData.EVENT)){
@@ -91,6 +95,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     private void chatMessage(Map<String, String> data){
+        userDataSP.setNotificationNumber(userDataSP.getNotificationNumber(UserDataSP.CHAT_NOTIFICATION_NUM)+1,UserDataSP.CHAT_NOTIFICATION_NUM);
+        sendNotificationRecevedBrodcast();
         myDataBase.newChat(data.get(CHAT_ID)
                 ,data.get(SENDER_FULL_NAME)
                 ,data.get(SENDER_USER_ID)
@@ -115,6 +121,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    private void sendNotificationRecevedBrodcast(){
+        sendBroadcast(new Intent(MainTabAdapter.NOTIFICATION_BC_FILTER));
+    }
 
     private void sendNotification(String title, String msg, Intent intent, int notification_id) {
 

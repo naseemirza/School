@@ -1,7 +1,11 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -9,13 +13,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
+import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.R;
 
 import java.util.ArrayList;
@@ -32,7 +37,10 @@ public class MainTabAdapter extends Fragment {
     private final int QA_TAB = 1;
     private final int CHAT_TAB = 2;
     private final int NOTIFICATION_TAB = 3;
+    UserDataSP userDataSP;
 
+    View b1,b2;
+    public static final String NOTIFICATION_BC_FILTER = "NOTIFICATION_BC_FILTER";
     private static int preRot = 0;
     ViewPagerAdapter adapter;
     public MainTabAdapter() {
@@ -46,6 +54,7 @@ public class MainTabAdapter extends Fragment {
         rootview = inflater.inflate(R.layout.fragment_main_frag, container, false);
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
         adapter = new ViewPagerAdapter(getChildFragmentManager());
+        userDataSP = new UserDataSP(getActivity().getApplicationContext());
         setupViewPager(viewPager);
         fab = (FloatingActionButton) rootview.findViewById(R.id.post_new_fab);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabs);
@@ -72,9 +81,13 @@ public class MainTabAdapter extends Fragment {
                 else if(position == CHAT_TAB){
                     fab.show();
                     rotateFab(fab,position, state);
+                    userDataSP.setNotificationNumber(0,UserDataSP.CHAT_NOTIFICATION_NUM);
+                    updateTabs();
                 }
                 else if(position == NOTIFICATION_TAB){
                     fab.hide();
+                    userDataSP.setNotificationNumber(0,UserDataSP.NOTIFICATION_NUM);
+                    updateTabs();
                 }
             }
         });
@@ -82,7 +95,6 @@ public class MainTabAdapter extends Fragment {
 
             @Override
             public void onClick(View v) {
-                currentTab = viewPager.getCurrentItem();
                 if(currentTab == HOME_TAB){
                     fab.show();
                     loadHomeFragDialog();
@@ -99,6 +111,8 @@ public class MainTabAdapter extends Fragment {
                 }
             }
         });
+
+        getActivity().registerReceiver(receiver,new IntentFilter(NOTIFICATION_BC_FILTER));
         return rootview;
     }
 
@@ -109,6 +123,7 @@ public class MainTabAdapter extends Fragment {
     }
 
     private void setTitle(int position){
+
         if(position == HOME_TAB){
             getActivity().setTitle("Home");
         }else if(position == QA_TAB){
@@ -172,11 +187,27 @@ public class MainTabAdapter extends Fragment {
     }
 
 
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateTabs();
+        }
+    };
+
+    private void updateTabs(){
+        currentTab = viewPager.getCurrentItem();
+        tabLayout.removeAllTabs();
+        tabLayout.setupWithViewPager(viewPager);
+        setupTabIcons();
+    }
+
     private void setupTabIcons() {
+        b1 = new Badges(getActivity().getApplicationContext()).getBadgeIcon(R.drawable.ic_chat);
+        b2 = new Badges(getActivity().getApplicationContext()).getBadgeIcon(R.drawable.ic_notifications);
         tabLayout.getTabAt(HOME_TAB).setIcon(R.drawable.ic_home);
         tabLayout.getTabAt(QA_TAB).setIcon(R.drawable.ic_question_answer);
-        tabLayout.getTabAt(CHAT_TAB).setIcon(R.drawable.ic_message);
-        tabLayout.getTabAt(NOTIFICATION_TAB).setIcon(R.drawable.ic_net);
+        tabLayout.getTabAt(CHAT_TAB).setCustomView(b1);
+        tabLayout.getTabAt(NOTIFICATION_TAB).setCustomView(b2);
     }
 
     public void rotateFab(final FloatingActionButton fab, int dir, int state) {
@@ -200,4 +231,9 @@ public class MainTabAdapter extends Fragment {
         preRot = dir;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(receiver);
+    }
 }

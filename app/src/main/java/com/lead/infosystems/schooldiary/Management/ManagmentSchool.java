@@ -212,13 +212,11 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     }
     public void principalData()
     {
-        principalNameTitle.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
         principalNameContent.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_FIRST_NAME)+""+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_LAST_NAME)+"");
         mobileNP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_MOBILE)+"");
         gmailIdP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_GMAIL)+"");
         Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageTitle);
         Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_PIC)).into(principalImageContent);
-        designationP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_DESIGNATION));
         qualificationsP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_QUALIFICATION));
         interests_fieldP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_INTERESTS_FIELD));
         contact_detailP.setText(userDataSp.getPrincipalData(UserDataSP.PRINCIPAL_CONTACT_DETAIL));
@@ -226,13 +224,11 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
     public void directorData()
     {
-        directorNameTitle.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
         directorNameContent.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_FIRST_NAME)+""+userDataSp.getDirectorData(UserDataSP.DIRECTOR_LAST_NAME)+"");
         mobileND.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_MOBILE));
         gmailIdD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_GMAIL));
         Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageTitle);
         Picasso.with(getContext()).load(Utils.SERVER_URL+userDataSp.getDirectorData(UserDataSP.DIRECTOR_PIC)).into(directorImageContent);
-        designationD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_DESIGNATION));
         qualificationsD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_QUALIFICATION));
         interests_fieldD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_INTERESTS_FIELD));
         contact_detailD.setText(userDataSp.getDirectorData(UserDataSP.DIRECTOR_CONTACT_DETAIL));

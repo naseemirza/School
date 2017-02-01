@@ -109,7 +109,9 @@
     <string name="transition_name_time">post_time</string>
     <string name="transition_name_text">post_text</string>
     <string name="transition_name_post_image">post_image</string>
-    <string name="transition_name_login">login_tran</string>
+    <string name="transition_name_login_logo">login_tran</string>
+    <string name="transition_name_login_pow">login_tran_pow</string>
+    <string name="transition_name_login_name">login_tran_name</string>
     <string name="Home_Work_Title">Home Work Title </string>
     <string name="Home_Work_contents">Home Work Contents:</string>
 
