@@ -111,7 +111,7 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         if (requestCode == PDF_REQ && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             path = FilePath.getPath(getActivity().getApplicationContext(), filePath);
-            if(path.contentEquals(".pdf")) {
+            if(path.contains(".pdf")) {
                 String[] s = path.split("/");
                 String fileName = s[s.length - 1].replace(".pdf", "");
                 file_name.setText(fileName);

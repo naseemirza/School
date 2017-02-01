@@ -3,6 +3,7 @@ package com.lead.infosystems.schooldiary.Suggestion;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,12 @@ import com.lead.infosystems.schooldiary.R;
 import com.ramotion.foldingcell.FoldingCell;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -24,22 +31,30 @@ import java.util.List;
 
 public class FloadingListAdapter extends ArrayAdapter<sc_items>{
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
-
+    List<sc_items> list = new ArrayList<>();
     public FloadingListAdapter(Context context, List<sc_items> objects) {
         super(context,0, objects);
+        this.list = objects;
+    }
+
+
+    public void sortData()
+    {
+        Collections.sort(list, new MyComparator());
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        sc_items item = getItem(position);
+        sc_items item = list.get(position);
         FoldingCell cell = (FoldingCell) convertView;
         ViewHolder viewHolder;
         if (cell == null) {
             viewHolder = new ViewHolder();
             LayoutInflater vi = LayoutInflater.from(getContext());
             cell = (FoldingCell) vi.inflate(R.layout.cell_suggestion, parent, false);
-            cell.initialize(1000, Color.DKGRAY, 3);
+            cell.initialize(1000, Color.DKGRAY, 1);
 
             viewHolder.name_title = (TextView) cell.findViewById(R.id.sugg_name);
             viewHolder.name_content = (TextView)cell.findViewById(R.id.sugg_name_content);
@@ -98,6 +113,24 @@ public class FloadingListAdapter extends ArrayAdapter<sc_items>{
         unfoldedIndexes.add(position);
     }
 
+    private class MyComparator implements Comparator<sc_items> {
+
+        @Override
+        public int compare(sc_items lhs, sc_items rhs) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                Date date1 = dateFormat.parse(rhs.getDate());
+                Date date2 = dateFormat.parse(lhs.getDate());
+                Log.e("date1", date2.compareTo(date1) + "");
+                return date1.compareTo(date2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+    }
+
+
     public static class ViewHolder {
         TextView name_title;
         TextView name_content;
@@ -113,4 +146,7 @@ public class FloadingListAdapter extends ArrayAdapter<sc_items>{
         ImageView content_image;
 
     }
+
+
+
 }

@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 
 public class StudentDiary_DatePicker extends AppCompatActivity implements IVolleyResponse{
-    public static final String INTENTFILTER ="intent_filter";
+    public static final String INTENTFILTER ="intent_filter_h";
     public static final String HOMEWORK_NUMBER ="homework_number";
     public static final String HOMEWORK_TITLE= "homework_title";
     public static final String HOMEWORK_CONTENTS = "homework_contents";
@@ -39,7 +39,7 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
     private String className;
     private String divisionName;
     private String subjectName;
-    private String lastDate_submission;
+   // private String lastDate_submission;
     private UserDataSP userDataSp;
     private int year_h;
     private int month_h;
@@ -111,19 +111,21 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
         }
     };
 
-public void submitHomeWork()
-{   if(editTitle.getText().toString().isEmpty()) {
-    Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
-} else if (editContent.getText().toString().isEmpty()) {
-    Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
-} else {
-        lastDate_submission = year_h + "-" + month_h + "-" + day_h + " " + 00 + ":" + 00 + ":" + 00;
+    public void submitHomeWork()
+        {
+            if(editTitle.getText().toString().isEmpty()) {
+                Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
+                    }
+            else if (editContent.getText().toString().isEmpty()) {
+                Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
+                }
+        else {
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams("class", className);
         myVolley.setParams("division", divisionName);
         myVolley.setParams("subject_name", subjectName);
-        myVolley.setParams("lastDate_submission", lastDate_submission);
+                myVolley.setParams("lastDate_submission", date_display.getText().toString());
         myVolley.setParams("homework_title", editTitle.getText().toString());
         myVolley.setParams("homework_content", editContent.getText().toString());
         myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
@@ -138,7 +140,7 @@ public void submitHomeWork()
             if(!result.contains("ERROR")){
                 Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
                 try {
-                    parseData(result, editTitle.getText().toString(), editContent.getText().toString(), subjectName, lastDate_submission );
+                    parseData(result, editTitle.getText().toString(), editContent.getText().toString(), subjectName, date_display.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +150,7 @@ public void submitHomeWork()
 
 
     }
-    private void parseData(String re,  String homeTitle, String homeContent,  String subject, String lastDate ) throws JSONException {
+    public void parseData(String re,  String homeTitle, String homeContent,  String subject, String lastDate ) throws JSONException {
         JSONArray json = new JSONArray(re);
         String homeNumber = null;
         String homeDate = null;

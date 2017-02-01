@@ -1,6 +1,10 @@
 package com.lead.infosystems.schooldiary.Suggestion;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -27,6 +31,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.INTENTFILTER_SUGGESTION;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTER_CLASS;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTER_DIVISION;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTER_FIRSTNAME;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTER_LASTNAME;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTER_PROFILEPIC;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTION_CONTENT;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTION_DATE;
+import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGESTION_TITLE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -39,6 +53,7 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
     private ProgressBar progressBar;
     private TextView notAvailable;
     private TextView noInternet;
+    FloadingListAdapter adapter;
     UserDataSP userDataSp;
     public Suggestion_Complain() {
         // Required empty public constructor
@@ -58,20 +73,47 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
         progressBar = (ProgressBar)rootView.findViewById(R.id.suggestion_loading);
         notAvailable = (TextView)rootView.findViewById(R.id.suggestionNotAvailable);
         noInternet = (TextView)rootView.findViewById(R.id.suggestionNoInternet);
-        button = (FloatingActionButton) rootView.findViewById(R.id.add);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                android.app.FragmentManager manager = getActivity().getFragmentManager();
-                Suggestion_Post suggestion_post = new Suggestion_Post();
-                suggestion_post.show(manager, "Suggestion_Post");
-            }
-        });
+        button = (FloatingActionButton) rootView.findViewById(R.id.add_suggestion);
+        if(userDataSp.isStudent()) {
+            button.setVisibility(View.VISIBLE);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ServerConnect.checkInternetConenction(getActivity())) {
+                        android.app.FragmentManager manager = getActivity().getFragmentManager();
+                        Suggestion_Post suggestion_post = new Suggestion_Post();
+                        suggestion_post.show(manager, "Suggestion_Post");
+                    }
+                }
+            });
+        }
+        else
+        {
+            button.setVisibility(View.GONE);
+        }
         checkInternetConnection();
         return rootView;
     }
+     @Override
+     public void onStart()
+     {
+         super.onStart();
+         getActivity().registerReceiver(receiver, new IntentFilter(INTENTFILTER_SUGGESTION));
+     }
+     private BroadcastReceiver receiver = new BroadcastReceiver() {
+         @Override
+         public void onReceive(Context context, Intent intent) {
+              scItem.add(0, new sc_items(intent.getStringExtra(SUGGESTER_FIRSTNAME), intent.getStringExtra(SUGGESTER_LASTNAME), intent.getStringExtra(SUGGESTER_CLASS), intent.getStringExtra(SUGGESTER_DIVISION), intent.getStringExtra(SUGGESTER_PROFILEPIC), intent.getStringExtra(SUGGESTION_TITLE), intent.getStringExtra(SUGGESTION_CONTENT), intent.getStringExtra(SUGGESTION_DATE)));
+              adapter.sortData();
+              adapter.notifyDataSetChanged();
+         }
+     };
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(receiver);
+    }
 
     public void checkInternetConnection()
     {
@@ -106,7 +148,6 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
         }
 
     }
-
     public void getJsonData(String re) throws JSONException{
         JSONArray json = new JSONArray(re);
 
@@ -118,7 +159,8 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
 
         }
 
-        final FloadingListAdapter adapter = new FloadingListAdapter(getActivity(), scItem);
+        adapter = new FloadingListAdapter(getActivity(), scItem);
+        adapter.sortData();
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

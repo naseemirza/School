@@ -1,16 +1,13 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.test.suitebuilder.TestMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +24,10 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
-import com.lead.infosystems.schooldiary.IVolleyResponse;
-import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.Generic.Utils;
+import com.lead.infosystems.schooldiary.IVolleyResponse;
+import com.lead.infosystems.schooldiary.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,14 +70,17 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         if(userdatasp.isStudent()){
             button.setVisibility(View.GONE);
         }
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                android.app.FragmentManager manager = getActivity().getFragmentManager();
-                Dialog_form dialog_form = new Dialog_form();
-                dialog_form.show(manager, "Dialog_form");
-            }
-        });
+        else {
+            button.setVisibility(View.VISIBLE);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    android.app.FragmentManager manager = getActivity().getFragmentManager();
+                    Dialog_form dialog_form = new Dialog_form();
+                    dialog_form.show(manager, "Dialog_form");
+                }
+            });
+        }
         notAvailable = (TextView) rootView.findViewById(R.id.not_available);
         progressBar = (ProgressBar) rootView.findViewById(R.id.pdf_progress);
         list_model = (ListView) rootView.findViewById(R.id.list);

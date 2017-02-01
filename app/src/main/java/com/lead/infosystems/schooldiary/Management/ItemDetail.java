@@ -6,7 +6,7 @@ package com.lead.infosystems.schooldiary.Management;
 
 public class ItemDetail {
     String firstName, lastName, mobile_no, gmail_id, profil_pic, designation, qualifications, interests_field, contact_detail;
-    public ItemDetail(String firstName, String lastName, String mobile_no, String gmail_id, String profil_pic, String qualifications, String designation, String interests_field, String contact_detail) {
+    public ItemDetail(String firstName, String lastName, String mobile_no, String gmail_id, String profil_pic,String designation , String qualifications, String interests_field, String contact_detail) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobile_no = mobile_no;

@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.lead.infosystems.schooldiary.Progress.Marks.items;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +47,7 @@ public class Progress_Report extends Fragment {
     private ListView list;
     private View rootView;
     private String examData;
+
     private ProgressBar progressBar;
     private TextView notAvailable;
     public Button btn1;
@@ -67,6 +70,18 @@ public class Progress_Report extends Fragment {
         progressBar = (ProgressBar)rootView.findViewById(R.id.report_progress);
         notAvailable = (TextView)rootView.findViewById(R.id.reportnot_available);
         subjects.clear();
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (examData == null){
+                    Toast.makeText(getActivity(),"There is no data for Showing Graph..",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent it = new Intent(getActivity().getApplicationContext(), GraphView.class);
+                    startActivity(it);
+                }
+            }
+        });
         checkInternetConnection();
         return rootView;
     }

@@ -48,5 +48,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        app:elevation="5dp" />
+        app:elevation="5dp"
+        android:visibility="gone"/>
 </RelativeLayout>
