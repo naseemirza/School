@@ -133,11 +133,9 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
 
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
             class_text.setText("class");
-
-            String firstletter = String.valueOf(classes.get(position).charAt(0));
             ColorGenerator generator = ColorGenerator.MATERIAL;
             int color = generator.getColor(getItem(position));
-            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(classes.get(position).toUpperCase(),color,20);
             ((ImageView) ItemView.findViewById(R.id.class_image)).setImageDrawable(drawable);
             return ItemView;
 

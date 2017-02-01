@@ -156,6 +156,7 @@ public class ChatNew extends AppCompatActivity implements IVolleyResponse{
             ImageView propic = (ImageView) itemView.findViewById(R.id.propic);
             Picasso.with(getApplicationContext())
                     .load(Utils.SERVER_URL+currentItem.getProfilePic_link().replace("profilepic","propic_thumb"))
+                    .placeholder(R.drawable.defaultpropic)
                     .networkPolicy(ServerConnect.checkInternetConenction(activity) ?
                             NetworkPolicy.NO_CACHE : NetworkPolicy.OFFLINE)
                     .into(propic);

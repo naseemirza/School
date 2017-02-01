@@ -31,6 +31,8 @@
         android:layout_below="@+id/title_home"
         android:layout_margin="5dp"
         android:id="@+id/content_home"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
         android:gravity="top"
         android:inputType="textMultiLine"
         android:background="@drawable/cell_shape_full" />

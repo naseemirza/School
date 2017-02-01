@@ -22,7 +22,7 @@
         android:textSize="18sp"
         android:textStyle="normal|bold"
         android:id="@+id/marksnot_available"
-        android:visibility="gone"
+
         android:textAlignment="center" />
     <LinearLayout
         android:layout_width = "fill_parent"

@@ -38,18 +38,18 @@ import static com.lead.infosystems.schooldiary.SchoolDiary.StudentDiary_DatePick
 
 
 public class HomeworkList_teacher extends AppCompatActivity implements IVolleyResponse{
+
     private FloatingActionButton button;
-    FoldingCellListAdapter adapter;
-     String className;
-    String divisionName;
-    String subjectName;
-    ListView list;
+    private FoldingCellListAdapter adapter;
+    private String className;
+    private String divisionName;
+    private String subjectName;
+    private ListView list;
     private ArrayList<Item> items_homework;
     private MyVolley myVolley;
-    UserDataSP userDataSp;
+    private UserDataSP userDataSp;
     private ProgressBar progressBar;
     private TextView notAvailable;
-
 
 
     @Override

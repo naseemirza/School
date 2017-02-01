@@ -130,10 +130,9 @@ public class Attendance_teacher extends Fragment {
 
             String className=classes.get(position);
             ImageView img = (ImageView) itemView.findViewById(R.id.class_image);
-            String firstletter = String.valueOf(className.charAt(0));
             ColorGenerator generator = ColorGenerator.MATERIAL;
             int color = generator.getColor(getItem(position));
-            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(className.toUpperCase(),color,20);
             img.setImageDrawable(drawable);
             return itemView;
 

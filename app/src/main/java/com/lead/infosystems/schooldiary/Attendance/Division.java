@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -29,17 +30,18 @@ import java.util.List;
 
 public class Division extends AppCompatActivity {
 
-    UserDataSP userDataSP;
-
-    SPData spData;
-
-    ListView dlist;
-    String class_list;
+    private UserDataSP userDataSP;
+    private SPData spData;
+    private ListView dlist;
+    private String class_list;
+    private ProgressBar progressBar;
     public static List<String> division= new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_division);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         Intent intent = getIntent();
         setTitle("Attendance");
         class_list = intent.getStringExtra("class");
@@ -50,6 +52,7 @@ public class Division extends AppCompatActivity {
     }
 
     public void getDivisionData(){
+        progressBar.setVisibility(View.VISIBLE);
         MyVolley volley = new MyVolley(getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
@@ -58,6 +61,7 @@ public class Division extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.ATTENDANCE);

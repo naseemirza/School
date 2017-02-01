@@ -46,14 +46,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/layout_event"
+        android:layout_below="@+id/compactcalendar_view"
         android:orientation="horizontal"
-        android:layout_marginTop="300dp">
+        android:layout_marginTop="4dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Events"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:id="@+id/no_events"
+            android:visibility="gone"
+            android:layout_centerHorizontal="true"
+            android:textStyle="normal|bold|italic"
+            android:textColor="@color/cardview_dark_background" />
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="215dp"
+            android:layout_height="match_parent"
             android:id="@+id/list_event"
             />
 
     </RelativeLayout>
+
 </RelativeLayout>

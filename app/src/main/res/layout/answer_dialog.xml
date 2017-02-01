@@ -12,25 +12,28 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:elevation="10dp"
-        android:hint="  Type your question..."
-        android:layout_height="80dp">
+        android:hint=" Type your question..."
+        android:layout_height="wrap_content">
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_marginTop="3dp"
             android:layout_below="@+id/upload_post_image"
             android:background="@drawable/input_boder"
             android:id="@+id/text"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:gravity="top"
             android:focusableInTouchMode="false"
+            android:inputType="textMultiLine"
             android:focusable="false"
-            android:singleLine="false"
-            android:lines="3" />
+
+             />
 
     </android.support.design.widget.TextInputLayout>
-
     <Button
-        android:text="Button"
+        android:text="Submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/post_text_field"

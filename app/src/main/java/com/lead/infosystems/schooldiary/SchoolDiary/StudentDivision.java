@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -29,30 +30,27 @@ import java.util.ArrayList;
 
 public class StudentDivision extends AppCompatActivity implements IVolleyResponse{
 
-    UserDataSP userDataSP;
+    private UserDataSP userDataSP;
     private MyVolley myVolley;
-    ListView list_div;
-    String className;
-    ArrayList<String> division = new ArrayList<>();
+    private ListView list_div;
+    private String className;
+    private ProgressBar progressBar;
+    private ArrayList<String> division = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_division);
-
-
         Intent intent = getIntent();
         className = intent.getStringExtra("class");
-
+        progressBar = (ProgressBar) findViewById(R.id.homework_progress);
         list_div=(ListView)findViewById(R.id.list_div);
-
-
         userDataSP=new UserDataSP(this);
         myVolley = new MyVolley(getApplicationContext(), this);
         getDivisionData();
-
     }
 
     public void getDivisionData(){
+        progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams("class", className);
@@ -61,18 +59,13 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
     }
     @Override
     public void volleyResponse(String result) {
-
         try {
-
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
+        progressBar.setVisibility(View.GONE);
     }
-
-
-
 
     private void getJsonData(String re) throws JSONException {
         JSONArray json = new JSONArray(re);
@@ -81,20 +74,15 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
             division.add(jsonobj.getString("division"));
-
         }
-
         list_div.setAdapter(new MyAdaptor());
         list_div.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-
                 Intent intent = new Intent(view.getContext(), StudentSubject_list.class);
                 intent.putExtra("division", division.get(position));
                 intent.putExtra("class", className);
                 startActivity(intent);
-
             }
         });
 
@@ -114,7 +102,6 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
                 ItemView = getLayoutInflater().inflate(R.layout.class_div, parent, false);
             }
 
-           // ClassPage currentItem=division.get(position);
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
             class_text.setText("Division");
 
@@ -123,12 +110,7 @@ public class StudentDivision extends AppCompatActivity implements IVolleyRespons
             int color = generator.getColor(getItem(position));
             TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
             ((ImageView) ItemView.findViewById(R.id.class_image)).setImageDrawable(drawable);
-
             return ItemView;
-
         }
     }
-
-
-
 }

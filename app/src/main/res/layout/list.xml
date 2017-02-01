@@ -1,46 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:id="@+id/table_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="6">
+    android:layout_height="match_parent">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/table">
 
         <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/textView_roll"
-            android:layout_weight="2" />
+            android:layout_width = "0dp"
+            android:layout_height = "match_parent"
+            android:layout_weight = "2"
+            android:background = "@drawable/cell_shape"
+            android:ellipsize = "end"
+            android:padding = "5dp"
+            android:text = "Date"
+            android:singleLine = "true"
+            android:textColor="@android:color/background_dark"/>
 
         <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/textView_name"
-            android:layout_weight="4"/>
-
-
+            android:layout_width = "0dp"
+            android:layout_height = "match_parent"
+            android:layout_weight = "5"
+            android:background = "@drawable/cell_shape"
+            android:ellipsize = "end"
+            android:padding = "5dp"
+            android:text = "Date"
+            android:singleLine = "true"
+            android:textColor="@android:color/background_dark" />
 
             <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="25dp"
-                android:id="@+id/radio_buttonA"/>
+                android:id="@+id/radio_buttonA"
+                android:layout_width = "0dp"
+                android:layout_height = "wrap_content"
+                android:layout_weight = "1"
+                android:background = "@drawable/cell_shape"
+                android:ellipsize = "end"
+                android:padding = "5dp"
+                android:text = "Date"
+                android:singleLine = "true"
+                android:textColor="@android:color/background_dark" />
 
             <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/radio_buttonL"
-                android:layout_marginRight="5dp"/>
+                android:layout_width = "0dp"
+                android:layout_height = "wrap_content"
+                android:layout_weight = "1"
+                android:background = "@drawable/cell_shape"
+                android:ellipsize = "end"
+                android:padding = "5dp"
+                android:text = "Date"
+                android:singleLine = "true"
+                android:textColor="@android:color/background_dark"/>
 
-
-    </TableRow>
-
-
-</TableLayout>
+</LinearLayout>

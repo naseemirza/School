@@ -1,65 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_student_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Attendance.Student_list">
 
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/list"
-        android:layout_marginTop="30dp"
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
         />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Students"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        android:id="@+id/no_students"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="7"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="23dp"
-        android:id="@+id/linearLayout">
+        android:id="@+id/linearLayout"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:text="Roll_No"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:id="@+id/textView1"
-            android:layout_weight="1"
-            />
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:layout_weight = "2"
+            android:gravity = "center"
+            android:padding = "5dp"
+            android:textStyle="normal|bold"
+            android:textSize="14sp"
+            android:textColor="@color/cardview_light_background" />
         <TextView
             android:text="Students"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:gravity = "center"
+            android:padding = "5dp"
             android:id="@+id/textView2"
-            android:layout_weight="6"
-            />
+            android:layout_weight="5"
+            android:textAlignment="center"
+            android:textStyle="normal|bold"
+            android:textSize="14sp"
+            android:textColor="@color/cardview_light_background" />
 
         <TextView
-            android:text="     A               L"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:text="A"
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:gravity = "center"
+            android:padding = "5dp"
             android:id="@+id/textView"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textStyle="normal|bold"
+            android:textSize="14sp"
+            android:textColor="@color/cardview_light_background" />
+        <TextView
+            android:text="L"
+            android:layout_width = "0dp"
+            android:layout_height = "wrap_content"
+            android:gravity = "center"
+            android:padding = "5dp"
+            android:id="@+id/textView4"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textStyle="normal|bold"
+            android:textSize="14sp"
+            android:textColor="@color/cardview_light_background" />
 
     </LinearLayout>
 
-    <Button
-        android:text="Submit"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:backgroundTint="@color/colorAccent"
-        android:id="@+id/button_submit"
-        android:textColor="@color/cardview_light_background"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/linearLayout">
 
+
+        <Button
+            android:text="Submit"
+            android:layout_width="384dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/colorAccent"
+            android:id="@+id/button_submit"
+            android:textColor="@color/cardview_light_background"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ListView
+            android:layout_height="0dp"
+            android:id="@+id/list"
+            app:layout_constraintBottom_toTopOf="@+id/button_submit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="0dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="1.0" />
+
+
+    </android.support.constraint.ConstraintLayout>
 </RelativeLayout>

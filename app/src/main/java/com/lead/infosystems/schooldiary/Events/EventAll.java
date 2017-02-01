@@ -49,15 +49,15 @@ public class EventAll extends Fragment {
 
     private Date selectedDate;
     private MyDataBase myDataBase;
-    View rootView;
+    private View rootView;
     private UserDataSP userDataSP;
     private ProgressBar progressBar;
-    private TextView notAvailable;
-    CompactCalendarView calendarView;
-    ListView listview;
-    List<EventsData> eventList = new ArrayList<>();
-    MyAdapter adapter;
-    Boolean dateDoubleClick = false;
+    private TextView notAvailable, noEvents;
+    private CompactCalendarView calendarView;
+    private ListView listview;
+    private List<EventsData> eventList = new ArrayList<>();
+    private MyAdapter adapter;
+    private Boolean dateDoubleClick = false;
 
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
 
@@ -73,6 +73,7 @@ public class EventAll extends Fragment {
         progressBar = (ProgressBar)rootView.findViewById(R.id.event_progress);
         notAvailable = (TextView)rootView.findViewById(R.id.eventnot_available);
         listview = (ListView)rootView.findViewById(R.id.list_event);
+        noEvents = (TextView) rootView.findViewById(R.id.no_events);
         calendarView = (CompactCalendarView)rootView.findViewById(R.id.compactcalendar_view);
         getActivity().setTitle(dateFormatForMonth.format(calendarView.getFirstDayOfCurrentMonth()));
         eventList.clear();
@@ -210,9 +211,13 @@ public class EventAll extends Fragment {
                 }
                 eventList.clear();
                 List<Event> listDataOnDate = (List<Event>) calendarView.getEvents(dateClicked);
-                for(int i=0; i<listDataOnDate.size(); i++)
-                {
-                    eventList.add((EventsData) listDataOnDate.get(i).getData());
+                if(listDataOnDate.size() > 0) {
+                    noEvents.setVisibility(View.GONE);
+                    for (int i = 0; i < listDataOnDate.size(); i++) {
+                        eventList.add((EventsData) listDataOnDate.get(i).getData());
+                    }
+                }else{
+                    noEvents.setVisibility(View.VISIBLE);
                 }
                 adapter.notifyDataSetChanged();
             }

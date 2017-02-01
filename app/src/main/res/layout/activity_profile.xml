@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -61,7 +62,8 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
-            <android.support.v4.widget.SwipeRefreshLayout
+
+    <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -75,5 +77,18 @@
                     android:id="@+id/recyclerview">
             </android.support.v7.widget.RecyclerView>
         </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Posts"
+        android:id="@+id/no_posts"
+        app:layout_anchor="@+id/swipeRefresh"
+        app:layout_anchorGravity="top|center_horizontal"
+        android:layout_gravity="bottom|center_horizontal"
+        android:paddingTop="25dp"
+        android:textStyle="normal|bold|italic"
+        android:textSize="18sp"
+        android:textColor="@color/backgroundSemiGray" />
 
 </android.support.design.widget.CoordinatorLayout>

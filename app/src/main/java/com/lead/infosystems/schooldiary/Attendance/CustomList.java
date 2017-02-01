@@ -26,13 +26,10 @@ public class CustomList extends ArrayAdapter<Datalist> {
 
 
     public class ListViewHolder {
-
         TextView text_name;
         TextView text_roll;
-
         RadioButton Rabsent;
         RadioButton Rleave;
-
     }
 
     public CustomList( Activity context, List<Datalist> items) {
@@ -49,7 +46,6 @@ public class CustomList extends ArrayAdapter<Datalist> {
         final ListViewHolder listViewHolder;
         if(convertView == null)
         {
-
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = layoutInflater.inflate(R.layout.list,parent,false);
             listViewHolder = new ListViewHolder();
@@ -58,9 +54,7 @@ public class CustomList extends ArrayAdapter<Datalist> {
             listViewHolder.Rabsent=(RadioButton) rowView.findViewById(R.id.radio_buttonA);
             listViewHolder.Rleave = (RadioButton)rowView.findViewById(R.id.radio_buttonL);
             rowView.setTag(listViewHolder);
-        }
-        else
-        {
+        }else{
             rowView = convertView;
             listViewHolder = (ListViewHolder) rowView.getTag();
         }

@@ -95,6 +95,7 @@ public class MainTabAdapter extends Fragment {
 
             @Override
             public void onClick(View v) {
+                currentTab = viewPager.getCurrentItem();
                 if(currentTab == HOME_TAB){
                     fab.show();
                     loadHomeFragDialog();
@@ -234,6 +235,10 @@ public class MainTabAdapter extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().unregisterReceiver(receiver);
+        try {
+            getActivity().unregisterReceiver(receiver);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

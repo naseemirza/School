@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -21,17 +22,20 @@ import com.lead.infosystems.schooldiary.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class StudentSubject_list extends AppCompatActivity implements IVolleyResponse{
-    UserDataSP userDataSP;
 
+    private UserDataSP userDataSP;
     private MyVolley myVolley;
-    ListView list_subject;
-    String className;
-    String divisionName;
-    ArrayList<String> subjects = new ArrayList<>();
+    private ListView list_subject;
+    private String className;
+    private String divisionName;
+    private ProgressBar progressBar;
+    private TextView noSubs;
+    private ArrayList<String> subjects = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,42 +43,42 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
         setContentView(R.layout.activity_student_subject_list);
         Intent intent = getIntent();
         className = intent.getStringExtra("class");
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         divisionName = intent.getStringExtra("division");
         list_subject=(ListView)findViewById(R.id.list_subject);
+        noSubs = (TextView) findViewById(R.id.no_subs);
         userDataSP=new UserDataSP(this);
         myVolley = new MyVolley(getApplicationContext(), this);
         getSubjectData();
-
     }
 
     public void getSubjectData(){
+        progressBar.setVisibility(View.VISIBLE);
         myVolley.setUrl(Utils.HOMEWORK_INSERT);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams("class", className);
         myVolley.setParams("division", divisionName);
         myVolley.connect();
-
     }
     @Override
     public void volleyResponse(String result) {
         try {
+            noSubs.setVisibility(View.GONE);
             getJsonData(result);
         } catch (JSONException e) {
             e.printStackTrace();
+            noSubs.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
     }
 
     private void getJsonData(String re) throws JSONException {
-        Log.e("res", re);
         JSONArray json = new JSONArray(re);
         subjects.clear();
-
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
             subjects.add(jsonobj.getString("sub_name"));
-
         }
-
         list_subject.setAdapter(new MyAdaptor());
         list_subject.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,7 +96,6 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
         public MyAdaptor() {
             super(getApplicationContext(), R.layout.class_div,subjects);
         }
-
         @NonNull
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -102,12 +105,7 @@ public class StudentSubject_list extends AppCompatActivity implements IVolleyRes
             }
             TextView class_text=(TextView)ItemView.findViewById(R.id.class_id) ;
             class_text.setText(subjects.get(position));
-
             return ItemView;
-
         }
     }
-
-
-
 }

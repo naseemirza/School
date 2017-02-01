@@ -55,7 +55,6 @@ public class Marks extends AppCompatActivity {
         progressBar= (ProgressBar)findViewById(R.id.marks_progress);
         notAvailable = (TextView)findViewById(R.id.marksnot_available);
         checkInternetConnection();
-        //items.clear();
         adaptor = new MyAdaptor();
         marks.setAdapter(adaptor);
         init();
@@ -75,17 +74,15 @@ public class Marks extends AppCompatActivity {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void getJsonExam(String data) {
         try {
             progressBar.setVisibility(View.GONE);
             myDataBase.clearMarksData();
             JSONArray json_data = new JSONArray(data);
             for(int j = 0 ; j<json_data.length(); j++) {
-
                 JSONObject job_data = json_data.getJSONObject(j);
                 String sub_name = job_data.getString("sub_name");
-                if(Objects.equals(subName, sub_name)) {
+                if(subName.contentEquals(sub_name)) {
                     String sub_data_exam = job_data.getString("sub_data");
                     JSONArray json_exam_data = new JSONArray(sub_data_exam);
 
@@ -105,7 +102,6 @@ public class Marks extends AppCompatActivity {
                             String date = json_obj_marks.getString("date");
                             Float percentage = (float) ((marks * 100) / total);
                             myDataBase.insertMarksData(date, exam_name, total+"", marks+"", percentage+"");
-                           // items.add(new MarksData(date, exam_name, total+"", marks+"", percentage+""));
                         }
                         putMarksDataList();
                     }
@@ -115,19 +111,16 @@ public class Marks extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void checkInternetConnection()
     {
         if(ServerConnect.checkInternetConenction(this))
         {
             progressBar.setVisibility(View.VISIBLE);
             getJsonExam(userDataSP.getUserData(UserDataSP.SUBJECTS));
-        }
-        else {
+        } else {
             putMarksDataList();
         }
 

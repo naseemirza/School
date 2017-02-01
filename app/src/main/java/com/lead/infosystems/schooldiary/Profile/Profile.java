@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
@@ -52,6 +53,7 @@ import net.gotev.uploadservice.UploadStatusDelegate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +80,7 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
     private CompressImage compressImage;
     private ProgressBar proPicProgressBar;
     private Target target;
-    private boolean imageLoad = true;
+    private TextView noPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,7 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
         userDataSP = new UserDataSP(getApplicationContext());
         toolbar.setTitle(userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME));
         proPicChange = (ImageButton) findViewById(R.id.change_propic);
+        noPosts = (TextView) findViewById(R.id.no_posts);
         activity = this;
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -360,8 +363,11 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
             refresh();
         }else{
             if(userDataSP.getPostData()!=""){
+                noPosts.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
                 postAdaptor.addAll(getJsonData(userDataSP.getPostData()));
+            }else{
+                noPosts.setVisibility(View.VISIBLE);
             }
         }
         super.onStart();
@@ -437,6 +443,11 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
                 if (i == jsonPost.length() - 1) {
                     POST_MIN = jsonPostObj.getString("post_id");
                 }
+            }
+            if(itemlist.size()>0){
+                noPosts.setVisibility(View.GONE);
+            }else {
+                noPosts.setVisibility(View.VISIBLE);
             }
             return itemlist;
         } catch (JSONException e) {
