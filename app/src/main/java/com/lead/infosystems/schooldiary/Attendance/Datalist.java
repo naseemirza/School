@@ -6,7 +6,7 @@ package com.lead.infosystems.schooldiary.Attendance;
 
 public class Datalist {
 
-    String student_name,number_user,student_roll,attendance;
+   private String student_name,number_user,student_roll,attendance;
 
     public Datalist(String student_name,String student_roll, String student_number, String attendance) {
         this.student_name = student_name;

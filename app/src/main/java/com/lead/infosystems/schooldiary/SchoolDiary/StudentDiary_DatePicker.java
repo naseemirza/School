@@ -2,6 +2,7 @@ package com.lead.infosystems.schooldiary.SchoolDiary;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +40,6 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
     private String className;
     private String divisionName;
     private String subjectName;
-   // private String lastDate_submission;
     private UserDataSP userDataSp;
     private int year_h;
     private int month_h;
@@ -50,6 +50,7 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
     private EditText editTitle, editContent;
     private MyVolley myVolley;
     private TextView date_display;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,44 +112,44 @@ public class StudentDiary_DatePicker extends AppCompatActivity implements IVolle
         }
     };
 
-    public void submitHomeWork()
-        {
-            if(editTitle.getText().toString().isEmpty()) {
-                Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
-                    }
-            else if (editContent.getText().toString().isEmpty()) {
-                Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
+    public void submitHomeWork() {
+        if(editTitle.getText().toString().isEmpty()) {
+            Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
                 }
-        else {
-        myVolley.setUrl(Utils.HOMEWORK_INSERT);
-        myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
-        myVolley.setParams("class", className);
-        myVolley.setParams("division", divisionName);
-        myVolley.setParams("subject_name", subjectName);
-                myVolley.setParams("lastDate_submission", date_display.getText().toString());
-        myVolley.setParams("homework_title", editTitle.getText().toString());
-        myVolley.setParams("homework_content", editContent.getText().toString());
-        myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
-        myVolley.connect();
+        else if (editContent.getText().toString().isEmpty()) {
+            Toast.makeText(this, "fill the entries", Toast.LENGTH_SHORT).show();
+        }else {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Please Wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            myVolley.setUrl(Utils.HOMEWORK_INSERT);
+            myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
+            myVolley.setParams("class", className);
+            myVolley.setParams("division", divisionName);
+            myVolley.setParams("subject_name", subjectName);
+            myVolley.setParams("lastDate_submission", date_display.getText().toString());
+            myVolley.setParams("homework_title", editTitle.getText().toString());
+            myVolley.setParams("homework_content", editContent.getText().toString());
+            myVolley.setParams(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
+            myVolley.connect();
     }
 }
     @Override
     public void volleyResponse(String result) {
-        Log.e("response", result);
-
         if(result != null){
             if(!result.contains("ERROR")){
                 Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
                 try {
-                    parseData(result, editTitle.getText().toString(), editContent.getText().toString(), subjectName, date_display.getText().toString());
+                    parseData(result, editTitle.getText().toString(), editContent.getText().toString(),
+                            subjectName, date_display.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 finish();
             }
         }
-
-
+    progressDialog.dismiss();
     }
     public void parseData(String re,  String homeTitle, String homeContent,  String subject, String lastDate ) throws JSONException {
         JSONArray json = new JSONArray(re);

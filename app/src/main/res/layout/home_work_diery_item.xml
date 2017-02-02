@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     folding-cell:additionalFlipsCount="3"
     folding-cell:animationDuration="800"
-    folding-cell:backSideColor="@color/bgBackSideColor">
+    folding-cell:backSideColor="@color/cardview_light_background">
 
     <!-- CONTENT (UNFOLDED) LAYOUT (MUST BE AT LEAST 2x times BIGGER than content layout bellow)-->
     <include layout="@layout/cell_content_layout" />

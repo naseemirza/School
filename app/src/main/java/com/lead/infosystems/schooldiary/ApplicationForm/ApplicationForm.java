@@ -151,7 +151,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
             final ApplicationFormData currentItem = items.get(position);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
-            ImageButton delete = (ImageButton) ItemView.findViewById(R.id.paper_delete);
+            ImageView delete = (ImageView) ItemView.findViewById(R.id.paper_delete);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
 
@@ -175,24 +175,19 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
                             myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
                                 @Override
                                 public void volleyResponse(String result) {
-                                    Log.e("after delete", result);
-
-
                                     if(result.contains("DONE"))
                                     {
                                         items.remove(position);
                                         myAdaptor.notifyDataSetChanged();
-                                        Toast.makeText(getActivity().getApplicationContext(), ""+result, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity().getApplicationContext(), "DONE", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
                             });
-
                             myVolley.setUrl(Utils.APPLICATIONFORM_DELETE);
                             myVolley.setParams(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
                             myVolley.setParams("form_link", currentItem.getLink() );
                             myVolley.connect();
-
                             dialog.dismiss();
 
                         }

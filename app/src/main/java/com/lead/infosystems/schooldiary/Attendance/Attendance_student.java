@@ -74,12 +74,9 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
     }
      public void checkInternetConnection()
      {
-         if(ServerConnect.checkInternetConenction(getActivity()))
-         {
+         if(ServerConnect.checkInternetConenction(getActivity())) {
              getAttendanceData();
-         }
-         else
-         {
+         } else {
              putAttendanceIntoList();
          }
      }
@@ -103,8 +100,9 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
             myDatabase.clearAttendanceData();
             for (int i = 0; i <= json.length() - 1; i++) {
                 JSONObject jsonobj = json.getJSONObject(i);
-                myDatabase.insertAttendanceData(jsonobj.getString("year"), jsonobj.getString("day"), jsonobj.getString("month"), jsonobj.getString("attendance"));
-
+                myDatabase.insertAttendanceData(jsonobj.getString("year"),
+                        jsonobj.getString("day"), jsonobj.getString("month"),
+                        jsonobj.getString("attendance"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -113,23 +111,18 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         putAttendanceIntoList();
     }
 
-    public void putAttendanceIntoList()
-    {   if(myDatabase.getAttendanceData().getCount()>0)
-    {
-        attendance.clear();
-        Cursor data = myDatabase.getAttendanceData();
-        while (data.moveToNext())
-        {
-            attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
-        }
-        getDataValues();
-    }
-        else
-    {
+    public void putAttendanceIntoList() {
+        if(myDatabase.getAttendanceData().getCount()>0) {
+            attendance.clear();
+            Cursor data = myDatabase.getAttendanceData();
+            while (data.moveToNext())
+            {
+                attendance.add(new AttendanceData(data.getString(1), data.getString(2), data.getString(3), data.getString(4)));
+            }
+            getDataValues();
+        }else {
         notAvailable.setVisibility(View.VISIBLE);
-    }
-
-
+        }
     }
 
     private void getDataValues()
@@ -137,19 +130,15 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
         Event e;
       for(int i=0; i<attendance.size(); i++) {
           AttendanceData allAttendance = attendance.get(i);
-              if(allAttendance.getAttendance().contains("A")) {
-
+              if(allAttendance.getAttendance().contains(CustomList.ABSENT)) {
                   e = new Event(RED, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
-              else if(allAttendance.getAttendance().contains("L"))
-              {
+              else if(allAttendance.getAttendance().contains(CustomList.LEAVE)) {
                   e = new Event(ORANGE, allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
-              else
-              {
-
+              else {
                   e = new Event(Color.TRANSPARENT,allAttendance.getTimeInMili(), allAttendance.getAttendance());
                   calendarView.addEvent(e);
               }
@@ -177,9 +166,6 @@ public class Attendance_student extends Fragment implements IVolleyResponse{
             }
         });
 
-
-
-
     }
 
 
@@ -187,16 +173,13 @@ private void getMonthData(List<Event> li) {
     int present=0, absent=0, leaves=0;
     for(int j=0; j<li.size(); j++)
     {
-        if(li.get(j).getColor()==RED)
-        {
+        if(li.get(j).getColor()==RED) {
             absent++;
         }
-        else if(li.get(j).getColor()==ORANGE)
-        {
+        else if(li.get(j).getColor()==ORANGE) {
             leaves++;
         }
-        else
-        {
+        else {
             present++;
         }
     }

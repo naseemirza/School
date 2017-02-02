@@ -90,7 +90,11 @@ public class HomeworkList_teacher extends AppCompatActivity implements IVolleyRe
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           adapter.addItemNew(new Item(intent.getStringExtra(HOMEWORK_TITLE),intent.getStringExtra(HOMEWORK_CONTENTS),intent.getStringExtra(LASTDATE_SUBMISSION),intent.getStringExtra(SUBJECT), intent.getStringExtra(HOMEWORKDATE), intent.getStringExtra(NUMBER_USER), intent.getStringExtra(HOMEWORK_NUMBER)));
+           adapter.addItemNew(new Item(intent.getStringExtra(HOMEWORK_TITLE),intent.getStringExtra(HOMEWORK_CONTENTS)
+                   ,intent.getStringExtra(LASTDATE_SUBMISSION),intent.getStringExtra(SUBJECT),
+                   intent.getStringExtra(HOMEWORKDATE), intent.getStringExtra(NUMBER_USER),
+                   intent.getStringExtra(HOMEWORK_NUMBER)));
+            adapter.notifyDataSetChanged();
         }
     };
 

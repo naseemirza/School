@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -58,8 +59,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private TextView notAvailable;
     private MyVolley myVolley;
     private String classNumber;
-
-    private ImageButton delete_button;
+    private ImageView delete_button;
     List<Model_paper> items = new ArrayList<>();
 
 
@@ -89,14 +89,11 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(ServerConnect.checkInternetConenction(getActivity()))
-
-                    {
+                    if(ServerConnect.checkInternetConenction(getActivity())) {
                         android.app.FragmentManager manager = getActivity().getFragmentManager();
                         Dialog_model dialog_model = new Dialog_model();
                         dialog_model.setClassNumber(classNumber);
                         dialog_model.show(manager, "Dialog_model");
-
                     }
                 }
             });
@@ -133,7 +130,11 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(receiver);
+        try {
+            getActivity().unregisterReceiver(receiver);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void getDataFromServer(){
@@ -195,7 +196,7 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
             }
 
             final Model_paper currentItem = items.get(position);
-            delete_button = (ImageButton)ItemView.findViewById(R.id.paper_delete);
+            delete_button = (ImageView) ItemView.findViewById(R.id.paper_delete);
             TextView name = (TextView) ItemView.findViewById(R.id.pdf_name);
             name.setText(currentItem.getName());
             ImageView imageName = (ImageView) ItemView.findViewById(R.id.image_text);
@@ -221,26 +222,21 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
                                 myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
                                     @Override
                                     public void volleyResponse(String result) {
-                                        Log.e("after delete", result);
-
-
                                         if(result.contains("DONE"))
                                         {
                                             items.remove(position);
                                             adaptor.notifyDataSetChanged();
-                                            Toast.makeText(getActivity().getApplicationContext(), "Deleted", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity().getApplicationContext(), "Deleted",
+                                                    Toast.LENGTH_SHORT).show();
                                         }
 
                                     }
                                 });
-
                                 myVolley.setUrl(Utils.MODELPAPER_DELETE);
                                 myVolley.setParams(UserDataSP.NUMBER_USER, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
                                 myVolley.setParams("paper_link",currentItem.getLink() );
                                 myVolley.connect();
-
                                 dialog.dismiss();
-
                             }
                         });
                         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -252,12 +248,10 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
                         alert.show();
                     }
                 });
-
             }
             else{
                 delete_button.setVisibility(View.GONE);
             }
-
             return ItemView;
         }
     }

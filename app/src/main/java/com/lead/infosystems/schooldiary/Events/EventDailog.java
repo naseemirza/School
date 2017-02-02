@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Events;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -105,16 +106,21 @@ public class EventDailog extends DialogFragment{
     }
 
     private void submitEvent(final String eventText, final String eventDetails){
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         MyVolley myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
-                getDialog().dismiss();
-                Toast.makeText(getActivity().getApplicationContext(), "Event Inserted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Event Submitted", Toast.LENGTH_SHORT).show();
                 try {
                     parseDataEvent(eventText, eventDetails, result);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                progressDialog.dismiss();
+                getDialog().dismiss();
             }
         });
         myVolley.setUrl(Utils.EVENT_INSERT);
@@ -124,7 +130,6 @@ public class EventDailog extends DialogFragment{
         myVolley.setParams(EVENT_DATE,event_date);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.setParams(UserDataSP.NUMBER_USER, userDataSP.getUserData(UserDataSP.NUMBER_USER));
-
         myVolley.connect();
     }
     private void parseDataEvent(String event_name, String event_details, String re) throws JSONException {
@@ -141,7 +146,5 @@ public class EventDailog extends DialogFragment{
         intent.putExtra(SUBMIT_DATE, submit_date);
         intent.putExtra(UserDataSP.STUDENT_NUMBER,userDataSP.getUserData(UserDataSP.SCHOOL_NUMBER));
         getActivity().getApplicationContext().sendBroadcast(intent);
-
-
     }
   }

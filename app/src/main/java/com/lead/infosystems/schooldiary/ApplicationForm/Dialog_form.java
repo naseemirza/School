@@ -65,14 +65,15 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
                             .addParameter(UserDataSP.NUMBER_USER,userdatasp.getUserData(UserDataSP.NUMBER_USER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
+                            // broadcast
                             .startUpload();
 
                 } catch (Exception exc) {
-                    Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Failed to upload", Toast.LENGTH_SHORT).show();
                 }
                 getDialog().dismiss();
             }else {
-                Toast.makeText(getActivity().getApplicationContext(),"File Name Length Should Be Atleast 4",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(),"File name too short",Toast.LENGTH_SHORT).show();
             }
         }
     }

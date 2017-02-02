@@ -1,10 +1,12 @@
 package com.lead.infosystems.schooldiary.Model_Paper;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,10 @@ import com.lead.infosystems.schooldiary.Generic.Utils;
 import com.lead.infosystems.schooldiary.R;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.util.UUID;
 
@@ -61,13 +66,11 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
         this.classNumber  = classNumber;
     }
 
-    public void uploadMultipart(String path) {
-
-
-        String name = file_name.getText().toString().trim();
-
+    public void uploadMultipart(final String path) {
+        final String name = file_name.getText().toString().trim();
         if (path == null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Please move your .pdf file to internal storage and retry", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "Please move your .pdf file to internal storage and retry",
+                    Toast.LENGTH_LONG).show();
         } else {
             if (name.length()>3) {
                 try {
@@ -75,6 +78,11 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
                         this.classNumber = userdatasp.getUserData(UserDataSP.CLASS);
                     }
                     String uploadId = UUID.randomUUID().toString();
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage("Please Wait...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+
                     new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.MODEL_PAPER)
                             .addFileToUpload(path, "pdf")
                             .addParameter("name", name)
@@ -83,17 +91,44 @@ public class Dialog_model extends DialogFragment implements View.OnClickListener
                             .addParameter(UserDataSP.SCHOOL_NUMBER,userdatasp.getUserData(UserDataSP.SCHOOL_NUMBER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
-                            .startUpload();
-                            parseDataModel(name, path, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
-                    Toast.makeText(getActivity().getApplicationContext(), "Uploading ....", Toast.LENGTH_LONG).show();
+                            .setDelegate(new UploadStatusDelegate() {
+                                @Override
+                                public void onProgress(UploadInfo uploadInfo) {
 
+                                }
+
+                                @Override
+                                public void onError(UploadInfo uploadInfo, Exception exception) {getDialog().dismiss();
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity().getApplicationContext(), "Uploaded Failed", Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                                    progressDialog.dismiss();
+                                    Intent intent = new Intent(INTENTFILTER_M);
+                                    intent.putExtra(PAPER_NAME, name);
+                                    intent.putExtra(PAPER_LINK, serverResponse.getBodyAsString().replaceAll("DONE",""));
+                                    intent.putExtra(USER_UPLOAD, userdatasp.getUserData(UserDataSP.NUMBER_USER));
+                                    getActivity().sendBroadcast(intent);getDialog().dismiss();
+                                    // parseDataModel(name, path, userdatasp.getUserData(UserDataSP.NUMBER_USER) );
+                                }
+
+                                @Override
+                                public void onCancelled(UploadInfo uploadInfo) {
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
+                                }
+                            })
+                            .startUpload();
                 } catch (Exception exc) {
                     Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                getDialog().dismiss();
+
                 Toast.makeText(getActivity().getApplicationContext(), "Successfully Uploaded", Toast.LENGTH_LONG).show();
             }else {
-                Toast.makeText(getActivity().getApplicationContext(),"File Name Length Should Be Atleast 4",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(),"File Name is too short",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -6,8 +6,8 @@ package com.lead.infosystems.schooldiary.ApplicationForm;
 
 public class ApplicationFormData {
 
-    String name,link;
-    int deleteUser;
+    private String name,link;
+    private int deleteUser;
 
     public ApplicationFormData(String name, String link, String number_user ) {
         this.name = name;

@@ -22,7 +22,10 @@ public class CustomList extends ArrayAdapter<Datalist> {
     private boolean flagA=false;
     private boolean flagL=false;
     private final Activity context;
-    static List<Datalist> items=new ArrayList<>();
+    public static List<Datalist> items=new ArrayList<>();
+    public static final String PRESENT = "P";
+    public static final String LEAVE = "L";
+    public static final String ABSENT = "A";
 
 
     public class ListViewHolder {
@@ -64,6 +67,17 @@ public class CustomList extends ArrayAdapter<Datalist> {
         listViewHolder.text_roll.setText(currentItem.getStudent_roll());
         listViewHolder.text_name.setText(currentItem.getStudent_name());
 
+        if(currentItem.getAttendance().contentEquals(ABSENT)){
+            listViewHolder.Rabsent.setChecked(true);
+            listViewHolder.Rleave.setChecked(false);
+        }else if(currentItem.getAttendance().contentEquals(LEAVE)){
+            listViewHolder.Rabsent.setChecked(false);
+            listViewHolder.Rleave.setChecked(true);
+        }else{
+            listViewHolder.Rabsent.setChecked(false);
+            listViewHolder.Rleave.setChecked(false);
+        }
+
         listViewHolder.Rabsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,13 +88,13 @@ public class CustomList extends ArrayAdapter<Datalist> {
                         listViewHolder.Rleave.setChecked(false);
                         flagA = true;
                         flagL = false;
-                        currentItem.setAttendance("A");
+                        currentItem.setAttendance(ABSENT);
 
                     } else {
                         flagA = false;
                         listViewHolder.Rabsent.setChecked(false);
                         listViewHolder.Rleave.setChecked(false);
-                        currentItem.setAttendance("P");
+                        currentItem.setAttendance(PRESENT);
                     }
                 }
 
@@ -98,13 +112,13 @@ public class CustomList extends ArrayAdapter<Datalist> {
                         flagA = false;
 
 
-                        currentItem.setAttendance("L");
+                        currentItem.setAttendance(LEAVE);
 
                     } else {
                         flagL = false;
                         listViewHolder.Rleave.setChecked(false);
                         listViewHolder.Rabsent.setChecked(false);
-                        currentItem.setAttendance("P");
+                        currentItem.setAttendance(PRESENT);
                     }
                 }
 

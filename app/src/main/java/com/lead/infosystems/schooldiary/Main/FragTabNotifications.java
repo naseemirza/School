@@ -129,6 +129,14 @@ public class FragTabNotifications extends Fragment {
         volley.connect();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if( userDataSP.getNotificationNumber(UserDataSP.NOTIFICATION_NUM)>0){
+            getDataFromServer();
+        }
+    }
+
     private void putDataIntoList() {
         Cursor data = myDataBase.getNotifications();
         if(data.getCount()>0){
