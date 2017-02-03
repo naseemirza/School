@@ -1,17 +1,24 @@
 package com.lead.infosystems.schooldiary.ExamTest;
 
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
@@ -25,6 +32,7 @@ import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 import static android.app.Activity.RESULT_OK;
@@ -37,18 +45,18 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
     public static final String EXAM_PDFLINK = "exam_pdf_link";
     public static final String EXAM_SUBMISSION_DATE = "submission_date";
     public static final String EXAM_UPLOAD_USER = "upload_user";
-    UserDataSP userDataSp;
-    EditText exam_name, exam_date, exam_description, exam_pdf_name;
-    Button button_upload;
-    ImageView btn_pdf;
-   // TextView exam_date_display;
-    String path;
+    private UserDataSP userDataSp;
+    private EditText exam_name, exam_date, exam_description, exam_pdf_name;
+    private Button button_upload;
+    private ImageView btn_pdf;
+    private TextView exam_date_display;
+    private String path;
     private int PDF_REQ = 1;
     private static final int DIALOG_ID = 0;
-   // private int year_e;
-   // private int month_e;
-   // private int day_e;
-   // ImageView btn_date;
+    private int year_e;
+    private int month_e;
+    private int day_e;
+    ImageView btn_date;
     View rootView;
     String result;
 
@@ -66,64 +74,79 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
         getDialog().setTitle("Upload PDF");
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         exam_name = (EditText) rootView.findViewById(R.id.examName);
-        exam_date = (EditText)rootView.findViewById(R.id.examDate_test);
-        //exam_date_display = (TextView) rootView.findViewById(exam_date_display);
-        //btn_date = (ImageView) rootView.findViewById(R.id.button_date_exam);
+       // exam_date = (EditText)rootView.findViewById(R.id.examDate_test);
+        exam_date_display = (TextView) rootView.findViewById(R.id.exam_date_display);
+        btn_date = (ImageView) rootView.findViewById(R.id.button_date_exam);
         exam_description = (EditText) rootView.findViewById(R.id.examDescription);
         exam_pdf_name = (EditText) rootView.findViewById(R.id.examPDFName);
         btn_pdf = (ImageView) rootView.findViewById(R.id.uploadexam_pdf);
         button_upload = (Button) rootView.findViewById(R.id.button_upload_exam);
         btn_pdf.setOnClickListener(this);
         button_upload.setOnClickListener(this);
-       // final Calendar calendar_date= Calendar.getInstance();
-       // year_e = calendar_date.get(Calendar.YEAR);
-       // month_e = calendar_date.get(Calendar.MONTH) + 1;
-       // day_e = calendar_date.get(Calendar.DAY_OF_MONTH);
-       // exam_date_display.setText(day_e + "/" + month_e + "/" + year_e);
-       // showDialogOnButtonClickDate();
+        final Calendar calendar_date= Calendar.getInstance();
+        year_e = calendar_date.get(Calendar.YEAR);
+        month_e = calendar_date.get(Calendar.MONTH) + 1;
+        day_e = calendar_date.get(Calendar.DAY_OF_MONTH);
+        exam_date_display.setText(day_e + "-" + month_e + "-" + year_e);
+        showDialogOnButtonClickDate();
         return rootView;
     }
 
-//    public void showDialogOnButtonClickDate()
-//    {
-//        btn_date.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getActivity().showDialog(DIALOG_ID);
-//            }
-//        });
-//    }
-//
-//      @Override
-//      protected Dialog onCreateDialog(int id)
-//      {
-//          if(id==DIALOG_ID);
-//               return new DatePickerDialog(getActivity().getApplicationContext(), dpickerListener, year_e, month_e, day_e);
-//          return null;
-//      }
-//      private DatePickerDialog.OnDateSetListener dpickerListener = new DatePickerDialog.OnDateSetListener() {
-//          @Override
-//          public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//              year_e=year;
-//              month_e = monthOfYear;
-//              day_e = dayOfMonth;
-//              exam_date_display.setText(day_e+"/"+month_e+"/"+year_e);
-//          }
-//      };
+    public void showDialogOnButtonClickDate()
+    {
+        btn_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateDialog dateDialog = new DateDialog();
+                android.app.FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+                dateDialog.show(ft,"DatePicker");
+            }
+        });
+    }
 
-    public void uploadMultipart(String path) {
+
+
+    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int y = c.get(Calendar.YEAR);
+            int m = c.get(Calendar.MONTH);
+            int d = c.get(Calendar.DAY_OF_MONTH);
+            return new DatePickerDialog(getActivity(),this,y,m,d);
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            year_e=year;
+            month_e = monthOfYear;
+            day_e = dayOfMonth;
+            exam_date_display.setText(day_e+"-"+month_e+"-"+year_e);
+        }
+    }
+
+    public void uploadMultipart(final String path) {
         String name = exam_pdf_name.getText().toString().trim();
 
         if (path == null) {
             Toast.makeText(getActivity().getApplicationContext(), "Please move your .pdf file to internal storage and retry", Toast.LENGTH_LONG).show();
         } else {
+            final String examName =  exam_name.getText().toString();
+            final String examDate = exam_date_display.getText().toString();
+            final String examDis = exam_description.getText().toString();
+            final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Please wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
             if (name.length()>3) {
                 try {
+
                     String uploadId = UUID.randomUUID().toString();
                     new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.EXAM_DETAIL)
                             .addFileToUpload(path, "pdf")
                             .addParameter("name", exam_name.getText().toString().trim())
-                            .addParameter("exam_date",exam_date.getText().toString().trim())
+                            .addParameter("exam_date",examDate+" 10:00:00")
                             .addParameter("exam_description", exam_description.getText().toString().trim())
                             .addParameter(UserDataSP.SCHOOL_NUMBER,userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER))
                             .addParameter(UserDataSP.NUMBER_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER))
@@ -137,32 +160,42 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
 
                                 @Override
                                 public void onError(UploadInfo uploadInfo, Exception exception) {
-
+                                    Toast.makeText(getActivity().getApplicationContext(), "Failed to submit",
+                                            Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
                                 }
 
                                 @Override
                                 public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
-                                   Log.e("server response", serverResponse.toString());
-                                    Log.e("server reponse 2", serverResponse.getBodyAsString());
-                                    Log.e("server response 3 ", String.valueOf(serverResponse.getBody()));
-                                    result = serverResponse.getBodyAsString();
-
+                                    result = serverResponse.getBodyAsString().replaceAll("DONE","");
+                                    Intent intent = new Intent(INTENTFILTEREXAM);
+                                    intent.putExtra(EXAM_NAME, examName);
+                                    intent.putExtra(EXAM_DATE, examDate);
+                                    intent.putExtra(EXAM_DESCRIPTION, examDis );
+                                    intent.putExtra(EXAM_PDFLINK, result);
+                                    intent.putExtra(EXAM_SUBMISSION_DATE, "");
+                                    intent.putExtra(EXAM_UPLOAD_USER, userDataSp.getUserData(UserDataSP.NUMBER_USER));
+                                    getActivity().sendBroadcast(intent);
+                                    Log.e("res",result);
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
                                 }
                                 @Override
                                 public void onCancelled(UploadInfo uploadInfo) {
-
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
                                 }
                             })
                             .startUpload();
 
-                    parseExamData(exam_name.getText().toString().trim(),exam_date.getText().toString().trim(), exam_description.getText().toString().trim(), path , result , userDataSp.getUserData(UserDataSP.NUMBER_USER));
 
                 } catch (Exception exc) {
-                    Toast.makeText(getActivity().getApplicationContext(), exc.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Failed to submit", Toast.LENGTH_SHORT).show();
                 }
-                getDialog().dismiss();
+
             }else {
-                Toast.makeText(getActivity().getApplicationContext(),"File Name Length Should Be Atleast 4",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(),"File name too short",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -194,17 +227,6 @@ public class Dialog_exam extends DialogFragment implements View.OnClickListener{
         if (v == button_upload) {
             uploadMultipart(path);
         }
-    }
-    public void parseExamData(String examName, String examDate, String examDescription, String examPdfLink, String submissionDate, String uploadUser )
-    {
-        Intent intent = new Intent(INTENTFILTEREXAM);
-        intent.putExtra(EXAM_NAME, examName);
-        intent.putExtra(EXAM_DATE, examDate);
-        intent.putExtra(EXAM_DESCRIPTION, examDescription);
-        intent.putExtra(EXAM_PDFLINK, examPdfLink);
-        intent.putExtra(EXAM_SUBMISSION_DATE, submissionDate);
-        intent.putExtra(EXAM_UPLOAD_USER, uploadUser);
-        getActivity().sendBroadcast(intent);
     }
 
 }

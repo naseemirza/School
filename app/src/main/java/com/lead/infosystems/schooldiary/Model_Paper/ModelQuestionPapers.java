@@ -122,7 +122,9 @@ public class ModelQuestionPapers extends Fragment implements IVolleyResponse {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            items.add(0, new Model_paper(intent.getStringExtra(PAPER_NAME), intent.getStringExtra(PAPER_LINK), intent.getStringExtra(USER_UPLOAD)));
+            items.add(0, new Model_paper(intent.getStringExtra(PAPER_NAME),
+                    intent.getStringExtra(PAPER_LINK),
+                    intent.getStringExtra(USER_UPLOAD)));
             adaptor.notifyDataSetChanged();
         }
     };

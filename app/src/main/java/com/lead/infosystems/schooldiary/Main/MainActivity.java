@@ -95,16 +95,62 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void openFrag() {
+        MainTabAdapter mainFrag = new MainTabAdapter();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_con,mainFrag);
+        transaction.addToBackStack("main");
+        transaction.commit();
         try {
-            if(getIntent().getAction().contains(NotificationData.EVENT)){
-                openEventFrag();
+            if(getIntent().getAction().length()>0){
+                switch (getIntent().getAction().toString()){
+                    case NotificationData.HOME_WORK:
+                        StudentDiary_student frag1 = new StudentDiary_student();
+                        FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                        transaction1.replace(R.id.main_con,frag1);
+                        transaction1.addToBackStack(BACK_STACK_TAG);
+                        transaction1.commit();
+                        break;
+                    case NotificationData.MARKS:
+                        if(userDataSP.isStudent()){
+                            Progress_Report frag = new Progress_Report();
+                            FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                            transaction2.replace(R.id.main_con,frag);
+                            transaction2.addToBackStack(BACK_STACK_TAG);
+                            transaction2.commit();
+                        }
+                        break;
+                    case NotificationData.MODEL_QP:
+                        ModelQuestionPapers frag2 = new ModelQuestionPapers();
+                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                        transaction2.replace(R.id.main_con,frag2);
+                        transaction2.addToBackStack(BACK_STACK_TAG);
+                        transaction2.commit();
+                        break;
+                    case NotificationData.TEST_EXAM:
+                        ExamDetails frag3 = new ExamDetails();
+                        FragmentTransaction transaction3 = getSupportFragmentManager().beginTransaction();
+                        transaction3.replace(R.id.main_con,frag3);
+                        transaction3.addToBackStack(BACK_STACK_TAG);
+                        transaction3.commit();
+                        break;
+                    case NotificationData.EVENT:
+                        EventAll frag4 = new EventAll();
+                        FragmentTransaction transaction4 = getSupportFragmentManager().beginTransaction();
+                        transaction4.replace(R.id.main_con,frag4);
+                        transaction4.addToBackStack(BACK_STACK_TAG);
+                        transaction4.commit();
+                        break;
+                    case NotificationData.APPLICATION_FORM:
+                        ApplicationForm frag5 = new ApplicationForm();
+                        FragmentTransaction transaction5 = getSupportFragmentManager().beginTransaction();
+                        transaction5.replace(R.id.main_con,frag5);
+                        transaction5.addToBackStack(BACK_STACK_TAG);
+                        transaction5.commit();
+                        break;
+                }
             }
         }catch (Exception e){
-            MainTabAdapter frag = new MainTabAdapter();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.main_con,frag);
-            transaction.addToBackStack("main");
-            transaction.commit();
+         e.printStackTrace();
         }
 
     }

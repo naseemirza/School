@@ -170,6 +170,14 @@ public class UserDataSP {
         editor.commit();
     }
 
+    public void storeClasses(String s){
+        editor.putString("mqpclasses",s);
+        editor.commit();
+    }
+
+    public String getClassesMQP(){
+        return sharedPreferences.getString("mqpclasses","");
+    }
 
     public void storePrincipalData(String firstName, String lastName, String mobile, String gmail, String pic, String designation, String qualifiaction, String interests_field, String contact_detail)
     {

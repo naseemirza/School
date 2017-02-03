@@ -9,7 +9,7 @@ public class NotificationData {
     public static final String HOME_WORK = "HOME_WORK";
     public static final String MARKS = "MARKS";
     public static final String MODEL_QP = "M_Q_P";
-    public static final String TEST_EXAM = "EXAMS";
+    public static final String TEST_EXAM = "EXAM";
     public static final String EVENT = "EVENT";
     public static final String APPLICATION_FORM = "APPLICATION_FORM";
 

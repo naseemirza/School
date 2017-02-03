@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,14 +69,16 @@ import java.util.Map;
 public class FragTabChat extends Fragment {
 
 
-    View rootview;
-    ListView list;
+    private View rootview;
+    private ListView list;
     private UserDataSP userDataSP;
     private MyListAdapter myListAdapter;
-    List<ChatListItems> items = new ArrayList<>();
-    String myName;
+    private List<ChatListItems> items = new ArrayList<>();
+    private String myName;
+    private ProgressBar progressBar;
     private MyDataBase dataBase;
     private TextView noChats;
+    private static boolean back = false;
     public FragTabChat() {
         // Required empty public constructor
     }
@@ -93,6 +96,7 @@ public class FragTabChat extends Fragment {
         // Inflate the layout for this fragment
         rootview =  inflater.inflate(R.layout.fragment_tab_chat, container, false);
         list = (ListView) rootview.findViewById(R.id.list_two);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
         dataBase = new MyDataBase(getActivity().getApplicationContext());
         myName = userDataSP.getUserData(UserDataSP.FIRST_NAME)+" "+userDataSP.getUserData(UserDataSP.LAST_NAME);
@@ -100,7 +104,7 @@ public class FragTabChat extends Fragment {
         noChats = (TextView) rootview.findViewById(R.id.no_chats);
         list.setAdapter(myListAdapter);
         setItemClicks();
-        if(ServerConnect.checkInternetConenction(getActivity())){
+        if(ServerConnect.checkInternetConenction(getActivity()) && !back){
             connect();
         }else{
             getDataIntoList();
@@ -179,6 +183,7 @@ public class FragTabChat extends Fragment {
     }
 
     private void connect(){
+        progressBar.setVisibility(View.VISIBLE);
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
@@ -201,6 +206,8 @@ public class FragTabChat extends Fragment {
                 }else{
                     noChats.setVisibility(View.VISIBLE);
                 }
+                progressBar.setVisibility(View.GONE);
+                back = true;
             }
         });
         volley.setUrl(Utils.CHAT_LIST);

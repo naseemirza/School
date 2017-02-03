@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +20,10 @@ import com.lead.infosystems.schooldiary.R;
 import com.lead.infosystems.schooldiary.Generic.Utils;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.util.UUID;
 
@@ -32,6 +36,10 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
     private ImageView btn_choose;
     private String path;
     public static final String APPLICATION_NAME = "application_name";
+    public static final String INTENT_FILTER = "dialog_filter";
+    public static final String FORM_LINK = "form_link";
+    public static final String FORM_NAME = "form_name";
+
     private int REQ_PDF = 1;
 
     @Nullable
@@ -50,7 +58,7 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
     }
 
     public void uploadMultipart(String path) {
-        String name = file_name.getText().toString().trim();
+        final String name = file_name.getText().toString().trim();
 
         if (path == null) {
             Toast.makeText(getActivity().getApplicationContext(), "Please move your .pdf file to internal storage and retry", Toast.LENGTH_LONG).show();
@@ -58,6 +66,10 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
             if (name.length()>3) {
                 try {
                     String uploadId = UUID.randomUUID().toString();
+                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage("Please wait...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
                     new MultipartUploadRequest(getActivity().getApplicationContext(), uploadId, Utils.APPLICATION_FORMS)
                             .addFileToUpload(path, "pdf")
                             .addParameter(APPLICATION_NAME, name)
@@ -65,13 +77,41 @@ public class Dialog_form extends DialogFragment implements View.OnClickListener 
                             .addParameter(UserDataSP.NUMBER_USER,userdatasp.getUserData(UserDataSP.NUMBER_USER))
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
-                            // broadcast
+                            .setDelegate(new UploadStatusDelegate() {
+                                @Override
+                                public void onProgress(UploadInfo uploadInfo) {
+
+                                }
+
+                                @Override
+                                public void onError(UploadInfo uploadInfo, Exception exception) {
+                                    Toast.makeText(getActivity().getApplicationContext(), "Failed to upload", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
+                                }
+
+                                @Override
+                                public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                                    Intent intent = new Intent(INTENT_FILTER);
+                                    intent.putExtra(FORM_NAME,name);
+                                    intent.putExtra(FORM_LINK,serverResponse.getBodyAsString().replaceAll("DONE",""));
+                                    getActivity().sendBroadcast(intent);
+                                    progressDialog.dismiss();
+                                    getDialog().dismiss();
+                                }
+
+                                @Override
+                                public void onCancelled(UploadInfo uploadInfo) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity().getApplicationContext(), "Failed to upload", Toast.LENGTH_SHORT).show();
+                                }
+                            })
                             .startUpload();
 
                 } catch (Exception exc) {
                     Toast.makeText(getActivity().getApplicationContext(), "Failed to upload", Toast.LENGTH_SHORT).show();
                 }
-                getDialog().dismiss();
+
             }else {
                 Toast.makeText(getActivity().getApplicationContext(),"File name too short",Toast.LENGTH_SHORT).show();
             }

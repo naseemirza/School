@@ -1,8 +1,11 @@
 package com.lead.infosystems.schooldiary.ApplicationForm;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -81,6 +84,7 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
                 }
             });
         }
+
         notAvailable = (TextView) rootView.findViewById(R.id.not_available);
         progressBar = (ProgressBar) rootView.findViewById(R.id.pdf_progress);
         list_model = (ListView) rootView.findViewById(R.id.list);
@@ -88,6 +92,12 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         list_model.setAdapter(myAdaptor);
         connect();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(receiver,new IntentFilter(Dialog_form.INTENT_FILTER));
     }
 
     private void connect(){
@@ -113,7 +123,9 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
         JSONArray json = new JSONArray(re);
         for (int i = 0; i <= json.length() - 1; i++) {
             JSONObject jsonobj = json.getJSONObject(i);
-            items.add(new ApplicationFormData(jsonobj.getString("form_name"),jsonobj.getString("form_link"),jsonobj.getString(UserDataSP.NUMBER_USER)));
+            items.add(new ApplicationFormData(jsonobj.getString("form_name"),
+                    jsonobj.getString("form_link"),
+                    jsonobj.getString(UserDataSP.NUMBER_USER)));
         }
         myAdaptor.notifyDataSetChanged();
         list_model.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -135,6 +147,29 @@ public class ApplicationForm extends Fragment implements IVolleyResponse {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        try{
+            getActivity().unregisterReceiver(receiver);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle b = intent.getExtras();
+            items.add(new ApplicationFormData(b.getString(Dialog_form.FORM_NAME),
+                    b.getString(Dialog_form.FORM_LINK),
+                    userdatasp.getUserData(UserDataSP.NUMBER_USER)));
+            Log.e("data",b.getString(Dialog_form.FORM_NAME)+"   "+
+                    b.getString(Dialog_form.FORM_LINK)+"   "+
+                    userdatasp.getUserData(UserDataSP.NUMBER_USER));
+            myAdaptor.notifyDataSetChanged();
+        }
+    };
     class MyAdaptor extends ArrayAdapter<ApplicationFormData> {
         public MyAdaptor() {
 

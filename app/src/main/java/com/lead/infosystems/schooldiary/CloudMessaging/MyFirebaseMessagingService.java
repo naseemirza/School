@@ -86,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NOTIFICATION_ID = 6;
         }else if(data.get(NOTIFICATION_TYPE).contentEquals(NotificationData.TEST_EXAM)){
             intent.setAction(NotificationData.TEST_EXAM);
-            notificationTitle = "Marks Uploaded";
+            notificationTitle = "New Exam Timetable";
             NOTIFICATION_ID = 7;
         }
 

@@ -2,6 +2,7 @@ package com.lead.infosystems.schooldiary.Generic;
 
 import android.app.Activity;
 import android.net.ConnectivityManager;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -25,6 +26,7 @@ import java.net.URL;
 public class ServerConnect {
 
 
+    private static boolean toastShow = true;
 //    this function is for post query string generations
 //
 //        Uri.Builder builder = new Uri.Builder();
@@ -82,7 +84,16 @@ public class ServerConnect {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity.getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+                if(toastShow){
+                    toastShow = false;
+                    Toast.makeText(activity.getApplicationContext(),"No Internet Connection",Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            toastShow = true;
+                        }
+                    },5000);
+                }
             }
         });
     }

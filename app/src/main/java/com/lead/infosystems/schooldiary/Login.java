@@ -2,6 +2,7 @@ package com.lead.infosystems.schooldiary;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -28,6 +29,7 @@ public class Login extends AppCompatActivity implements IVolleyResponse {
     private final String USERNAME = "username";
     private final String PASSWORD = "password";
     private ProgressDialog progressDialog;
+    private static boolean backExit = false;
     public static final String DEVICE_NUM = "device_num";
 
     @Override
@@ -58,6 +60,22 @@ public class Login extends AppCompatActivity implements IVolleyResponse {
                 eUsername.setText("");
                 ePassword.setText("");
             }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backExit){
+            moveTaskToBack(true);
+        }else{
+            backExit = true;
+            Toast.makeText(getApplicationContext(),"Press back button one more time to exit",Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    backExit = false;
+                }
+            },1000);
+        }
     }
 
     @Override

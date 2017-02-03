@@ -43,6 +43,7 @@ public class TeacherMQP extends Fragment {
     private ProgressBar progressBar;
     private TextView noInternet;
     private TextView notAvailable;
+    public static boolean backpressed = false;
     public static List<String> classes = new ArrayList<>();
 
     public TeacherMQP() {
@@ -62,24 +63,36 @@ public class TeacherMQP extends Fragment {
         notAvailable = (TextView)rootView.findViewById(R.id.modelnotavailableT);
         noInternet = (TextView)rootView.findViewById(R.id.noInternetT);
         adaptor = new MyAdaptor();
-        checkInternetConnection();
         classes.clear();
         clist.setAdapter(adaptor);
-
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkInternetConnection();
     }
 
     public  void checkInternetConnection()
     {
-        if(ServerConnect.checkInternetConenction(getActivity()))
+        if(ServerConnect.checkInternetConenction(getActivity()) && !backpressed)
         {
             progressBar.setVisibility(View.VISIBLE);
             getClassData();
         }
         else
         {
-            noInternet.setVisibility(View.VISIBLE);
+            String data = userDataSP.getClassesMQP();
+            if(data.length()>0){
+                try {
+                    getJsonData(data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                noInternet.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -90,6 +103,7 @@ public class TeacherMQP extends Fragment {
                 try {
                     progressBar.setVisibility(View.GONE);
                     noInternet.setVisibility(View.GONE);
+                    userDataSP.storeClasses(result);
                     getJsonData(result);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -115,6 +129,7 @@ public class TeacherMQP extends Fragment {
         clist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                backpressed = true;
                 ModelQuestionPapers blankFragment = new ModelQuestionPapers(classes.get(position));
                 FragmentTransaction frag = getActivity().getSupportFragmentManager().beginTransaction();
                 frag.replace(R.id.main_con,blankFragment);
@@ -142,10 +157,9 @@ public class TeacherMQP extends Fragment {
 
             String className=classes.get(position);
             ImageView img = (ImageView) itemView.findViewById(R.id.class_image);
-            String firstletter = String.valueOf(className.charAt(0));
             ColorGenerator generator = ColorGenerator.MATERIAL;
             int color = generator.getColor(getItem(position));
-            TextDrawable drawable = TextDrawable.builder().buildRoundRect(firstletter.toUpperCase(),color,20);
+            TextDrawable drawable = TextDrawable.builder().buildRoundRect(className.toUpperCase(),color,20);
             img.setImageDrawable(drawable);
             return itemView;
 

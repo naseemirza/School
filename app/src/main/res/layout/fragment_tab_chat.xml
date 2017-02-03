@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     tools:context="com.lead.infosystems.schooldiary.Main.FragTabChat">
 
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

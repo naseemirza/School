@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.QaData;
@@ -44,6 +45,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
     private boolean backPressed = false;
     static List<QaData> items = new ArrayList<>();
     public static QaAnimData qaAnimData;
+    private ProgressBar progressBar;
     public FragTabQA() {
     }
 
@@ -54,6 +56,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         noMoreItems = false;
         if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){
             QA_MIN = "0";
+            progressBar.setVisibility(View.VISIBLE);
             loadData(QA_MIN);
         }else{
             if(userDataSP.getPostData()!=""){
@@ -75,6 +78,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         rootview =  inflater.inflate(R.layout.fragment_tab_qa, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeRefresh);
         RecyclerView recyclerView = (RecyclerView) rootview.findViewById(R.id.rvList);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         qaAdaptor = new QaAdaptor(this,getActivity());
@@ -180,6 +184,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
                     qaAdaptor.setMoreLoading(false);
                     noMoreItems = true;
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.QA_FETCH);

@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import com.lead.infosystems.schooldiary.Data.MyDataBase;
 import com.lead.infosystems.schooldiary.Data.NotificationData;
 import com.lead.infosystems.schooldiary.Data.UserDataSP;
 import com.lead.infosystems.schooldiary.Events.EventAll;
+import com.lead.infosystems.schooldiary.ExamTest.ExamDetails;
 import com.lead.infosystems.schooldiary.Generic.MyVolley;
 import com.lead.infosystems.schooldiary.IVolleyResponse;
 import com.lead.infosystems.schooldiary.Model_Paper.ModelQuestionPapers;
@@ -63,6 +65,7 @@ public class FragTabNotifications extends Fragment {
     private UserDataSP userDataSP;
     private MyDataBase myDataBase;
     private static boolean loaded = false;
+    private ProgressBar progressBar;
     public FragTabNotifications() {
         // Required empty public constructor
     }
@@ -77,6 +80,7 @@ public class FragTabNotifications extends Fragment {
         list = (ListView) rootview.findViewById(R.id.list_three);
         adapter = new MyListAdapter();
         list.setAdapter(adapter);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         userDataSP = new UserDataSP(getActivity().getApplicationContext());
         if(ServerConnect.checkInternetConenction(getActivity())&& !loaded){
@@ -97,6 +101,7 @@ public class FragTabNotifications extends Fragment {
     };
 
     private void getDataFromServer(){
+        progressBar.setVisibility(View.VISIBLE);
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
@@ -118,6 +123,7 @@ public class FragTabNotifications extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.NOTIFICATION_FETCH);
@@ -225,7 +231,7 @@ public class FragTabNotifications extends Fragment {
                         transaction2.commit();
                         break;
                     case NotificationData.TEST_EXAM:
-                        ModelQuestionPapers frag3 = new ModelQuestionPapers();
+                        ExamDetails frag3 = new ExamDetails();
                         FragmentTransaction transaction3 = getActivity().getSupportFragmentManager().beginTransaction();
                         transaction3.replace(R.id.main_con,frag3);
                         transaction3.addToBackStack(BACK_STACK_TAG);

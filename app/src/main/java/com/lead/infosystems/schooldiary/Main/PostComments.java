@@ -64,7 +64,6 @@ public class PostComments extends AppCompatActivity {
     private ArrayList<PostCommentData> items = new ArrayList<>();
     public static String ANIM_DATA = "anim_data";
 
-    PostComments(){}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

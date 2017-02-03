@@ -56,7 +56,7 @@ import static com.lead.infosystems.schooldiary.ExamTest.Dialog_exam.INTENTFILTER
 public class ExamDetails extends Fragment implements IVolleyResponse{
     private UserDataSP userDataSp;
     private MyVolley myVolley;
-    ListView examList;
+    private ListView examList;
     private MyAdaptor adaptor;
     private ProgressBar progressBar;
     private TextView notAvailable;
@@ -105,6 +105,7 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         return rootView;
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -114,14 +115,22 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            exam_detail.add(0, new ExamData(intent.getStringExtra(EXAM_NAME),intent.getStringExtra(EXAM_DATE),intent.getStringExtra(EXAM_DESCRIPTION),intent.getStringExtra(EXAM_PDFLINK), intent.getStringExtra(EXAM_SUBMISSION_DATE), intent.getStringExtra(EXAM_UPLOAD_USER)));
+            exam_detail.add(0, new ExamData(intent.getStringExtra(EXAM_NAME),
+                    intent.getStringExtra(EXAM_DATE),intent.getStringExtra(EXAM_DESCRIPTION),
+                    intent.getStringExtra(EXAM_PDFLINK), intent.getStringExtra(EXAM_SUBMISSION_DATE),
+                    intent.getStringExtra(EXAM_UPLOAD_USER)));
+            adaptor.notifyDataSetChanged();
         }
     };
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(receiver);
+        try {
+            getActivity().unregisterReceiver(receiver);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -163,8 +172,9 @@ public class ExamDetails extends Fragment implements IVolleyResponse{
         for(int i =0; i<jsonArray.length(); i++)
         {
             JSONObject jobj = jsonArray.getJSONObject(i);
-            exam_detail.add(new ExamData(jobj.getString("exam_name"), jobj.getString("exam_date")
-                    , jobj.getString("exam_description"), jobj.getString("exam_pdf_link"), jobj.getString("submission_date"), jobj.getString("number_user")));
+            exam_detail.add(new ExamData(jobj.getString("exam_name"), jobj.getString("exam_date"),
+                    jobj.getString("exam_description"), jobj.getString("exam_pdf_link"),
+                    jobj.getString("submission_date"), jobj.getString("number_user")));
         }
         sortData();
         adaptor.notifyDataSetChanged();

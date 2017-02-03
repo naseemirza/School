@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.lead.infosystems.schooldiary.Data.Post_Data;
@@ -46,6 +47,7 @@ public class FragTabHome extends Fragment implements IPostInterface,SwipeRefresh
     private JSONArray jsonPost,jsonLikes;
     boolean backPressed = false;
     boolean noMorePost = false;
+    private ProgressBar progressBar;
 
     public FragTabHome() {
         // Required empty public constructor
@@ -83,6 +85,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.frag_tab_home, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) rootview.findViewById(R.id.swipeRefresh);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
         RecyclerView recyclerView = (RecyclerView) rootview.findViewById(R.id.rvList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -102,6 +105,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
     public void loadData(Activity activity) {
         if(ServerConnect.checkInternetConenction(activity)){
+            progressBar.setVisibility(View.VISIBLE);
             POST_MIN = "0";
             postDataLoad(POST_MIN);
         }
@@ -191,6 +195,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
         volley.setUrl(Utils.POST_FETCH);
