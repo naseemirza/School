@@ -31,7 +31,6 @@ import java.util.List;
 public class Division extends AppCompatActivity {
 
     private UserDataSP userDataSP;
-    private SPData spData;
     private ListView dlist;
     private String class_list;
     private ProgressBar progressBar;
@@ -47,7 +46,6 @@ public class Division extends AppCompatActivity {
         class_list = intent.getStringExtra("class");
         dlist=(ListView)findViewById(R.id.div_list);
         userDataSP=new UserDataSP(this);
-        spData =new SPData(this);
         getDivisionData();
     }
 

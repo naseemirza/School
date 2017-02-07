@@ -140,9 +140,9 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         compressImage = new CompressImage(activity,this);
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch(requestCode) {
-            case 0:
-                if(resultCode == activity.RESULT_OK){
+            if(resultCode == activity.RESULT_OK) {
+                switch(requestCode) {
+                case 0:
                     File f = new File(Environment.getExternalStorageDirectory()
                             .toString());
                     for (File temp : f.listFiles()) {
@@ -151,30 +151,26 @@ public class Profile extends AppCompatActivity implements IPostInterface,SwipeRe
                             break;
                         }
                     }
-                   crop(Uri.fromFile(f));
-                }
-                break;
-            case 1:
-                if(resultCode == activity.RESULT_OK){
+                    crop(Uri.fromFile(f));
+                    break;
+
+                case 1:
                     Uri selectedImage = imageReturnedIntent.getData();
                     crop(selectedImage);
-                }
-                break;
+                    break;
 
-            case 99:
-                if(resultCode == activity.RESULT_OK){
+                case 99:
                     try {
                         newProPic = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData());
-                        if(newProPic != null){
+                        if (newProPic != null) {
                             compressImage.setImg(newProPic);
                             compressImage.execute();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                }
-                break;
+                    break;
+            }
 
         }}
 

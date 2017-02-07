@@ -44,12 +44,12 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private IPostInterface iPostInterface;
     private LinearLayoutManager mLinearLayoutManager;
     private Context context;
-    Activity activity;
+    private Activity activity;
     private UserDataSP userDataSP;
     private boolean canClickLike = true;
     private boolean isMoreLoading = false;
     private int visibleThreshold = 1;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
+    private int firstVisibleItem, visibleItemCount, totalItemCount;
     public static PostAnimData postAnimData;
 
 

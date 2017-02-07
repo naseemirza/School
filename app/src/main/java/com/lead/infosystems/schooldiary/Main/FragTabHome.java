@@ -38,12 +38,12 @@ import java.util.ArrayList;
  */
 public class FragTabHome extends Fragment implements IPostInterface,SwipeRefreshLayout.OnRefreshListener{
 
-    View rootview;
+    private View rootview;
     private static ArrayList<Post_Data> itemlist = new ArrayList<Post_Data>();;
     private SwipeRefreshLayout swipeRefreshLayout;
     private static PostAdaptor postAdaptor;
     private String POST_MIN = "0";
-    static UserDataSP userDataSP;
+    public static UserDataSP userDataSP;
     private JSONArray jsonPost,jsonLikes;
     boolean backPressed = false;
     boolean noMorePost = false;

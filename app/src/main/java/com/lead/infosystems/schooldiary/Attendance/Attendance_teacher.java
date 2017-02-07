@@ -35,8 +35,7 @@ public class Attendance_teacher extends Fragment {
     private TextView noInternet;
     private ProgressBar progressBar;
     private TextView notAvailable;
-    SPData spData;
-    ListView clist;
+    private ListView clist;
     public static List<String> classes = new ArrayList<>();
 
 
@@ -53,7 +52,6 @@ public class Attendance_teacher extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_teacher__attendance, container, false);
         getActivity().setTitle("Attendance");
         userDataSP=new UserDataSP(getActivity());
-        spData =new SPData(getActivity());
         clist=(ListView)rootView.findViewById(R.id.class_list);
         noInternet = (TextView)rootView.findViewById(R.id.noInternet);
         progressBar = (ProgressBar)rootView.findViewById(R.id.attendance_progress);

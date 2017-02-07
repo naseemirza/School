@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="all">
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_profile"
@@ -27,9 +27,9 @@
             android:icon="@drawable/ic_question_papers"
             android:title="Model Question Papers" />
     </group>
-
     <item android:title="Notice">
         <menu>
+            <group android:checkableBehavior="all">
             <item
                 android:id="@+id/nav_test"
                 android:icon="@drawable/ic_diery"
@@ -38,11 +38,13 @@
                 android:id="@+id/nav_event"
                 android:icon="@drawable/ic_events"
                 android:title="Events" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Contacts">
         <menu>
+            <group android:checkableBehavior="all">
             <item
                 android:id="@+id/nav_suggestions"
                 android:icon="@drawable/ic_suggestions"
@@ -59,23 +61,19 @@
                 android:id="@+id/nav_formdownload"
                 android:icon="@drawable/ic_download"
                 android:title="Application Forms" />
+            </group>
         </menu>
     </item>
 
 
     <item android:title="General">
         <menu>
-            <!--<item-->
-                <!--android:id="@+id/nav_settings"-->
-                <!--android:icon="@drawable/ic_settings"-->
-                <!--android:title="Settings"/>-->
-
+            <group android:checkableBehavior="all">
             <item
                 android:id="@+id/nav_log_out"
                 android:icon="@drawable/ic_logout"
                 android:title="Log Out" />
-
-
+            </group>
         </menu>
     </item>
 
