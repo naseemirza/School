@@ -147,7 +147,7 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             });
 
             if(Integer.parseInt(itemList.get(position).getUserNumber()) ==
-                    Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
+                    Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER)) || !userDataSP.isStudent()){
                 ((StudentViewHolder) holder).answerDelete.setVisibility(View.VISIBLE);
             }else{
                 ((StudentViewHolder) holder).answerDelete.setVisibility(View.GONE);
@@ -176,7 +176,6 @@ public class QaAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.e("question delete" , response);
                 if(response != null && response.contains("DONE")){
                     deleteItem(pos);
                 }

@@ -221,7 +221,7 @@ public class PostAdaptor extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 }
             });
 
-            if(singleItem.getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER))){
+            if(singleItem.getStudentNum() == Integer.parseInt(userDataSP.getUserData(UserDataSP.NUMBER_USER)) || !userDataSP.isStudent()){
                 ((StudentViewHolder) holder).deleteBtn.setVisibility(View.VISIBLE);
                 ((StudentViewHolder) holder).deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override

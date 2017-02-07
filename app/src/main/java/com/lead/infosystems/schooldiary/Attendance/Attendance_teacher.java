@@ -37,6 +37,7 @@ public class Attendance_teacher extends Fragment {
     private TextView notAvailable;
     private ListView clist;
     public static List<String> classes = new ArrayList<>();
+    private MyAdaptor adaptor;
 
 
 
@@ -56,6 +57,8 @@ public class Attendance_teacher extends Fragment {
         noInternet = (TextView)rootView.findViewById(R.id.noInternet);
         progressBar = (ProgressBar)rootView.findViewById(R.id.attendance_progress);
         notAvailable = (TextView)rootView.findViewById(R.id.attendanceNotAvailable);
+        adaptor = new MyAdaptor();
+        clist.setAdapter(adaptor);
         checkInternetConnection();
         return rootView;
     }
@@ -101,7 +104,7 @@ public class Attendance_teacher extends Fragment {
             classes.add(jsonobj.getString(UserDataSP.CLASS));
         }
 
-        clist.setAdapter(new MyAdaptor());
+        adaptor.notifyDataSetChanged();
         clist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Management;
 
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ManagmentSchool extends Fragment implements IVolleyResponse{
+public class ManagmentSchool extends Fragment{
 
     private MyVolley myVolley;
     private UserDataSP userDataSp;
@@ -39,13 +40,12 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
     private ProgressBar progressBar;
     private TextView notAvailable;
     private TextView noInternet;
-    FoldingCell firstCell, secondCell;
+    private FoldingCell firstCell, secondCell;
     private ArrayList<ItemDetail> items;
     private TextView principalNameContent, directorNameContent,  mobileNP,  gmailIdP, qualificationsP,
             interests_fieldP, contact_detailP,  mobileND,  gmailIdD, qualificationsD, interests_fieldD, contact_detailD;
     private ImageView principalImageTitle, directorImageTitle, principalImageContent, directorImageContent;
-    private boolean firstfold = true;
-    private boolean secondfold = true;
+    private static Activity activity;
 
 
     public ManagmentSchool() {
@@ -59,7 +59,6 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         View rootView = inflater.inflate(R.layout.managment_school, container, false);
         // Inflate the layout for this fragment
         getActivity().setTitle("Management");
-        myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         userDataSp = new UserDataSP(getActivity().getApplicationContext());
         myDataBase = new MyDataBase(getActivity().getApplicationContext());
         progressBar = (ProgressBar) rootView.findViewById(R.id.management_progress);
@@ -84,7 +83,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         qualificationsD = (TextView)secondCell.findViewById(R.id.Dqualification_t);
         interests_fieldD= (TextView)secondCell.findViewById(R.id.Dfield);
         contact_detailD = (TextView)secondCell.findViewById(R.id.DcontactDetail);
-
+        activity = getActivity();
         firstCell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,23 +117,24 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
 
     public void getTeacherDetail()
     {   progressBar.setVisibility(View.VISIBLE);
+        myVolley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+
+                try {
+                    notAvailable.setVisibility(View.GONE);
+                    getJsonData(result);
+                }
+                catch (JSONException e){
+                    e.printStackTrace();
+                    notAvailable.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+        });
         myVolley.setUrl(Utils.MANAGEMENT_DETAIL);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.connect();
-    }
-    @Override
-    public void volleyResponse(String result)
-    {
-
-        try {
-            notAvailable.setVisibility(View.GONE);
-            getJsonData(result);
-        }
-        catch (JSONException e){
-            e.printStackTrace();
-            notAvailable.setVisibility(View.VISIBLE);
-        }
-        progressBar.setVisibility(View.GONE);
     }
 
 
@@ -191,7 +191,7 @@ public class ManagmentSchool extends Fragment implements IVolleyResponse{
         else{
             notAvailable.setVisibility(View.VISIBLE);
         }
-        final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(getActivity(), items);
+        final ExpandableCellListAdapter adapter = new ExpandableCellListAdapter(activity, items);
         list.setAdapter(adapter);
         list.setExpanded(true);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Suggestion;
 
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,7 +45,7 @@ import static com.lead.infosystems.schooldiary.Suggestion.Suggestion_Post.SUGGES
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Suggestion_Complain extends Fragment implements IVolleyResponse {
+public class Suggestion_Complain extends Fragment{
     private FloatingActionButton button;
     private View rootView;
     ListView list;
@@ -67,7 +68,6 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
         rootView = inflater.inflate(R.layout.suggestion__complain, container, false);
 
         userDataSp = new UserDataSP(getActivity());
-        myVolley = new MyVolley(getActivity().getApplicationContext(), this);
         getActivity().setTitle("Suggestion/Complaints");
         list = (ListView) rootView.findViewById(R.id.list_detail);
         progressBar = (ProgressBar)rootView.findViewById(R.id.suggestion_loading);
@@ -120,35 +120,33 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
         if(ServerConnect.checkInternetConenction(getActivity()))
         {
             progressBar.setVisibility(View.VISIBLE);
-            getSuggestionData();
+            getSuggestionData(getActivity());
         }
         else
         {
             noInternet.setVisibility(View.VISIBLE);
         }
     }
-    public void getSuggestionData() {
+    public void getSuggestionData(final Activity activity) {
+        myVolley = new MyVolley(activity.getApplicationContext(), new IVolleyResponse() {
+            @Override
+            public void volleyResponse(String result) {
+                try {
+                    notAvailable.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    getJsonData(result,activity);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    notAvailable.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         myVolley.setUrl(Utils.SUGGESTION_COMPLAIN);
         myVolley.setParams(UserDataSP.SCHOOL_NUMBER, userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
         myVolley.connect();
-        Log.e("school",userDataSp.getUserData(UserDataSP.SCHOOL_NUMBER));
     }
 
-    @Override
-    public void volleyResponse(String result) {
-
-        try {
-            notAvailable.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            Log.e("result",result);
-            getJsonData(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            notAvailable.setVisibility(View.VISIBLE);
-        }
-
-    }
-    public void getJsonData(String re) throws JSONException{
+    public void getJsonData(String re, Activity activity) throws JSONException{
         JSONArray json = new JSONArray(re);
 
         scItem = new ArrayList<>();
@@ -159,7 +157,7 @@ public class Suggestion_Complain extends Fragment implements IVolleyResponse {
 
         }
 
-        adapter = new FloadingListAdapter(getActivity(), scItem);
+        adapter = new FloadingListAdapter(activity, scItem);
         adapter.sortData();
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

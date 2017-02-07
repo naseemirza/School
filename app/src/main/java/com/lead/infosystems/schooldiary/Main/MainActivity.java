@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static boolean backExit = false;
     public static String BACK_STACK_TAG = "tag";
     public static String BACK_STACK_TMQP = "tag_tmqp";
+    public static String BACK_STACK_MAIN = "main_tag";
     public static String BACK_TAG ;
     static SimpleFacebook fb;
     private ImageView propic;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MainTabAdapter mainFrag = new MainTabAdapter();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_con,mainFrag);
-        transaction.addToBackStack("main");
+        transaction.addToBackStack(BACK_STACK_MAIN);
         transaction.commit();
         try {
             if(getIntent().getAction().length()>0){
@@ -168,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         propic = (ImageView) holder.findViewById(R.id.propic);
         Picasso.with(getApplicationContext())
                 .load(Utils.SERVER_URL+(userDataSP.getUserData(UserDataSP.PROPIC_URL).replace("profilepic","propic_thumb")))
+                .placeholder(R.drawable.defaultpropic)
                 .networkPolicy(ServerConnect.checkInternetConenction(this)?
                         NetworkPolicy.NO_CACHE:NetworkPolicy.OFFLINE)
                 .into(propic);

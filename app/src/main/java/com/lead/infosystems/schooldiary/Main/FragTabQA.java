@@ -1,6 +1,7 @@
 package com.lead.infosystems.schooldiary.Main;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -36,16 +37,17 @@ import java.util.List;
  */
 public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,SwipeRefreshLayout.OnRefreshListener {
 
-    View rootview;
-    SwipeRefreshLayout swipeRefreshLayout;
-    static QaAdaptor qaAdaptor;
-    static UserDataSP userDataSP;
-    String QA_MIN = "0";
-    boolean noMoreItems = false;
+    private View rootview;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private static QaAdaptor qaAdaptor;
+    private static UserDataSP userDataSP;
+    private String QA_MIN = "0";
+    private boolean noMoreItems = false;
     private boolean backPressed = false;
-    static List<QaData> items = new ArrayList<>();
+    private static List<QaData> items = new ArrayList<>();
     public static QaAnimData qaAnimData;
     private ProgressBar progressBar;
+
     public FragTabQA() {
     }
 
@@ -57,7 +59,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         if(ServerConnect.checkInternetConenction(getActivity())&& !backPressed){
             QA_MIN = "0";
             progressBar.setVisibility(View.VISIBLE);
-            loadData(QA_MIN);
+            loadData(QA_MIN,getActivity().getApplicationContext());
         }else{
             if(userDataSP.getPostData()!=""){
                 swipeRefreshLayout.setRefreshing(false);
@@ -100,14 +102,14 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         QA_MIN = "0";
         noMoreItems = false;
         qaAdaptor.setMoreLoading(false);
-        loadData(QA_MIN);
+        loadData(QA_MIN,getActivity().getApplicationContext());
     }
 
     @Override
     public void onLoadMore() {
         if(!noMoreItems){
             qaAdaptor.setProgressMore(true);
-            loadData(QA_MIN);
+            loadData(QA_MIN,getActivity().getApplicationContext());
         }
     }
 
@@ -161,12 +163,11 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
         }
     }
 
-    public void loadData(final String min){
+    public void loadData(final String min, final Context context){
         MyVolley volley = new MyVolley(getActivity().getApplicationContext(), new IVolleyResponse() {
             @Override
             public void volleyResponse(String result) {
                 if(result.contains(UserDataSP.NUMBER_USER)){
-
                     if(min == "0"){
                         swipeRefreshLayout.setRefreshing(false);
                         qaAdaptor.addAll(parseJson(result));
@@ -179,7 +180,7 @@ public class FragTabQA extends Fragment implements QaAdaptor.OnLoadMoreListener,
                     }
 
                 }else{
-                    Toast.makeText(getActivity().getApplicationContext(),"No more Questions..",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"No more Questions..",Toast.LENGTH_SHORT).show();
                     qaAdaptor.setProgressMore(false);
                     qaAdaptor.setMoreLoading(false);
                     noMoreItems = true;

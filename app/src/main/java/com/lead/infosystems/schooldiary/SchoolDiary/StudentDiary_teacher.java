@@ -32,14 +32,14 @@ import java.util.ArrayList;
 
 public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
 
-    UserDataSP userDataSP;
+    private UserDataSP userDataSP;
     private MyVolley myVolley;
-    ListView list_class;
+    private ListView list_class;
     private ProgressBar progressBar;
     private TextView notAvailable;
     private TextView noInternet;
-    ArrayList<String> classes = new ArrayList<String>();
-
+    private ArrayList<String> classes = new ArrayList<String>();
+    private MyAdaptor adaptor;
 
     public StudentDiary_teacher() {
         // Required empty public constructor
@@ -59,6 +59,8 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
         progressBar = (ProgressBar)rootView.findViewById(R.id.homework_progress);
         notAvailable = (TextView)rootView.findViewById(R.id.homeworkNotAvailable);
         noInternet = (TextView)rootView.findViewById(R.id.homenoInternet);
+        adaptor = new MyAdaptor();
+        list_class.setAdapter(adaptor);
         checkInternetConnection();
         return rootView;
 
@@ -103,8 +105,7 @@ public class StudentDiary_teacher extends Fragment implements IVolleyResponse {
             classes.add(jsonobj.getString("class"));
 
         }
-
-        list_class.setAdapter(new MyAdaptor());
+        adaptor.notifyDataSetChanged();
         list_class.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

@@ -174,12 +174,17 @@ public class FragTabNotifications extends Fragment {
                 itemView = getActivity().getLayoutInflater().inflate(R.layout.messageview_item,parent,false);
             }
             NotificationData current = items.get(position);
-
             TextView title = (TextView) itemView.findViewById(R.id.title);
             TextView date = (TextView) itemView.findViewById(R.id.date);
             TextView text = (TextView) itemView.findViewById(R.id.text);
             ((ImageView) itemView.findViewById(R.id.profile_image)).setVisibility(View.GONE);
-            String title_text = current.getType().replace("_"," ");
+            String title_text;
+            if(current.getType().contentEquals(NotificationData.MODEL_QP)){
+                title_text = "MODEL QUESTION PAPER";
+            }else{
+                title_text = current.getType();
+            }
+            title_text = title_text.replace("_"," ");
             title.setText(title_text);
             date.setText(Utils.getTimeString(current.getDate()));
             text.setText(current.getNotificationText());
